@@ -1,14 +1,19 @@
 [build-system]
-requires = ["flit_core >=3.4,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=69.0.2", "wheel", "build", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "sphinx_external_toc"
-dynamic = ["version"]
-description = "A sphinx extension that allows the site-map to be defined in a single YAML file."
-readme = "README.md"
-authors = [{name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"}]
+name = "sphinx-external-toc-strict"
+dynamic = [
+    "optional-dependencies",
+    "dependencies",
+    "version",
+]
 license = {file = "LICENSE"}
+description = "A sphinx extension that allows the site-map to be defined in a single YAML file."
+keywords = ["sphinx","extension", "toc", "strictyaml"]
+readme = "README.md"
+requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Sphinx :: Extension",
@@ -23,54 +28,159 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Text Processing :: Markup",
 ]
-keywords = ["sphinx","extension", "toc"]
-requires-python = ">=3.9"
-dependencies = [
-    "click>=7.1",
-    "pyyaml",
-    "sphinx>=5",
+# author sphinx-external-toc {name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"},
+authors = [  # Contact by mastodon please
+    {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
 ]
 
 [project.urls]
-Homepage = "https://github.com/executablebooks/sphinx-external-toc"
-Documentation = "https://sphinx-external-toc.readthedocs.io"
+Homepage = "https://github.com/msftcangoblowm/sphinx-external-toc-strict"
+Documentation = "https://sphinx-external-toc-strict.readthedocs.io/intro.html"
+Chat = "https://mastodon.social/@msftcangoblowme"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["sphinx_external_toc_strict*"]
+
+[tool.setuptools.dynamic]
+optional-dependencies.pip = { file = ["requirements/pip.pip"] }
+optional-dependencies.pip_tools = { file = ["requirements/pip-tools.pip"] }
+dependencies = { file = ["requirements/prod.pip"] }
+optional-dependencies.dev = { file = ["requirements/dev.pip"] }
+optional-dependencies.manage = { file = ["requirements/manage.pip"] }
+optional-dependencies.docs = { file = ["docs/requirements.pip"] }
+version = {attr = "sphinx_external_toc_strict._version.__version__"}
 
 [project.entry-points]
-"jb.cmdline" = {toc = "sphinx_external_toc.cli:main"}
-
-[project.optional-dependencies]
-code_style = ["pre-commit>=2.12"]
-rtd = [
-    "myst-parser>=1.0.0",
-    "sphinx-book-theme>=1.0.0",
-]
-testing = [
-    "coverage",
-    "pytest>=7.1",
-    "pytest-cov",
-    "pytest-regressions",
-]
+"jb.cmdline" = {toc = "sphinx_external_toc_strict.cli:main"}
 
 [project.scripts]
-sphinx-etoc = "sphinx_external_toc.cli:main"
+sphinx-etoc-strict = "sphinx_external_toc_strict.cli:main"
 
-[tool.flit.sdist]
-exclude = [
-    "docs/",
-    "tests/",
-]
+[tool.pip-tools]
+no_header = true
+resolver = "backtracking"
+no_allow_unsafe = true
+generate_hashes = false  # From setuptools 69.0.2, parsing dependencies with hashes is broken
+
+[tool.setuptools_scm]
+# can be empty if no extra settings are needed, presence enables setuptools_scm
+# SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SPHINX_EXTERNAL_TOC_STRICT="1.0.2" python -m setuptools_scm
+fallback_version = "1.0.2"
+version_file = "src/sphinx_external_toc_strict/_version.py"
 
 [tool.mypy]
-show_error_codes = true
+mypy_path = "src"
+exclude = ['tests', 'docs']
+strict = true
+namespace_packages = true
+check_untyped_defs = true
 warn_unused_ignores = true
-warn_redundant_casts = true
 no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
 strict_equality = true
 
 [[tool.mypy.overrides]]
-module = ["docutils.*", "yaml.*"]
+module = ["docutils.*", "strictyaml.*"]
 ignore_missing_imports = true
 
+[tool.coverage.run]
+source_pkgs = ["sphinx_external_toc_strict"] # **REQUIRED** to be set correctly. Your package name
+branch = true
 
-[tool.ruff.lint.isort]
-force-sort-within-sections = true
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "@abc.abstractmethod",
+    "@abc.abstractproperty",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]
+precision = 2
+ignore_errors = true
+skip_covered = true
+skip_empty = true
+fail_under = 70
+show_missing = true
+
+[tool.sphinx-pyproject]
+language = "en"
+needs_sphinx = "1.7"
+templates_path = ["_templates",]
+html_static_path = ["_static",]
+# https://www.sphinx-doc.org/en/master/usage/markdown.html
+source_suffix = [".md", ".rst"]
+master_doc = "index"
+pygments_style = "sphinx"
+html_theme = "alabaster"
+numfig = true
+autosectionlabel_prefix_document = true
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosectionlabel",
+    "sphinx.ext.todo",
+    "sphinx.ext.doctest",
+    "sphinx.ext.githubpages",
+    "sphinx_paramlinks",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.extlinks",
+    "sphinx_external_toc_strict",  # circular?
+    "sphinx_licenseinfo",
+    "myst_parser",
+]
+myst_enable_extensions = ["colon_fence", "html_image"]
+external_toc_exclude_missing = true
+
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+]
+doctest_show_successes = false
+doctest_test_doctest_blocks = "Yes please!"
+nitpicky = true
+autodoc_typehints = 'signature'
+
+[tool.black]
+target_version = [
+    "py39",
+    "py310",
+    "py311",
+    "py312",
+]
+include = '\.pyi?$'
+
+[tool.blackdoc]
+skip_string_normalization = true
+color = false  # affects diffs only
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+force_grid_wrap = 2
+use_parentheses = true
+include_trailing_comma = true
+ensure_newline_before_comments = true
+line_length = 88
+supported_extensions = ["py", "pyi"]
+
+[tool.flake8]
+max_line_length = 88
+extend_ignore = [
+    "E203",
+    "W503",
+    "W605",
+    "W293",
+    "W291",
+    "E501",
+]
+
+[tool.twine]
+sign = true
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning:myst_parser.*:",
+    "ignore::DeprecationWarning:optparse.*:",
+]

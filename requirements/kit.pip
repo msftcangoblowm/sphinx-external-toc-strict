@@ -1,0 +1,31 @@
+build==1.2.1
+    # via -r requirements/kit.in
+colorama==0.4.6
+    # via -r requirements/kit.in
+importlib-metadata==7.1.0
+    # via build
+packaging==24.0
+    # via
+    #   build
+    #   setuptools-scm
+pyproject-hooks==1.0.0
+    # via build
+setuptools-scm==8.0.4
+    # via -r requirements/kit.in
+tomli==2.0.1
+    # via
+    #   build
+    #   pyproject-hooks
+    #   setuptools-scm
+typing-extensions==4.11.0
+    # via setuptools-scm
+wheel==0.43.0
+    # via -r requirements/kit.in
+zipp==3.18.1
+    # via importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+setuptools==69.2.0
+    # via
+    #   -r requirements/kit.in
+    #   setuptools-scm

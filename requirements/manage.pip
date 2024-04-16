@@ -1,0 +1,132 @@
+backports-tarfile==1.0.0
+    # via jaraco-context
+bleach==6.1.0
+    # via readme-renderer
+certifi==2024.2.2
+    # via
+    #   -c requirements/prod.pip
+    #   requests
+cffi==1.16.0
+    # via cryptography
+cfgv==3.4.0
+    # via pre-commit
+charset-normalizer==3.3.2
+    # via
+    #   -c requirements/prod.pip
+    #   requests
+cryptography==42.0.5
+    # via secretstorage
+distlib==0.3.8
+    # via
+    #   -c requirements/tox.pip
+    #   virtualenv
+docutils==0.20.1
+    # via
+    #   -c requirements/prod.pip
+    #   readme-renderer
+    #   restview
+filelock==3.13.4
+    # via
+    #   -c requirements/tox.pip
+    #   virtualenv
+identify==2.5.35
+    # via pre-commit
+idna==3.6
+    # via
+    #   -c requirements/prod.pip
+    #   requests
+importlib-metadata==7.1.0
+    # via
+    #   -c requirements/prod.pip
+    #   keyring
+    #   twine
+jaraco-classes==3.4.0
+    # via keyring
+jaraco-context==5.3.0
+    # via keyring
+jaraco-functools==4.0.0
+    # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
+keyring==25.1.0
+    # via twine
+markdown-it-py==3.0.0
+    # via
+    #   -c requirements/prod.pip
+    #   rich
+mdurl==0.1.2
+    # via
+    #   -c requirements/prod.pip
+    #   markdown-it-py
+more-itertools==10.2.0
+    # via
+    #   jaraco-classes
+    #   jaraco-functools
+nodeenv==1.8.0
+    # via pre-commit
+pkginfo==1.10.0
+    # via twine
+platformdirs==4.2.0
+    # via
+    #   -c requirements/tox.pip
+    #   virtualenv
+pre-commit==3.7.0
+    # via -r requirements/manage.in
+pycparser==2.22
+    # via cffi
+pygments==2.17.2
+    # via
+    #   -c requirements/prod.pip
+    #   readme-renderer
+    #   restview
+    #   rich
+pyyaml==6.0.1
+    # via
+    #   -c requirements/prod.pip
+    #   pre-commit
+readme-renderer==36.0
+    # via
+    #   restview
+    #   twine
+requests==2.31.0
+    # via
+    #   -c requirements/prod.pip
+    #   requests-toolbelt
+    #   twine
+requests-toolbelt==1.0.0
+    # via twine
+restview==3.0.1
+    # via -r requirements/manage.in
+rfc3986==2.0.0
+    # via twine
+rich==13.7.1
+    # via twine
+secretstorage==3.3.3
+    # via keyring
+six==1.16.0
+    # via
+    #   -c requirements/prod.pip
+    #   bleach
+twine==5.0.0
+    # via -r requirements/manage.in
+urllib3==2.2.1
+    # via
+    #   -c requirements/prod.pip
+    #   requests
+    #   twine
+virtualenv==20.25.1
+    # via
+    #   -c requirements/tox.pip
+    #   pre-commit
+webencodings==0.5.1
+    # via bleach
+zipp==3.18.1
+    # via
+    #   -c requirements/prod.pip
+    #   importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+setuptools==69.2.0
+    # via nodeenv

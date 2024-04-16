@@ -130,3 +130,7 @@ dmypy.json
 
 .vscode/
 ~$*
+
+# Removed from project
+retired/
+src/sphinx_external_toc_strict/_version.py

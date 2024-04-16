@@ -1,16 +1,28 @@
-"""A sphinx extension that allows the project toctree to be defined in a single file."""
+"""A sphinx extension that allows the project toctree to be defined in a single file.
 
-__version__ = "1.0.1"
+.. py:data:: __version__
+   :type: str
+
+   Hardcoded version in x.y.z format. Not semantic version. Crying out
+   to add setuptools-scm suppport
+
+"""
+
+from .constants import __version_app as __version__
 
 
-from typing import TYPE_CHECKING
+def setup(app):
+    """Initialize the Sphinx extension
 
-if TYPE_CHECKING:
-    from sphinx.application import Sphinx
+    :param app: Sphinx instance
+    :type app: sphinx.application.Sphinx
+    :returns:
 
+       dict containing version and whether safe to run in parallel.
+       Keys: version, parallel_read_safe
 
-def setup(app: "Sphinx") -> dict:
-    """Initialize the Sphinx extension."""
+    :rtype: dict[str, str | bool]
+    """
     from .events import (
         InsertToctrees,
         TableofContents,

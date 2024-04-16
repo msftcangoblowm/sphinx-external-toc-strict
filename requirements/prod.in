@@ -1,0 +1,4 @@
+click
+strictyaml
+sphinx
+myst-parser  # needed by both testing and docs. Short jump to make it always available
