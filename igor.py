@@ -174,15 +174,19 @@ def print_banner(label: str) -> None:
 
 def _update_file(fname: str, pattern: str, replacement: str) -> None:
     """Update the contents of a file, replacing pattern with replacement."""
-    with open(fname) as fobj:
-        old_text = fobj.read()
+    path_file = Path(fname)
+    if path_file.exists():
+        with open(fname) as fobj:
+            old_text = fobj.read()
 
-    new_text = re.sub(pattern, replacement, old_text, count=1)
+        new_text = re.sub(pattern, replacement, old_text, count=1)
 
-    if new_text != old_text:
-        print(f"Updating {fname}", file=sys.stderr)
-        with open(fname, "w") as fobj:
-            fobj.write(new_text)
+        if new_text != old_text:
+            print(f"Updating {fname}", file=sys.stderr)
+            with open(fname, "w") as fobj:
+                fobj.write(new_text)
+    else:
+        print(f"Cannot update nonexistent file, {fname}", file=sys.stderr)
 
 
 def get_release_facts(kind: str) -> types.SimpleNamespace:

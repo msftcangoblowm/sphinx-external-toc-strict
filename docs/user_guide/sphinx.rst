@@ -8,9 +8,29 @@ Add to your ``conf.py``:
 
 .. code-block:: python
 
-   extensions = ["sphinx_external_toc"]
-   external_toc_path = "_toc.yml"  # optional, default: _toc.yml
-   external_toc_exclude_missing = False  # optional, default: False
+    extensions = ["sphinx_external_toc"]
+    external_toc_path = "_toc.yml"  # optional, default: _toc.yml
+    external_toc_exclude_missing = False  # optional, default: False
+
+Or to your ``pyproject.toml``
+
+.. code-block:: text
+
+   [tool.sphinx-pyproject]
+   source_suffix = [".md", ".rst"]
+   external_toc_exclude_missing = true
+   extensions = [
+      "sphinx.ext.autodoc",
+      "sphinx.ext.autosectionlabel",
+      "sphinx.ext.todo",
+      "sphinx.ext.doctest",
+      "sphinx_paramlinks",
+      "sphinx.ext.intersphinx",
+      "sphinx.ext.extlinks",
+      "sphinx_external_toc_strict",
+      "myst_parser",
+   ]
+   myst_enable_extensions = ["colon_fence", "html_image"]
 
 Note the ``external_toc_path`` is always read as a Unix path, and can
 either be specified relative to the source directory (recommended) or
@@ -215,7 +235,7 @@ Using different key-mappings
 -----------------------------
 
 For certain use-cases, it is helpful to map the ``subtrees``/``entries`` keys
-to mirror e.g. an output `LaTeX structure <https://www.overleaf.com/learn/latex/sections_and_chapters>`_.
+to mirror e.g. an output `LaTeX structure <https://www.overleaf.com/learn/latex/Sections_and_chapters>`_.
 
 The ``format`` key can be used to provide such mappings (and also initial defaults).
 Currently available:
@@ -275,7 +295,7 @@ or ``glob`` in the ToC to the ``exclude_patterns`` list, add to your ``conf.py``
 
 .. code-block:: python
 
-   external_toc_exclude_missing = True
+    external_toc_exclude_missing = True
 
 Note that, for performance, files that are in *hidden folders*
 (e.g. in ``.tox`` or ``.venv``) will not be added to ``exclude_patterns``

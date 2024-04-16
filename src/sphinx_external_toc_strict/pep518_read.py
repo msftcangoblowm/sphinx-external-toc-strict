@@ -80,7 +80,7 @@ def find_project_root(srcs, stdin_filename=None):
        Files or folders, for files will take the parent folder.
        Potential folders that may contain ``pyproject.toml``
 
-    :type srcs: Sequence[Any] | None
+    :type srcs: collections.abc.Sequence[typing.Any] | None
 
     :param stdin_filename:
 
@@ -92,7 +92,7 @@ def find_project_root(srcs, stdin_filename=None):
 
        Folder containing .git, .hg, or ``pyproject.toml``, will be a common
        parent of all files and directories passed in
-       :paramref:`logging_strict.util.pep518_read.find_project_root.params.srcs`
+       :paramref:`~sphinx_external_toc_strict.pep518_read.find_project_root.params.srcs`
 
     :rtype: tuple[pathlib.Path, str]
     :raises:

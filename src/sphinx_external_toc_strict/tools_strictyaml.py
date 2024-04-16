@@ -57,6 +57,7 @@ def _default_affinity(additional_files, default_ext):
     :type default_ext: str
     :returns: By looking thru the create_files, the file extension is actually used
     :rtype: str
+    :meta private:
     """
     md_count = 0
     rst_count = 0
@@ -75,7 +76,8 @@ def _default_affinity(additional_files, default_ext):
             pass
 
     # ignore index.rst cuz it's unavoidable
-    if rst_count >= 1: rst_count -= 1
+    if rst_count >= 1:
+        rst_count -= 1
 
     if md_count != 0 and md_count > rst_count:
         default_affinity = ".md"
@@ -310,6 +312,7 @@ def _doc_item_from_path(
        child_files, child_folders
 
     :rtype: tuple[Document, list[tuple[pathlib.Path, str, collections.abc.Sequence[str], collections.abc.Sequence[str]]]]
+    :meta private:
     """
     file_items = [
         FileItem((folder / name).relative_to(root).as_posix())
@@ -334,9 +337,11 @@ def _doc_item_from_path(
 
     doc_item = Document(
         docname=(folder / index_docname).relative_to(root).as_posix(),
-        subtrees=[TocTree(items=file_items + index_items)]  # type: ignore[arg-type]
-        if (file_items or index_items)
-        else [],
+        subtrees=(
+            [TocTree(items=file_items + index_items)]  # type: ignore[arg-type]
+            if (file_items or index_items)
+            else []
+        ),
     )
     return doc_item, indexed_folders
 
@@ -374,7 +379,7 @@ def _assess_folder(
     sorts file/folder names by natural order.
 
     :param folder: A folder of ToC items
-    :type folder: Path
+    :type folder: pathlib.Path
     :param suffixes: file name suffixes to strip from file names
     :type suffixes: collections.abc.Sequence[str]
     :param default_index: Default file stem of root document
@@ -387,6 +392,7 @@ def _assess_folder(
 
        - :py:exc:`IOError` -- path must be a directory
 
+    :meta private:
     """
     if not folder.is_dir():
         raise IOError(f"path must be a directory: {folder}")

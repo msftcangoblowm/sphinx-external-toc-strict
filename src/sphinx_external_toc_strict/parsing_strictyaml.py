@@ -30,7 +30,12 @@ and ``tests/_toc_files`` folders
    Read-only mapping. Use as strictyaml schema with
    :py:func:`strictyaml.load` to fix the scalar value's type
 
+   key: field key
+
+   value: strictyaml scalar Validator
+
 """
+
 from __future__ import annotations
 
 import io
@@ -74,18 +79,6 @@ else:  # pragma: no cover
 
 __all__ = ("parse_toc_yaml", "parse_toc_data", "affinity_val", "load_yaml", "dump_yaml")
 
-
-""" read-only dict (aka ro mapping)
-
-- key: field key
-
-- value: strictyaml scalar Validator
-
-non-str affinity only
-
-Intended for use after strictyaml.load imports everything with schema,
-:py:class:`strictyaml.Any`. Later fix the scalars only using this mapping
-"""
 _scalar_affinity_map = MappingProxyType(
     {
         "root": s.Str(),
@@ -218,16 +211,32 @@ def dump_yaml(site_map):
     dumps the dict as yaml
 
     :param site_map: convert site map into a dict.  then dumps the dict into yaml str
-    :type site_map: sphinx_external_toc_strict.api.SiteMap
+    :type site_map: sphinx_external_toc_strict.api.SiteMap | dict[str, typing.Any]
     :returns: yaml
     :rtype: str
-    """
-    data = create_toc_dict(site_map)
-    f = io.StringIO()
+    :raises:
 
-    yaml = s.ruamel.YAML()
-    yaml.dump(data, f)
-    ret = f.getvalue()
+       - :py:exc:`ValueError` -- Unsupported type expecting
+         :py:func:`~sphinx_external_toc_strict.api.SiteMap` or
+         :py:func:`~sphinx_external_toc_strict.parsing_shared.create_toc_dict`
+
+    """
+    if issubclass(type(site_map), SiteMap):
+        data = create_toc_dict(site_map)
+    elif isinstance(site_map, dict):
+        # sphinx_external_toc_strict.parsing_shared.create_toc_dict call output
+        data = site_map
+    else:
+        msg_exc = (
+            "Expecting SiteMap or dict output of"
+            f"parsing_shared.create_toc_dict got {type(site_map)}"
+        )
+        raise ValueError(msg_exc)
+
+    with io.StringIO() as f:
+        yaml = s.ruamel.YAML()
+        yaml.dump(data, f)
+        ret = f.getvalue()
 
     return ret
 
@@ -355,6 +364,7 @@ def _parse_doc_item(
 
        - :py:exc:`MalformedError` -- invalid doc item
 
+    :meta private:
     """
     file_key = ROOT_KEY if is_root else FILE_KEY
     if file_key not in data.keys():
@@ -559,6 +569,7 @@ def _parse_docs_list(
 
        - :py:exc:`MalformedError` -- doc file used multiple times
 
+    :meta private:
     """
     for child_path, doc_data in docs_list:
         docname = doc_data[FILE_KEY]
@@ -580,27 +591,3 @@ def _parse_docs_list(
             depth=depth + 1,
             file_format=file_format,
         )
-
-
-"""
->>> import yaml
->>> from pathlib import Path
->>> path_sm = Path.home().joinpath("Downloads/git_decimals/sphinx_external_toc_strict/tests/_toc_files/basic_compressed.yml")
->>> with Path(path_sm).open(encoding="utf8") as handle:
-...     data = yaml.safe_load(handle)
-...     
->>> data
-{'defaults': {'titlesonly': True}, 'options': {'numbered': True}, 'root': 'intro', 'entries': [{'file': 'doc1'}, {'file': 'doc2'}, {'file': 'doc3', 'entries': [{'file': 'doc4'}, {'url': 'https://example.com'}]}], 'meta': {'regress': 'intro'}}
-"""
-
-"""
-from pathlib import Path
-from sphinx_external_toc_strict.parsing_strictyaml import parse_toc_yaml, create_toc_dict
-path_sm = Path.home().joinpath("Downloads/git_decimals/sphinx_external_toc_strict/tests/_toc_files/basic_compressed.yml")
-path_sm = Path.home().joinpath("Downloads/git_decimals/sphinx_external_toc_strict/tests/test_parsing/test_create_toc_dict_basic_.yml")
-sm = parse_toc_yaml(path_sm)
-create_toc_dict(sm)
-
-{'defaults': {'titlesonly': 'true'}, 'options': {'numbered': 'true'}, 'root': 'intro', 'entries': [{'file': 'doc1'}, {'file': 'doc2'}, {'file': 'doc3', 'entries': [{'file': 'doc4'}, {'url': 'https://example.com'}]}], 'meta': {'regress': 'intro'}}
-"""
-pass

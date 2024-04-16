@@ -1,4 +1,7 @@
-"""Compatibility for using dataclasses instead of attrs.
+"""
+dataclasses dynamically construct tools and Validators
+
+Compatibility for using dataclasses instead of attrs.
 
 **But** a dynamic dataclasses.dataclasses with dynamic
 dataclasses.Field **cannot** be static type checked!
@@ -21,6 +24,7 @@ dataclasses.dataclass is not a valid type. Create a Protocol?
    Evidently dataclasses doesn't
 
 """
+
 from __future__ import annotations
 
 import dataclasses as dc
@@ -122,7 +126,7 @@ def instance_of(type_: UnionAB) -> ValidatorType:
     :param type_: The type to check for.
     :type type_: typing.Any | collections.abc.Sequence[typing.Any]
     :returns: Validator to check value is instance of type
-    :rtype: ValidatorType
+    :rtype: :py:data:`~sphinx_external_toc_strict._compat.ValidatorType`
     """
 
     def _validator(inst: Any, attr: dc.Field[Any], value: UnionAB) -> None:
@@ -155,7 +159,7 @@ def matches_re(regex: str | Pattern[str], flags: int = 0) -> ValidatorType:
 
     :type flags: int
     :returns: An inline function to validate regex
-    :rtype: collections.abc.Callable[[typing.Any, dataclasses.Field, typing.Any], None]
+    :rtype: :py:data:`~sphinx_external_toc_strict._compat.ValidatorType`
     :raises:
 
        - :py:exc:`ValueError` -- validator that raises ValueError when
@@ -224,11 +228,11 @@ def deep_iterable(
     """A validator that performs deep validation of an iterable.
 
     :param member_validator: Validator to apply to iterable members
-    :type member_validator: collections.abc.Callable[[typing.Any, dataclasses.Field, typing.Any], None]
+    :type member_validator: :py:class:`sphinx_external_toc_strict._compat.ValidatorType`
     :param iterable_validator: Default None. Validator to apply to iterable itself
-    :type iterable_validator: collections.abc.Callable[[typing.Any, dataclasses.Field, typing.Any], None] | None
+    :type iterable_validator: :py:class:`sphinx_external_toc_strict._compat.ValidatorType` | None
     :returns: Iterator which validates members
-    :rtype: collections.abc.Callable[[typing.Any, dataclasses.Field, typing.Any], None]
+    :rtype: :py:class:`sphinx_external_toc_strict._compat.ValidatorType`
     """
 
     def _validator(inst: Any, attr: dc.Field[Any], value: UnionAB) -> None:

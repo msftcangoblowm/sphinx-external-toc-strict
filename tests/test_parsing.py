@@ -12,6 +12,7 @@ from sphinx_external_toc_strict.parsing_shared import (
 from sphinx_external_toc_strict.parsing_strictyaml import (
     _scalar_affinity_map,
     affinity_val,
+    dump_yaml,
     parse_toc_data,
     parse_toc_yaml,
 )
@@ -166,3 +167,24 @@ ids_parse_toc_data = [
 def test_parse_toc_data(data):
     with pytest.raises(MalformedError):
         parse_toc_data(data)
+
+
+testdata_unsupported_type = (
+    (None,),
+    (1.1234,),
+)
+ids_unsupported_type = (
+    "Forgot to check for None, huh?",
+    "float unsupported type",
+)
+
+
+@pytest.mark.parametrize(
+    "invalid",
+    testdata_unsupported_type,
+    ids=ids_unsupported_type,
+)
+def test_dump_yaml(invalid):
+    """unsupported type --> ValueError"""
+    with pytest.raises(ValueError):
+        dump_yaml(invalid)

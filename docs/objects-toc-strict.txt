@@ -1,0 +1,7 @@
+# Sphinx inventory version 2
+# Project: sphinx-external-toc-strict 1.0.2
+# Version: 1.0.2
+# The remainder of this file is compressed using zlib.
+sphinx-external-toc-strict.parsing_strictyaml.dump_yaml py:func 1 code/parsing_strictyaml.html#$ -
+sphinx-external-toc-strict._compat.ValidatorType py:class 1 code/_compat.html#$ -
+sphinx-external-toc-strict._compat.ValidatorType py:data 1 code/_compat.html#$ -

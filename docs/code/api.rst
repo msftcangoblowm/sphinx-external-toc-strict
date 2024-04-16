@@ -8,4 +8,3 @@ Data structures
    :private-members:
    :platform: Unix
    :synopsis: yaml portions' data structure
-

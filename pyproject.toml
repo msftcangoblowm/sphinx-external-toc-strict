@@ -12,7 +12,7 @@ dynamic = [
 license = {file = "LICENSE"}
 description = "A sphinx extension that allows the site-map to be defined in a single YAML file."
 keywords = ["sphinx","extension", "toc", "strictyaml"]
-readme = "README.md"
+readme = "README.rst"
 requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -126,8 +126,16 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
     "sphinx_external_toc_strict",  # circular?
-    "sphinx_licenseinfo",
     "myst_parser",
+]
+linkcheck_ignore = [
+    "https://github.com/crdoconnor/strictyaml/blob/dfd93f9740ebd5e7150029bc3d89ea102bcddf00/strictyaml/representation.py#L48",
+    "https://github.com/crdoconnor/strictyaml/blob/dfd93f9740ebd5e7150029bc3d89ea102bcddf00/strictyaml/representation.py#L114",
+    "https://github.com/PyCQA/flake8/blob/fb9a02aaf77b56fcad4320971e7edca0cea93489/src/flake8/options/config.py#L56",
+    "https://github.com/psf/black/blob/ea66d40dd7f1eaa20256e6fccaf6d7b853ccc541/src/black/files.py#L57",
+    "https://github.com/csachs/pyproject-flake8/blob/16b9dd4d2f19dcf0bfb3a3110f98227627cd67fe/pflake8/__init__.py#L22",
+    "https://github.com/csachs/pyproject-flake8/blob/16b9dd4d2f19dcf0bfb3a3110f98227627cd67fe/pflake8/__init__.py#L86",
+
 ]
 myst_enable_extensions = ["colon_fence", "html_image"]
 external_toc_exclude_missing = true

@@ -135,6 +135,19 @@ will create the ToC:
        - file: 14_subfolder/subsubfolder/other
          title: Other
 
+.. note:: hidden files are unsupported
+
+   On a filesystem, somewhere within your home directory, hidden files
+   are meant for config files. Documents are not hidden files!
+
+   The file stem and file suffix handling has improved dramatically.
+
+   But a hidden file, like ``.hidden_file.rst``, and ``.tar.gz`` looks
+   similar. Both have no file stem
+
+   Either can have markdown support or hidden file support, not both.
+   Fate chose markdown support; that's the way the dice rolled
+
 to-project
 -----------
 

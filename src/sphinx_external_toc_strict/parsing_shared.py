@@ -214,6 +214,7 @@ def _parse_item_testable(
 
        - :py:exc:`TypeError` -- unsupported type excepted FileItem, GlobItem, or URLItem
 
+    :meta private:
     """
     if isinstance(item, FileItem):
         if item in site_map:
@@ -279,6 +280,7 @@ def _docitem_to_dict(
        - :py:exc:`RecursionError` -- Site map recursion
        - :py:exc:`TypeError` -- invalid ToC item
 
+    :meta private:
     """
     file_key = ROOT_KEY if is_root else FILE_KEY
     subtrees_key = file_format.get_subtrees_key(depth)

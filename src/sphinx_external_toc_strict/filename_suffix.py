@@ -16,6 +16,7 @@ If a str, e.g. ".tar", a smarter algo is required.
    module exports
 
 """
+
 from __future__ import annotations
 
 import sys
@@ -71,6 +72,7 @@ def _strip_suffix_natural(name, suffixes):
 
         - :py:exc:`AssertionError` -- this algo is for one string only
 
+    :meta private:
     """
     if TYPE_CHECKING:
         l_suffixes: list[str]
@@ -129,6 +131,7 @@ def _strip_suffix_or(name, suffixes):
 
         - :py:exc:`AssertionError` -- this algo is for one list[str] only
 
+    :meta private:
     """
     if not isinstance(suffixes, list):
         raise AssertionError("this algo is list[str] only")

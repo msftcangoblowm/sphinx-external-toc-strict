@@ -5,20 +5,14 @@ Defines the `SiteMap` object, for storing the parsed ToC
 
 In yaml can include the top level field, ``meta``.
 
-Meta tricks:
+.. csv-table:: meta tricks
+   :header: "field", "typr", "desc"
+   :widths: auto
 
-- create_files: In Sphinx doc tree, create empty file. Normally
-  just the file stem. If both .rst and .md docs are present include entire file name
-
-- create_append: In Sphinx doc tree, create with provided contents.
-  In unittest yml this is tricky. Use single quote, without
-  newlines, rather than | or double quotes. Escape double quotes
-  and single whitespace
-
-- regress: During building html phase, the root doc stem. No file extension
-
-- exclude_missing: Rather than fail, continue if a present file is
-  not included into the ToC
+   "create_files", "list[str]", "In Sphinx doc tree, create empty file. Normally just the file stem. If both .rst and .md docs are present include entire file name"
+   "create_append", "file_stem[.md|.rst]: | '[text]'", "In Sphinx doc tree, create with provided contents. In unittest yml this is tricky. Use single quote, without newlines, rather than | or double quotes. Escape double quotes and single whitespace"
+   "regress", "str", "During building html phase, the root doc stem. No file extension"
+   "exclude_missing", "bool", "Rather than fail, continue if a present file is not included into the ToC"
 
 Outside of unittest yml, tricks
 
@@ -40,6 +34,7 @@ Whitespace is significant. The empty lines must not include whitespace.
 Even if using markdown, the root index file **must be** ``index.rst``
 
 """
+
 from __future__ import annotations
 
 import sys
@@ -369,9 +364,11 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
                 d[k] = SiteMap._replace_items(v)
             elif isinstance(v, (list, tuple)):
                 d[k] = [
-                    SiteMap._replace_items(i)
-                    if isinstance(i, dict)
-                    else (str(i) if isinstance(i, str) else i)
+                    (
+                        SiteMap._replace_items(i)
+                        if isinstance(i, dict)
+                        else (str(i) if isinstance(i, str) else i)
+                    )
                     for i in v
                 ]
             elif isinstance(v, str):

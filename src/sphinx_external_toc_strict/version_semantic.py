@@ -1,6 +1,8 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
+git --> setuptools-scm --> kitting (howto.txt / igor.py / Makefile) --> semantic versioning
+
 .. py:data:: _map_release
    :type: types.MappingProxyType
    :value: types.MappingProxyType({"alpha": "a", "beta": "b", "candidate": "rc"})
@@ -92,6 +94,7 @@ def _strip_epoch(ver):
     :type ver: str
     :returns: epoch and remaining str including ``v`` and local
     :rtype: collections.abc.Sequence[str | None, str]
+    :meta private:
     """
     try:
         idx = ver.index("!")
@@ -117,6 +120,7 @@ def _strip_local(ver):
 
     :returns: local and remaining
     :rtype: collections.abc.Sequence[str | None, str]
+    :meta private:
     """
     try:
         idx = ver.index("+")

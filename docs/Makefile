@@ -55,7 +55,7 @@ ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" || echo "$(err_check_web_conn). exit code $$?"
 endif
 
-# sphobjinv convert -q zlib objects-toc.txt objects-toc.inv
+# sphobjinv convert -q zlib objects-toc-strict.txt objects-toc-strict.inv
 # sphobjinv convert -q zlib objects-strictyaml-source.txt objects-strictyaml-source.inv
 # sphobjinv convert -q zlib objects-strictyaml-docs.txt objects-strictyaml-docs.inv
 # sphobjinv convert -q zlib objects-docutils-source.txt objects-docutils-source.inv
@@ -87,7 +87,7 @@ objects_py: override usage := "make objects_py find=[dotted path]"
 objects_py:	_objects		## Query python Sphinx objects. make objects_py find="[dotted path]"
 objects_py:
 
-# $(VENV_BIN_PYTHON) -m sphinx.ext.intersphinx $(SOURCEDIR)/objects-logging-strict.inv
+# $(VENV_BIN_PYTHON) -m sphinx.ext.intersphinx $(SOURCEDIR)/objects-toc-strict.inv
 # make objects_toc find=VERSION_FALLBACK
 .PHONY: objects_toc
 objects_toc: override project_name := sphinx-external-toc-strict

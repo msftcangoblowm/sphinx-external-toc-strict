@@ -8,6 +8,7 @@ Sphinx extension machinary
    Module level logger. No idea how to see or store these log messages
 
 """
+
 from __future__ import annotations
 
 import glob

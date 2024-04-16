@@ -8,4 +8,3 @@ Events
    :private-members:
    :platform: Unix
    :synopsis: Sphinx extension machinary
-

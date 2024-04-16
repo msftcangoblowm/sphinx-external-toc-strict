@@ -1,3 +1,28 @@
+"""
+Command line functions
+
+Usage
+
+sphinx-etoc-strict [command] [options]
+
+Help
+
+sphinx-etoc-strict --help
+
+sphinx-etoc-strict [command] --help
+
+commands:
+
+- create_site
+
+- create_toc
+
+- migrate_toc
+
+- parse_toc
+
+"""
+
 from __future__ import annotations
 
 from pathlib import (
@@ -6,13 +31,9 @@ from pathlib import (
 )
 
 import click
-import yaml
 
 from . import __version__
-from .parsing_shared import (
-    FILE_FORMATS,
-    create_toc_dict,
-)
+from .parsing_shared import FILE_FORMATS
 from .parsing_strictyaml import (
     dump_yaml,
     load_yaml,
@@ -28,7 +49,7 @@ from .tools_strictyaml import (
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(version=__version__)
 def main():
-    """Command-line for sphinx-external-toc."""
+    """Command-line for sphinx-external-toc-strict. Prints usage"""
 
 
 @main.command("parse")
@@ -186,8 +207,10 @@ def create_toc(site_dir, extension, index, skip_match, guess_titles, file_format
             # remove first word if is an integer
             words = words[1:] if words and all(c.isdigit() for c in words[0]) else words
             site_map[docname].title = " ".join(words).capitalize()
-    data = create_toc_dict(site_map)
-    click.echo(yaml.dump(data, sort_keys=False, default_flow_style=False))
+
+    # yaml.dump(data, sort_keys=False, default_flow_style=False)
+    yml_2 = dump_yaml(site_map)
+    click.echo(yml_2)
 
 
 @main.command("migrate")
@@ -214,8 +237,11 @@ def migrate_toc(toc_file, format, output):
     :param output: Output file absolute path
     :type output: pathlib.Path
     """
+
     toc = migrate_jupyter_book(Path(toc_file))
-    content = yaml.dump(toc, sort_keys=False, default_flow_style=False)
+    # content = yaml.dump(toc, sort_keys=False, default_flow_style=False)
+    content = dump_yaml(toc)
+
     if output:
         path = Path(output)
         path.parent.mkdir(exist_ok=True, parents=True)

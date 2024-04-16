@@ -35,13 +35,13 @@ proj_master_doc = config.get("master_doc")
 # copyright = "2021, Executable Book Project"
 
 # @@@ editable
-copyright = "2023-2024, Dave Faulkmore"
+copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "1.0.2"
+version = "1.1.0"
 # The full version, including alpha/beta/rc tags.
-release = "1.0.2"
+release = "1.1.0"
 # The date of release, in "monthname day, year" format.
-release_date = "April 8, 2024"
+release_date = "April 16, 2024"
 # @@@ end
 
 v = parse(release)
@@ -156,9 +156,17 @@ intersphinx_mapping = {
         "https://docutils.sourceforge.io",
         ("objects-docutils-source.inv", "objects-docutils-source.txt"),
     ),
-    "sphinx-docs": (
+    "sphinx-docs": (  # source logging-strict
         "https://www.sphinx-doc.org/en/master",
         ("objects-sphinx-docs.inv", "objects-sphinx-docs.txt"),
+    ),
+    "toc-strict": (
+        "https://sphinx-external-toc-strict.readthedocs.io/en/latest",
+        ("objects-toc-strict.inv", "objects-toc-strict.txt"),
+    ),
+    "objects-black": (  # source logging-strict
+        "https://github.com/psf/black",
+        ("objects-black.inv", "objects-black.txt"),
     ),
 }
 intersphinx_disabled_reftypes = ["std:doc"]

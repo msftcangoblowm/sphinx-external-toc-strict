@@ -8,11 +8,12 @@ it should contain:
 
 .. code-block:: python
 
-   import yaml
-   from sphinx_external_toc.parsing import parse_toc_yaml
-   path = "path/to/_toc.yml"
-   site_map = parse_toc_yaml(path)
-   yaml.dump(site_map.as_json())
+    import yaml
+    from sphinx_external_toc.parsing import parse_toc_yaml
+
+    path = "path/to/_toc.yml"
+    site_map = parse_toc_yaml(path)
+    yaml.dump(site_map.as_json())
 
 Would produce e.g.
 
@@ -35,4 +36,3 @@ Would produce e.g.
          titlesonly: true
        title: null
    meta: {}
-
