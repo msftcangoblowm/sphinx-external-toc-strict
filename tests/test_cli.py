@@ -1,23 +1,38 @@
 import os
+import traceback
 from pathlib import Path
 from typing import List
 
 import pytest
 from click.testing import CliRunner
 
-from sphinx_external_toc import __version__
-from sphinx_external_toc.cli import create_toc, main, migrate_toc, parse_toc
+from sphinx_external_toc_strict import __version__
+from sphinx_external_toc_strict.cli import (
+    create_toc,
+    main,
+    migrate_toc,
+    parse_toc,
+)
 
 
 @pytest.fixture()
 def invoke_cli():
-    """Run CLI and do standard checks."""
+    """Run CLI and do standard checks
+    .. seealso::
+
+       `click.testing.Result <https://click.palletsprojects.com/en/8.1.x/api/#click.testing.Result>`_
+
+    """
 
     def _func(command, args: List[str], assert_exit: bool = True):
         runner = CliRunner()
         result = runner.invoke(command, args)
-        if assert_exit:
-            assert result.exit_code == 0, result.output
+        if assert_exit and result.exit_code != 0:
+            exc_type, exc, tb = result.exc_info
+            lst_tb = traceback.format_tb(tb)
+            str_tb = "".join(lst_tb)
+            err_msg = f"{exc_type}: {exc.args[0]}\n" f"{str_tb}\n"
+            assert result.exit_code == 0, err_msg
         return result
 
     yield _func

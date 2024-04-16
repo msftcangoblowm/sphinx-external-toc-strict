@@ -1,0 +1,11 @@
+defaults:
+  titlesonly: true
+options:
+  numbered: false
+root: intro
+subtrees:
+- caption: Hi there
+  entries:
+  - file: doc1
+meta:
+  regress: intro

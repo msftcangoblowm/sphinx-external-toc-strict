@@ -1,0 +1,5 @@
+root: intro
+format: epub
+subtrees:
+- entries:
+  - file: doc1

@@ -1,0 +1,5 @@
+root: intro
+entries:
+- file
+- {"file": "b"}
+- file: doc2

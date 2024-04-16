@@ -1,9 +1,12 @@
+import sys
 from pathlib import Path
 
 import pytest
 
-from sphinx_external_toc.parsing import parse_toc_data
-from sphinx_external_toc.tools import (
+from sphinx_external_toc_strict.parsing_strictyaml import parse_toc_data
+from sphinx_external_toc_strict.tools_strictyaml import (
+    _assess_folder,
+    _default_affinity,
     create_site_from_toc,
     create_site_map_from_path,
     migrate_jupyter_book,
@@ -23,6 +26,24 @@ def test_file_to_sitemap(path: Path, tmp_path: Path, data_regression):
     create_site_from_toc(path, root_path=site_path)
     file_list = [p.relative_to(site_path).as_posix() for p in site_path.glob("**/*")]
     data_regression.check(sorted(file_list))
+
+
+TOC_PICK_ONE = list(
+    (Path(__file__).parent.joinpath("_toc_files", "glob.yml"),),
+)
+
+
+@pytest.mark.parametrize(
+    "path", TOC_PICK_ONE, ids=[path.name.rsplit(".", 1)[0] for path in TOC_PICK_ONE]
+)
+def test_file_to_sitemap_file_already_exists(path: Path, tmp_path: Path):
+    """Monkey throws file into cogworks. So file already exists"""
+    site_path = tmp_path.joinpath("site")
+    site_path.mkdir(parents=True, exist_ok=True)
+    site_path.joinpath("doc1.rst").touch()
+
+    with pytest.raises(IOError):
+        create_site_from_toc(path, root_path=site_path)
 
 
 def test_create_site_map_from_path(tmp_path: Path, data_regression):
@@ -60,3 +81,36 @@ def test_migrate_jb(path, data_regression):
     data_regression.check(toc)
     # check it is a valid toc
     parse_toc_data(toc)
+
+
+@pytest.mark.skipif(sys.platform != "linux", reason="path is to a known linux file")
+def test_assess_folder_expecting_folder():
+    """Expecting a folder, got a file"""
+    folder = Path("/etc/shells")
+    suffixes = (".sh",)
+    default_index = "index"
+    ignore_matches = (".*",)
+    with pytest.raises(IOError):
+        _assess_folder(folder, suffixes, default_index, ignore_matches)
+
+
+testdata_default_affinity = (
+    (("intro.rst", "doc1.md", "doc2.md", "doc3.md"), ".txt", ".md"),
+    (("intro.rst", "doc1.md", "doc2.rst", "doc3.rst"), ".txt", ".rst"),
+    (("intro.rst", "doc1.md", "doc3.rst"), ".txt", ".txt"),
+)
+ids_default_affinity = (
+    "majority markdown files",
+    "majority restructuredtext files",
+    "equal so inconclusive; go with default",
+)
+
+
+@pytest.mark.parametrize(
+    "additional_files, default_ext, expected",
+    testdata_default_affinity,
+    ids=ids_default_affinity,
+)
+def test_default_affinity(additional_files, default_ext, expected):
+    actual_affinity = _default_affinity(additional_files, default_ext)
+    assert actual_affinity == expected

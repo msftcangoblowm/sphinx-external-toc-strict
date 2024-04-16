@@ -1,0 +1,8 @@
+entries:
+- file: doc1
+meta:
+  regress: intro
+options:
+  caption: Hi there
+  titlesonly: true
+root: intro

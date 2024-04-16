@@ -1,0 +1,20 @@
+documents:
+  doc1:
+    docname: doc1
+    subtrees: []
+    title: null
+  intro:
+    docname: intro
+    subtrees:
+    - caption: Hi there
+      hidden: true
+      items:
+      - doc1
+      maxdepth: -1
+      numbered: false
+      reversed: false
+      titlesonly: true
+    title: null
+meta:
+  regress: intro
+root: intro

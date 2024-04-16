@@ -1,4 +1,9 @@
-from sphinx_external_toc.api import Document, FileItem, SiteMap, TocTree
+from sphinx_external_toc_strict.api import (
+    Document,
+    FileItem,
+    SiteMap,
+    TocTree,
+)
 
 
 def test_sitemap_get_changed_identical():

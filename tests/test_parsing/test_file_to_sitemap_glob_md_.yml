@@ -1,0 +1,57 @@
+documents:
+  intro.rst:
+    docname: intro.rst
+    subtrees:
+    - caption: null
+      hidden: true
+      items:
+      - doc*
+      - README*
+      maxdepth: -1
+      numbered: false
+      reversed: false
+      titlesonly: false
+    title: null
+meta:
+  create_append:
+    README.md: '## Nice header readme
+
+
+      some text
+
+      '
+    conf.py: "language = \"en\"\nmyst_html_meta = {\n    \"description lang=en\":\
+      \ \"metadata description\",\n    \"description lang=fr\": \"description des\
+      \ métadonnées\",\n    \"keywords\": \"Sphinx, MyST\",\n    \"property=og:locale\"\
+      :  \"en_US\"\n}\nmyst_enable_extensions = [\"colon_fence\", \"html_image\"]\n"
+    doc1.md: '## Nice header doc1
+
+
+      some text
+
+      '
+    doc2.md: '## Nice header doc2
+
+
+      some text
+
+      '
+    doc3.md: '## Nice header doc3
+
+
+      some text
+
+      '
+    intro.rst: '
+
+      .. tableofcontents::
+
+      '
+  create_files:
+  - README.md
+  - doc1.md
+  - doc2.md
+  - doc3.md
+  exclude_missing: true
+  regress: intro
+root: intro.rst

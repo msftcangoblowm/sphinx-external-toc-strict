@@ -1,0 +1,5 @@
+root: intro
+entries:
+subtrees:
+- file: doc1
+- file: doc2

@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 
@@ -5,7 +6,7 @@ import pytest
 from sphinx import version_info as sphinx_version_info
 from sphinx.testing.util import SphinxTestApp
 
-from sphinx_external_toc.tools import create_site_from_toc
+from sphinx_external_toc_strict.tools_strictyaml import create_site_from_toc
 
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
 TOC_FILES_WARN = list(
@@ -14,7 +15,7 @@ TOC_FILES_WARN = list(
 
 
 CONF_CONTENT = """
-extensions = ["sphinx_external_toc"]
+extensions = ["sphinx_external_toc", "myst_parser"]
 external_toc_path = "_toc.yml"
 
 """
@@ -65,8 +66,11 @@ def sphinx_build_factory(make_app):
 @pytest.mark.parametrize(
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
-def test_success(path: Path, tmp_path: Path, sphinx_build_factory, file_regression):
+def test_success(
+    path: Path, tmp_path: Path, sphinx_build_factory, file_regression, caplog
+):
     """Test successful builds."""
+    caplog.set_level(logging.INFO, logger="root")
     src_dir = tmp_path / "srcdir"
     # write document files
     site_map = create_site_from_toc(path, root_path=src_dir)

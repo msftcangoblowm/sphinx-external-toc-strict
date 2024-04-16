@@ -17,7 +17,7 @@ Changelog
    - chore(pre-commit): remove ruff-pre-commit, add mypy, whitespace and file fixer
    - chore(.gitignore): hide my dirty laundry
    - feat: add Makefile
-   - feat(ci): add igor.py and howto.txt
+   - chore(ci): add igor.py and howto.txt
    - refactor: move source code under src/[app name] folder
    - refactor: dynamic requirements
    - chore: replace flit --> setuptools
@@ -29,6 +29,11 @@ Changelog
    - chore: add config for mypy, pytest, isort, black, blackdoc, flake, twine, sphinx, coverage
    - chore: add config for setuptools_scm and pip-tools
    - chore: remove config for flit and ruff.lint.isort
+   - feat: much smarter file suffix handling
+   - feat: transition pyyaml --> strictyaml
+   - feat: can mix markdown and restructuredtext files
+   - test: super difficult to accomplish test of markdown
+   - chore(mypy): static type checking. Not perfect
 
 .. scriv-start-here
 
