@@ -3,6 +3,7 @@ subtrees:
 - caption: User Guide
   numbered: true
   entries:
+  - file: user_guide/why
   - file: user_guide/sphinx
   - file: user_guide/cli
   - file: user_guide/api
@@ -12,7 +13,15 @@ subtrees:
     entries:
     - file: example/subfolder/page
     - glob: example/globfolder/*
+- caption: Code manual
+  entries:
+  - file: code/index
+    entries:
+    - glob: code/*
 - caption: Links
   entries:
   - title: GitHub Repository
     url: https://github.com/executablebooks/sphinx-external-toc
+meta:
+  exclude_missing: true
+  regress: intro

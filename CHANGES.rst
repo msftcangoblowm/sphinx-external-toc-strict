@@ -34,6 +34,10 @@ Changelog
    - feat: can mix markdown and restructuredtext files
    - test: super difficult to accomplish test of markdown
    - chore(mypy): static type checking. Not perfect
+   - docs: transition docs from markdown to restructuredtext
+   - docs: add Makefile
+   - docs: extensive use of sphinx extension intersphinx 
+   - docs: add code manual
 
 .. scriv-start-here
 

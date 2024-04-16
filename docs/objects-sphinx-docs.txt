@@ -1,0 +1,10 @@
+# Sphinx inventory version 2
+# Project: Sphinx 7.2.6
+# Version: 7.2.6
+# The remainder of this file is compressed using zlib.
+sphinx.application.Sphinx py:class 1 extdev/appapi.html#$ -
+sphinx.config.Config py:class 1 extdev/appapi.html#$ -
+sphinx.environment.BuildEnvironment py:class 1 extdev/envapi.html#$ -
+sphinx.transforms.SphinxTransform py:class 1 extdev/utils.html#$ -
+sphinx.util.docutils.SphinxDirective py:class 1 extdev/utils.html#$ -
+sphinx.util.logging.SphinxLoggerAdapter py:class 1 extdev/logging.html#$ -

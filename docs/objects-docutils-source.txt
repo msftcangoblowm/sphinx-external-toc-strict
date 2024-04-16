@@ -1,0 +1,7 @@
+# Sphinx inventory version 2
+# Project: docutils 0.20.1
+# Version: 0.20.1
+# The remainder of this file is compressed using zlib.
+docutils.nodes.Element py:class 1 docutils/nodes.py -
+docutils.nodes.document py:class 1 docutils/nodes.py -
+docutils.nodes.system_message py:class 1 docutils/nodes.py -
