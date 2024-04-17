@@ -123,11 +123,12 @@ def sanitize_tag(ver: str) -> str:
     return str_v
 
 
-def do_quietly(command):
+def do_quietly(command, cwd):
     """Run a noisy command in a shell to suppress the output"""
     proc = subprocess.run(
         command,
         shell=True,
+        cwd=cwd,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )

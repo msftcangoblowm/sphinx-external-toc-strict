@@ -188,3 +188,10 @@ linkcheck_request_headers = {
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:24.0) Gecko/20100101 Firefox/24.0",
     },
 }
+
+# Ignore unfixable WARNINGS
+# in pyproject.toml --> nitpicky = true
+# in conf.py --> nitpicky = True
+nitpick_ignore = [
+    ("py:class", "ValidatorType"),
+]

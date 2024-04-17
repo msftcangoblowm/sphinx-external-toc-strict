@@ -60,7 +60,7 @@
     - wait for ci to finish
     - merge to master
       $ git branch
-      $ git switch master
+      $ git switch main
       $ git merge -S -m "Your merge commit message" [source_branch]
     - Check web connection then push. Don't trigger a release until a tag push
       $ git push

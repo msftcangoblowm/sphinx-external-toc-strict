@@ -16,6 +16,12 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - docs(Makefile): add targets build_inv and clear_inv
+   - docs(Makefile): in target htmlall, add prerequisite target build_inv
+   - docs(conf.py): nitpick_ignore to suppress unfixed warnings
+   - chore(pre-commit): add hook remove-intersphinx-inventory-files
+   - chore(igor.py): to quietly command, add arg, cwd
+
 .. scriv-start-here
 
 .. _changes_1-1-0:

@@ -27,6 +27,28 @@ BUILDDIR      := _build
 
 ##@ Build
 
+# Convert *.txt --> *.inv Base folder only
+# sphobjinv convert -q zlib objects-toc-strict.txt objects-toc-strict.inv
+.PHONY: build_inv
+build_inv:				## inventory base folder only .txt --> .inv
+ifeq ($(is_venv),1)
+	@while read f_path; do
+	  if [[ -f "$${f_path}.txt" ]]; then
+	    [[ ! -f "$(SOURCEDIR)/$${f_path}.inv" ]] && sphobjinv convert -q zlib "$(SOURCEDIR)/$${f_path}.txt" "$(SOURCEDIR)/$${f_path}.inv" ||:
+	  fi
+	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.txt" -exec basename {} .txt \;)
+
+endif
+
+# clean .inv that have cooresponding .txt
+.PHONY: clean_inv
+clean_inv:
+	@while read f_path; do
+	  if [[ -f "$${f_path}.txt" ]]; then
+	    [[ -f "$(SOURCEDIR)/$${f_path}.inv" ]] && /bin/rm --preserve-root=all "$(SOURCEDIR)/$${f_path}.inv" ||:
+	  fi
+	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.txt" -exec basename {} .txt \;)
+
 .PHONY: html
 html:				## Sphinx build html. Only whats been changed
 ifeq ($(is_venv),1)
@@ -34,7 +56,7 @@ ifeq ($(is_venv),1)
 endif
 
 .PHONY: htmlall
-htmlall:				## Sphinx build clean and build html
+htmlall: build_inv		## Sphinx build clean and build html
 ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)/html"
 endif
@@ -55,11 +77,7 @@ ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" || echo "$(err_check_web_conn). exit code $$?"
 endif
 
-# sphobjinv convert -q zlib objects-toc-strict.txt objects-toc-strict.inv
-# sphobjinv convert -q zlib objects-strictyaml-source.txt objects-strictyaml-source.inv
-# sphobjinv convert -q zlib objects-strictyaml-docs.txt objects-strictyaml-docs.inv
-# sphobjinv convert -q zlib objects-docutils-source.txt objects-docutils-source.inv
-# sphobjinv convert -q zlib objects-sphinx-docs.txt objects-sphinx-docs.inv
+
 .PHONY: _objects
 _objects:
 ifeq ($(is_venv),1)
