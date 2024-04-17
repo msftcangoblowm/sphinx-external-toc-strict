@@ -21,6 +21,7 @@ Changelog
    - docs(conf.py): nitpick_ignore to suppress unfixed warnings
    - chore(pre-commit): add hook remove-intersphinx-inventory-files
    - chore(igor.py): to quietly command, add arg, cwd
+   - docs: convert all .inv --> .txt Do not store any .inv files
 
 .. scriv-start-here
 

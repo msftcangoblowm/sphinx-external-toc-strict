@@ -140,17 +140,17 @@ html_sidebars = {
 }
 
 intersphinx_mapping = {
-    "python": (
+    "python": (  # source https://docs.python.org/3/objects.inv
         "https://docs.python.org/3",
-        ("objects-python.inv", None),
+        ("objects-python.inv", "objects-python.txt"),
     ),
     "strictyaml-docs": (  # source logging-strict
         "https://hitchdev.com/strictyaml",
-        ("objects-strictyaml-docs.inv", None),
+        ("objects-strictyaml-docs.inv", "objects-strictyaml-docs.txt"),
     ),
     "strictyaml-source": (  # source logging-strict
         "https://github.com/crdoconnor/strictyaml",
-        ("objects-strictyaml-source.inv", None),
+        ("objects-strictyaml-source.inv", "objects-strictyaml-source.txt"),
     ),
     "docutils-source": (
         "https://docutils.sourceforge.io",

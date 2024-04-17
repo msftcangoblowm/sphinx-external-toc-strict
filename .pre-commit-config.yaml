@@ -61,7 +61,7 @@ repos:
     hooks:
       - id: remove-intersphinx-inventory-files
         name: remove-intersphinx-inventory-files
-        entry: python igor.py quietly "make clean_inv" docs/
+        entry: python igor.py quietly "make inv2txt" docs/
         language: python
         pass_filenames: false
         description: >
