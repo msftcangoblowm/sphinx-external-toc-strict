@@ -1,13 +1,31 @@
+auditwheel==6.0.0
+    # via -r requirements/kit.in
+bashlex==0.18
+    # via cibuildwheel
+bracex==2.4
+    # via cibuildwheel
 build==1.2.1
+    # via -r requirements/kit.in
+certifi==2024.2.2
+    # via cibuildwheel
+cibuildwheel==2.17.0
     # via -r requirements/kit.in
 colorama==0.4.6
     # via -r requirements/kit.in
+filelock==3.13.4
+    # via cibuildwheel
 importlib-metadata==7.1.0
     # via build
 packaging==24.0
     # via
+    #   auditwheel
     #   build
+    #   cibuildwheel
     #   setuptools-scm
+platformdirs==4.2.0
+    # via cibuildwheel
+pyelftools==0.31
+    # via auditwheel
 pyproject-hooks==1.0.0
     # via build
 setuptools-scm==8.0.4
@@ -15,10 +33,13 @@ setuptools-scm==8.0.4
 tomli==2.0.1
     # via
     #   build
+    #   cibuildwheel
     #   pyproject-hooks
     #   setuptools-scm
 typing-extensions==4.11.0
-    # via setuptools-scm
+    # via
+    #   cibuildwheel
+    #   setuptools-scm
 wheel==0.43.0
     # via -r requirements/kit.in
 zipp==3.18.1

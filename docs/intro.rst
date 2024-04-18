@@ -42,7 +42,7 @@ sphinx-external-toc-strict is a fork of sphinx-external-toc
 The core APIs should be compatible. To avoid confusion, on the command
 line, rather than ``sphinx-etoc``, use ``sphinx-etoc-strict``
 
-The author of `sphinx-external-toc <https://pypi.org/project/sphinx_external_toc/>`_ is Chris Sewell.
+The author of `sphinx-external-toc <https://pypi.org/project/sphinx_external_toc/>`_ is Chris Sewell
 
 The author of `sphinx-external-toc-strict <https://pypi.org/project/sphinx-external-toc-strict/>`_ is Dave Faulkmore
 

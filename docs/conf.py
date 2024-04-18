@@ -37,11 +37,11 @@ proj_master_doc = config.get("master_doc")
 # @@@ editable
 copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "1.1.0"
+version = "1.1.1"
 # The full version, including alpha/beta/rc tags.
-release = "1.1.0"
+release = "1.1.1"
 # The date of release, in "monthname day, year" format.
-release_date = "April 16, 2024"
+release_date = "April 18, 2024"
 # @@@ end
 
 v = parse(release)
@@ -97,25 +97,6 @@ texinfo_documents = [
         "Miscellaneous",
     )
 ]
-
-ADDITIONAL_PREAMBLE = r"""
-\DeclareUnicodeCharacter{20BF}{\'k}
-"""
-
-latex_elements = {
-    "sphinxsetup": "verbatimforcewraps",
-    "extraclassoptions": "openany,oneside",
-    "preamble": ADDITIONAL_PREAMBLE,
-}
-
-html_sidebars = {
-    "**": [
-        "about.html",
-        "searchbox.html",
-        "navigation.html",
-        "relations.html",
-    ],
-}
 
 #################
 # Static

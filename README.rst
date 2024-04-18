@@ -55,9 +55,9 @@ sphinx-external-toc-strict is a fork of sphinx-external-toc
 
 The core API should be compatible. To avoid confusion, on the command line, rather than ``sphinx-etoc``, use ``sphinx-etoc-strict``
 
-The author of `sphinx-external-toc <https://pypi.org/project/sphinx_external_toc/>`_ is Chris Sewell
+The author of sphinx-external-toc `[source ToC] <https://pypi.org/project/sphinx_external_toc/>`_ is Chris Sewell
 
-The author of `sphinx-external-toc-strict <https://pypi.org/project/sphinx-external-toc-strict/>`_ is Dave Faulkmore
+The author of sphinx-external-toc-strict `[source ToC-strict] <https://pypi.org/project/sphinx-external-toc-strict/>`_ is Dave Faulkmore
 
 User Guide
 ------------
@@ -432,7 +432,7 @@ To build a ToC file from an existing site:
 
 Some rules used:
 
-- Files/folders will be skipped if they match a pattern added by ``-s`` (based on `fnmatch <https://docs.python.org/3/library/fnmatch.html>`_ Unix shell-style wildcards)
+- Files/folders will be skipped if they match a pattern added by ``-s`` (based on `[fnmatch docs] <https://docs.python.org/3/library/fnmatch.html>`_ Unix shell-style wildcards)
 - Sub-folders with no content files inside will be skipped
 - File and folder names will be sorted by `natural order <https://en.wikipedia.org/wiki/Natural_sort_order>`_
 - If there is a file called ``index`` (or the name set by ``-i``) in any folder, it will be treated as the index file, otherwise the first file by ordering will be used.

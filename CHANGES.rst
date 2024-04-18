@@ -16,14 +16,27 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - docs(Makefile): add targets build_inv and clear_inv
-   - docs(Makefile): in target htmlall, add prerequisite target build_inv
-   - docs(conf.py): nitpick_ignore to suppress unfixed warnings
-   - chore(pre-commit): add hook remove-intersphinx-inventory-files
-   - chore(igor.py): to quietly command, add arg, cwd
-   - docs: convert all .inv --> .txt Do not store any .inv files
-
 .. scriv-start-here
+
+.. _changes_1-1-1:
+
+Version 1.1.1 — 2024-04-18
+--------------------------
+
+- docs(Makefile): add targets build_inv and clear_inv
+- docs(Makefile): in target htmlall, add prerequisite target build_inv
+- docs(conf.py): nitpick_ignore to suppress unfixed warnings
+- chore(pre-commit): add hook remove-intersphinx-inventory-files
+- chore(igor.py): to quietly command, add arg, cwd
+- chore(igor.py): support both branch master and main
+- chore(igor.py): readthedocs url hyphenated project name
+- docs: convert all .inv --> .txt Do not store any .inv files
+- ci(dependabot): weekly --> monthly
+- ci(tox.ini): rewrite add targets docs lint mypy test pre-commit cli
+- ci: initialize github workflows
+- ci: actions/setup-python remove option cache pip
+- fix(pep518_read.py): vendor func is_ok
+- docs(README.rst): ensure passes check, rst2html.py
 
 .. _changes_1-1-0:
 

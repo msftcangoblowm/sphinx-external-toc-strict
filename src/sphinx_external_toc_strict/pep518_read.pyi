@@ -17,6 +17,7 @@ else:
 
 __all__: Final[tuple[str, str]]
 
+def _is_ok(test: Any | None) -> bool: ...
 @lru_cache
 def find_project_root(
     srcs: Sequence[Any] | None,

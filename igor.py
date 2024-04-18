@@ -42,10 +42,8 @@ PROJECT_NAME = g_app_name.replace("_", "-")
 REPO = f"{REPO_OWNER}/{PROJECT_NAME}"
 REPO_URL = f"https://{REPO_URI}/{REPO}"
 
-
 UNRELEASED = "Unreleased\n----------"
 SCRIV_START = ".. scriv-start-here\n\n"
-
 current_alias_default = "current"
 current_aliases = (
     "current",
@@ -123,7 +121,7 @@ def sanitize_tag(ver: str) -> str:
     return str_v
 
 
-def do_quietly(command, cwd):
+def do_quietly(command: str, cwd: str) -> int:
     """Run a noisy command in a shell to suppress the output"""
     proc = subprocess.run(
         command,
@@ -209,10 +207,10 @@ def get_release_facts(kind: str) -> types.SimpleNamespace:
     facts.ver = clean_ver  # w/o final
 
     # lazy load
-    from logging_strict.constants import get_version
+    from sphinx_external_toc_strict.version_semantic import get_version
 
-    # mjr, mnr, mcr, rel, ser = facts.vi = logging_strict.constants.version_info
-    # facts.dev = logging_strict.constants._dev
+    # mjr, mnr, mcr, rel, ser = facts.vi = sphinx_external_toc_strict.constants.version_info
+    # facts.dev = sphinx_external_toc_strict.constants._dev
     t_ver = get_version(
         git_ver,
         is_use_final=True,  # allow ``final``
@@ -242,7 +240,7 @@ def get_release_facts(kind: str) -> types.SimpleNamespace:
     return facts
 
 
-def do_edit_for_release(kind: str):
+def do_edit_for_release(kind: str) -> None:
     """Edit a few files in preparation for a release."""
     kind_: str = sanitize_kind(kind)
     facts = get_release_facts(kind_)
@@ -314,17 +312,17 @@ def do_cheats(kind: str):
 
     egg = f"egg={PROJECT_NAME}==0.0"  # to force a re-install
     print(
-        f"https://{g_app_name}.readthedocs.io/en/{facts.ver}/changes.html#changes-{facts.anchor}"
+        f"https://{PROJECT_NAME}.readthedocs.io/en/{facts.ver}/changes.html#changes-{facts.anchor}"
     )
 
     print(
         "\n## For GitHub commenting:\n"
         + "This is now released as part of "
-        + f"[{g_app_name} {facts.ver}](https://pypi.org/project/{g_app_name}/{facts.ver})."
+        + f"[{g_app_name} {facts.ver}](https://pypi.org/project/{PROJECT_NAME}/{facts.ver})."
     )
 
     print("\n## To run this code:")
-    if facts.branch == "master":
+    if facts.branch in ("master", "main"):
         print(f"python3 -m pip install git+{REPO_URL}#{egg}")
     else:
         print(f"python3 -m pip install git+{REPO_URL}@{facts.branch}#{egg}")

@@ -51,8 +51,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
-from logging_strict.util.check_type import is_ok
-
 if sys.version_info >= (3, 9):  # pragma: no cover
     from collections.abc import Sequence  # noqa: F401 Used by sphinx
 else:  # pragma: no cover
@@ -62,6 +60,34 @@ __all__ = (
     "find_project_root",
     "find_pyproject_toml",
 )
+
+
+def _is_ok(test):
+    """Check if non-empty str
+
+    Edge case: contains only whitespace --> ``False``
+
+    :param test: variable to test
+    :type test: typing.Any | None
+    :returns: ``True`` if non-empty str otherwise ``False``
+    :rtype: bool
+
+    .. note::
+
+       Vendored logging-strict.util.check_type.is_ok, so current module
+       can be stand alone
+
+    """
+    ret = False
+    is_str = test is not None and isinstance(test, str)
+    if is_str:
+        # Edge case: contains only whitespace
+        str_stripped = test.strip()
+        ret = len(str_stripped) != 0
+    else:
+        ret = False
+
+    return ret
 
 
 @lru_cache
@@ -141,7 +167,7 @@ def find_project_root(srcs, stdin_filename=None):
         """Signature is intended to be Sequence[str], but assume
         Sequence[Any]. Filter out non-str, including None and str
         containing only whitespace"""
-        srcs = [src for src in srcs if is_ok(src)]
+        srcs = [src for src in srcs if _is_ok(src)]
 
         if stdin_filename is not None and len(srcs) != 0:
             srcs = list(stdin_filename if s == "-" else s for s in srcs)

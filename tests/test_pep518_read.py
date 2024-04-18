@@ -25,6 +25,7 @@ from pathlib import (
 from unittest.mock import patch
 
 from sphinx_external_toc_strict.pep518_read import (
+    _is_ok,
     find_project_root,
     find_pyproject_toml,
 )
@@ -44,6 +45,26 @@ class Pep518Sections(unittest.TestCase):
             # not cached
             self.path_tests = Path(__file__).parent
         self.cwd = self.path_tests.parent
+
+    def test_is_ok(self):
+        """Is not None and a non-empty string
+
+        Vendered from package/module, logging-strict.util.check_type
+        """
+        invalids = (
+            None,  # not str
+            "",  # empty string
+            0.123,  # not str
+            "    ",  # contains only whitespace
+        )
+        for invalid in invalids:
+            out_actual = _is_ok(invalid)
+            self.assertFalse(out_actual)
+
+        valids = ("Hello World!",)  # non-empty string
+        for valid in valids:
+            out_actual = _is_ok(valid)
+            self.assertTrue(out_actual)
 
     def test_find_project_root(self):
         """Check possibilities: .git, .hg, pyproject.toml, or file system root"""

@@ -37,7 +37,6 @@ ifeq ($(is_venv),1)
 	    [[ ! -f "$(SOURCEDIR)/$${f_path}.inv" ]] && sphobjinv convert -q zlib "$(SOURCEDIR)/$${f_path}.txt" "$(SOURCEDIR)/$${f_path}.inv" ||:
 	  fi
 	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.txt" -exec basename {} .txt \;)
-
 endif
 
 .PHONY: inv2txt
@@ -89,7 +88,6 @@ linkcheck:				## Sphinx check urls within docs and code base
 ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" || echo "$(err_check_web_conn). exit code $$?"
 endif
-
 
 .PHONY: _objects
 _objects:

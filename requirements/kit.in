@@ -6,9 +6,9 @@
 # Things needed to make distribution kits.
 # "make upgrade" turns this into requirements/kit.pip.
 
-# auditwheel
+auditwheel
 build
-# cibuildwheel
+cibuildwheel  # .github/workflows/kit.yml
 setuptools
 setuptools-scm  # versioning
 wheel

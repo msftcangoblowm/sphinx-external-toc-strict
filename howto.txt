@@ -23,7 +23,7 @@
     $ make relbranch
 - Edit supported Python version numbers. Search for "PYVERSIONS".
     - README.rst
-    - docs/index.rst
+    - docs/intro.rst
 - Update sphinx conf.py CHANGES.rst, and NOTICE.txt with release facts. Supply "next version":
     $ python igor.py bump_version "1.2.11"
     or

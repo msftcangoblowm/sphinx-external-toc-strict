@@ -1,0 +1,99 @@
+# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
+# For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
+#
+# https://github.com/codecov/codecov-action
+# https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
+
+name: "Codecov"
+
+on:
+  push:
+    branches:
+      - main
+      - msftcangoblowm/*
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: 1
+  COVERAGE_IGOR_VERBOSE: 1
+  FORCE_COLOR: 1    # Get colored test output
+
+permissions:
+  contents: write
+
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{ github.ref_type }}-
+    ${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  codecov:
+    name: "${{ matrix.python-version }} on ${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}-latest"
+    # Don't run tests if the branch name includes "-notests"
+    if: "!contains(github.ref, '-notests')"
+    strategy:
+      matrix:
+        os:
+          - ubuntu
+        python-version:
+          - "3.9"
+      fail-fast: false
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v4"
+        with:
+          # fetch all branches and tags instead of only fetching the ref/SHA that triggered the workflow
+          fetch-depth: 0
+      # https://stackoverflow.com/questions/66349002/get-latest-tag-git-describe-tags-when-repo-is-cloned-with-depth-1
+      # echo "tag=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_OUTPUT
+      - name: Get latest tag
+        id: vars
+        run: |
+          echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: "actions/setup-python@v5"
+        with:
+          python-version: "${{ matrix.python-version }}"
+          # cache: pip
+          # cache-dependency-path: 'requirements/*.pip'
+          allow-prereleases: true
+      - name: "Install tools"
+        run: |
+          set -xe
+          python -m pip install -r requirements/kit.pip
+          python -m pip install -r requirements/prod.pip
+          python -m pip install -r requirements/dev.pip
+      - name: "Build sdist and whl"
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          set -xe
+          echo "python igor.py build_next $RELEASE_VERSION"
+          python igor.py build_next "$RELEASE_VERSION"
+      - name: "Install"
+        run: |
+          set -xe
+          python -m pip install --disable-pip-version-check -q .
+      - name: "Run coverage"
+        run : |
+          set -xe
+          pytest --showlocals --quiet --cov=sphinx_external_toc_strict --cov-report=xml tests
+      - name: "Upload to Codecov"
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          name: unittest-py3.9
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: msftcangoblowm/sphinx-external-toc-strict
+          os: linux
+          flags: unittests
+          file: ./coverage.xml
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          verbose: true
