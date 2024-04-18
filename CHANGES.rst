@@ -18,6 +18,16 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-1-3:
+
+Version 1.1.3 — 2024-04-18
+--------------------------
+
+- ci(.readthedocs.yml): python.install.requirements list rather than dict
+- style(pyproject.toml): configure project.urls
+- docs(README.rst): github-ci badge use workflow release
+- docs(README.rst): add badges
+
 .. _changes_1-1-2:
 
 Version 1.1.2 — 2024-04-18

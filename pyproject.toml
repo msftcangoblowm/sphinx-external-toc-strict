@@ -34,8 +34,11 @@ authors = [  # Contact by mastodon please
 ]
 
 [project.urls]
-Homepage = "https://github.com/msftcangoblowm/sphinx-external-toc-strict"
-Documentation = "https://sphinx-external-toc-strict.readthedocs.io/intro.html"
+Documentation = "https://sphinx-external-toc-strict.readthedocs.io"
+Changes = "https://raw.githubusercontent.com/msftcangoblowm/sphinx-external-toc-strict/main/CHANGES.rst"
+"PyPI Releases" = "https://pypi.org/project/sphinx-external-toc-strict"
+"Source code" = "https://github.com/msftcangoblowm/sphinx-external-toc-strict"
+"Issue tracker" = "https://github.com/msftcangoblowm/sphinx-external-toc-strict/issues"
 Chat = "https://mastodon.social/@msftcangoblowme"
 
 [tool.setuptools.packages.find]

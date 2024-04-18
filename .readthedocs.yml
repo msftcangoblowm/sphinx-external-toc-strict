@@ -12,7 +12,8 @@ build:
 
 python:
   install:
-      -requirements: docs/requirements.pip
+    requirements:
+    - docs/requirements.pip
 
 sphinx:
   configuration: docs/conf.py

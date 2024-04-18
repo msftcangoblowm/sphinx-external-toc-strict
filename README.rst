@@ -6,10 +6,9 @@ sphinx-external-toc-strict
 
 A sphinx extension that allows the documentation site-map (a.k.a Table of Contents) to be defined external to the documentation files.
 
-| Github-CI |github-ci|
-| Coverage Status |codecov|
-| Code style: black |black|
-| PyPI |pypi|
+|  |kit| |license| |versions|
+|  |test-status| |codecov| |quality-status| |docs| |black|
+|  |stars| |mastodon-msftcangoblowm|
 
 In normal Sphinx documentation, the documentation site-map is defined
 *via* a bottom-up approach - adding
@@ -562,13 +561,32 @@ Questions / TODOs:
 - some jupyter-book issues point to potential changes in numbering, based on where the ``toctree`` is in the document.
   So could look into placing it e.g. under the first heading/title
 
-.. |github-ci| image:: https://github.com/msftcangoblowm/sphinx-external-toc-strict/workflows/continuous-integration/badge.svg?branch=main
-   :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict
-   :alt: Source code
-.. |codecov| image:: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict
-   :alt: coverage
+.. |test-status| image:: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/testsuite.yml/badge.svg?branch=main&event=push
+    :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/testsuite.yml
+    :alt: Test suite status
+.. |quality-status| image:: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/quality.yml/badge.svg?branch=main&event=push
+    :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/quality.yml
+    :alt: Quality check status
+.. |docs| image:: https://readthedocs.org/projects/sphinx-external-toc-strict/badge/?version=latest&style=flat
+    :target: https://sphinx-external-toc-strict.readthedocs.io/
+    :alt: Documentation
+.. |kit| image:: https://img.shields.io/pypi/v/sphinx-external-toc-strict
+    :target: https://pypi.org/project/sphinx-external-toc-strict/
+    :alt: PyPI status
+.. |versions| image:: https://img.shields.io/pypi/pyversions/sphinx-external-toc-strict.svg?logo=python&logoColor=FBE072
+    :target: https://pypi.org/project/sphinx-external-toc-strict/
+    :alt: Python versions supported
+.. |license| image:: https://img.shields.io/github/license/msftcangoblowm/sphinx-external-toc-strict
+    :target: https://pypi.org/project/sphinx-external-toc-strict/blob/master/LICENSE.txt
+    :alt: License
+.. |stars| image:: https://img.shields.io/github/stars/msftcangoblowm/sphinx-external-toc-strict.svg?logo=github
+    :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/stargazers
+    :alt: GitHub stars
+.. |mastodon-msftcangoblowm| image:: https://img.shields.io/mastodon/follow/112019041247183249
+    :target: https://mastodon.social/@msftcangoblowme
+    :alt: msftcangoblowme on Mastodon
+.. |codecov| image:: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict/branch/main/graph/badge.svg?token=HCBC74IABR
+    :target: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict
+    :alt: sphinx-external-toc-strict coverage percentage
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
-.. |pypi| image:: https://img.shields.io/pypi/v/sphinx-external-toc-strict.svg
-   :alt: https://pypi.org/project/sphinx-external-toc-strict
