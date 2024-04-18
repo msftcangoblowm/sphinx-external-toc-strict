@@ -18,6 +18,19 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-1-2:
+
+Version 1.1.2 — 2024-04-18
+--------------------------
+
+- ci(test-coverage.yml): bump version codecov/codecov-action
+- ci(release.yml): bump version sigstore/gh-action-sigstore-python
+- docs(.readthedocs.yml): during pre_build create inv files
+- fix(pyproject.toml): tool.black may not contain target_version
+- test(test_sphinx.py): ensure do not hardcode extension name
+- fix(constants.py): g_app_name should contain underscores not hyphens
+- fix(pyproject.toml): tool.mypy turn off warn_unused_ignores
+
 .. _changes_1-1-1:
 
 Version 1.1.1 — 2024-04-18

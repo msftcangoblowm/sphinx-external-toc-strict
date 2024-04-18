@@ -6,6 +6,7 @@ import pytest
 from sphinx import version_info as sphinx_version_info
 from sphinx.testing.util import SphinxTestApp
 
+from sphinx_external_toc_strict.constants import g_app_name
 from sphinx_external_toc_strict.tools_strictyaml import create_site_from_toc
 
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
@@ -13,9 +14,8 @@ TOC_FILES_WARN = list(
     Path(__file__).parent.joinpath("_warning_toc_files").glob("*.yml")
 )
 
-
-CONF_CONTENT = """
-extensions = ["sphinx_external_toc", "myst_parser"]
+CONF_CONTENT = f"""
+extensions = ["{g_app_name}", "myst_parser"]
 external_toc_path = "_toc.yml"
 
 """
@@ -102,7 +102,7 @@ def test_gettext(tmp_path: Path, sphinx_build_factory):
     create_site_from_toc(toc_path, root_path=src_dir, toc_name=None)
     # write conf.py
     content = f"""
-extensions = ["sphinx_external_toc"]
+extensions = ["{g_app_name}"]
 external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
 
 """
@@ -135,7 +135,7 @@ def test_absolute_path(tmp_path: Path, sphinx_build_factory):
     create_site_from_toc(toc_path, root_path=src_dir, toc_name=None)
     # write conf.py
     content = f"""
-extensions = ["sphinx_external_toc"]
+extensions = ["{g_app_name}"]
 external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
 
 """
@@ -168,7 +168,7 @@ chapters:
     )
     # write conf.py
     content = f"""
-extensions = ["sphinx_external_toc"]
+extensions = ["{g_app_name}"]
 external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
 
 """

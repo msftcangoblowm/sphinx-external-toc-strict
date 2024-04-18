@@ -92,7 +92,7 @@ __all__ = (
     "use_cases",
 )
 
-g_app_name = "sphinx-external-toc-strict"
+g_app_name = "sphinx_external_toc_strict"
 
 # Pattern used to match URL items.
 # regex should match sphinx.util.url_re

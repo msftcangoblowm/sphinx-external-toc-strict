@@ -4,14 +4,17 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.11"
+  jobs:
+    pre_build:
+    - |
+      make --directory=docs build_inv
+      mkdir -p $READTHEDOCS_OUTPUT/html/
 
 python:
   install:
-      - method: pip
-        path: .
-        extra_requirements:
-          - rtd
+      -requirements: docs/requirements.pip
 
 sphinx:
+  configuration: docs/conf.py
   builder: html
   fail_on_warning: true

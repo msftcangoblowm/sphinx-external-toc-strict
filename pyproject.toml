@@ -75,7 +75,7 @@ exclude = ['tests', 'docs']
 strict = true
 namespace_packages = true
 check_untyped_defs = true
-warn_unused_ignores = true
+warn_unused_ignores = false  # events.pyi :38 and :43
 no_implicit_optional = true
 show_error_codes = true
 warn_redundant_casts = true
@@ -151,12 +151,6 @@ nitpicky = true
 autodoc_typehints = 'signature'
 
 [tool.black]
-target_version = [
-    "py39",
-    "py310",
-    "py311",
-    "py312",
-]
 include = '\.pyi?$'
 
 [tool.blackdoc]
