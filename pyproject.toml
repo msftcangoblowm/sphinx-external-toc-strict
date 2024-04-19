@@ -18,7 +18,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Sphinx :: Extension",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -114,7 +114,7 @@ templates_path = ["_templates",]
 html_static_path = ["_static",]
 # https://www.sphinx-doc.org/en/master/usage/markdown.html
 source_suffix = [".md", ".rst"]
-master_doc = "index"
+master_doc = "intro"
 pygments_style = "sphinx"
 html_theme = "alabaster"
 numfig = true
@@ -128,7 +128,7 @@ extensions = [
     "sphinx_paramlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
-    "sphinx_external_toc_strict",  # circular?
+    "sphinx_external_toc_strict",
     "myst_parser",
 ]
 linkcheck_ignore = [

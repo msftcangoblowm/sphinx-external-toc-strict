@@ -1,0 +1,27 @@
+asset-gesture-like-thumbs-up.svg
+  https://www.svgrepo.com/svg/421044/gesture-like-thumbs-up
+  License: CC Attribution
+  Author: Artemy
+  Author web site: https://svgsprite.com
+
+asset-table-of-contents.svg
+  https://www.svgrepo.com/svg/530401/table-of-contents
+  License: CC0
+
+toc-graphic.png
+  http://pypi.org/project/sphinx-external-toc
+  Author: Chris Sewell
+  Author email: chrisj_sewell@hotmail.com
+  License: MIT
+
+toc_tree.pptx <-- what is this? Not linked anywhere
+  http://pypi.org/project/sphinx-external-toc
+  Author: Chris Sewell
+  Author email: chrisj_sewell@hotmail.com
+  License: MIT
+
+sphinx-external-toc-strict-logo.*
+  http://pypi.org/project/sphinx-external-toc-strict
+  Author: Dave Faulkmore
+  Chat: https://mastodon.social/@msftcangoblowme
+  License: Apache 2.0

@@ -37,11 +37,11 @@ proj_master_doc = config.get("master_doc")
 # @@@ editable
 copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "1.1.3"
+version = "1.1.4"
 # The full version, including alpha/beta/rc tags.
-release = "1.1.3"
+release = "1.1.4"
 # The date of release, in "monthname day, year" format.
-release_date = "April 18, 2024"
+release_date = "April 19, 2024"
 # @@@ end
 
 v = parse(release)
@@ -64,7 +64,7 @@ html_theme_options = {
     "description": proj_description,
     "show_relbars": True,
     "logo_name": False,
-    "logo": "logging-strict-logo.svg",
+    "logo": "sphinx-external-toc-strict-logo.svg",
     "show_powered_by": False,
 }
 
@@ -74,7 +74,7 @@ latex_documents = [
         f"{slug}.tex",
         f"{proj_project} Documentation",
         proj_authors,
-        "manual",
+        "manual",  # manual, howto, jreport (Japanese)
     )
 ]
 man_pages = [

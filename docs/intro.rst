@@ -30,10 +30,11 @@ sphinx-external-toc-strict is a fork of sphinx-external-toc
    :header: "Matric", "TOC", "TOC-Strict"
    :widths: auto
 
-   "yaml package", "pyyaml / yaml", "strictyaml / ruemel.yaml"
+   "yaml package", `pyyaml / yaml <https://hitchdev.com/strictyaml/why-not/>`_, `strictyaml / ruemel.yaml <https://hitchdev.com/strictyaml/why/>`_
    ".hidden.files.rst", "Yes", "No"
+   "docs theme", `sphinx-book-theme <https://sphinx-book-theme.readthedocs.io/en/latest>`_, `alabaster <https://alabaster.readthedocs.io/en/latest/>`_
    "markdown support", "Yes", "Yes"
-   "both", "No", "Yes, root doc must be ``index.rst``"
+   "both", `No <https://github.com/executablebooks/sphinx-external-toc/tree/main#development-notes>`_, "Yes, root doc must be ``index.rst``"
    "dump yaml", "use yaml.dump", :py:func:`parsing_strictyaml.dump_yaml <sphinx_external_toc_strict.parsing_strictyaml.dump_yaml>`
    "static type checking", "patchy", "Yes (99%)"
    "coverage", "patchy", "maximium"

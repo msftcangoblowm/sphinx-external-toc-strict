@@ -18,6 +18,24 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-1-4:
+
+Version 1.1.4 — 2024-04-19
+--------------------------
+
+- ci(.readthedocs.yml): py311 --> py39, do not build pdf, and notes
+- docs: defend assertions, links, in comparison table
+- fix: sphinx conf option master_doc index --> intro
+- docs: in comparison yaml dependency choice why and why not links
+- ci(.gitignore): eventhough pre-commit remove, ignore docs/*.inv
+- docs: advice on ramification of incorrectly set master_doc value
+- docs: add note sphinx extension sphinx-multitoc-numbering not working
+- docs: add logo files sphinx-external-toc-strict-logo.*
+- docs(credit.txt): document static asset authors and license
+- docs(_toc.yml): remove unnecessary captions. Rearrange ToC order
+- docs(user_guide/api.rst): in example fix python code
+- docs(regressions.rst): add  known regressions page, a markdown file
+
 .. _changes_1-1-3:
 
 Version 1.1.3 — 2024-04-18

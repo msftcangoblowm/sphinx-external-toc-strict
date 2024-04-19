@@ -1,7 +1,8 @@
 Why
 ====
 
-The package state is unmaintained and didn't want dependency, pyyaml.
+Primarily didn't want dependency, pyyaml. Also sphinx-external-toc package
+appears to be unmaintained.
 
 Removing pyyaml/yaml meant extensive changes. So even if the original
 author reemerges, didn't want to trouble him with a package he'll no
@@ -12,10 +13,10 @@ A fork is necessary.
 Fixes
 
 - meta field values are scrutinized
-- fixed the issues preventing markdown support
-- unittest for mixed markdown and restructuredtext
+- rewrote file name handling issue affecting markdown support
 - static type checking
-- More extensive unittesting
+- Extensive unittest coverage
+- unittest for mixed markdown and restructuredtext
 - the dependencies
 - in-code documentation
 
@@ -27,6 +28,7 @@ Enhancements
 - Makefile for docs
 - semantic versioning
 - github actions
+- **mixed** markdown and ReStructuredText support
 
 Dependencies
 -------------

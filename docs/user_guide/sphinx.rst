@@ -8,7 +8,7 @@ Add to your ``conf.py``:
 
 .. code-block:: python
 
-    extensions = ["sphinx_external_toc"]
+    extensions = ["sphinx_external_toc_strict"]
     external_toc_path = "_toc.yml"  # optional, default: _toc.yml
     external_toc_exclude_missing = False  # optional, default: False
 
@@ -36,7 +36,8 @@ Note the ``external_toc_path`` is always read as a Unix path, and can
 either be specified relative to the source directory (recommended) or
 as an absolute path.
 
-## Basic Structure
+Basic Structure
+-------------------
 
 A minimal ToC defines the top level `root` key, for a single root document file:
 
@@ -50,12 +51,15 @@ with or without the file extension.
 
 .. note:: root file
 
-   To set the root file, other than index, the Sphinx conf key is
+   For a root file other than than index, modify the Sphinx conf key is
 
    `master_doc <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-master_doc>`_
 
    This can be set in ``conf.py`` **or** ``pyproject.toml`` under section
    ``[tool.sphinx-pyproject]``
+
+   Incorrectly set master_doc value ramification,
+   :code:`make pdf` fails to build pdf
 
 Document files can then have a ``subtrees`` key - denoting a list of
 individual toctrees for that document - and in-turn each subtree should
@@ -134,7 +138,7 @@ ToC tree options
 -----------------
 
 Each subtree can be configured with a number of options (see also
-`sphinx `toctree` options <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-toctree>`_):
+`sphinx toctree options <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-toctree>`_):
 
 - ``caption`` (string): A title for the whole the subtree, e.g. shown
   above the subtree in ToCs
@@ -219,17 +223,19 @@ for all subtrees:
      entries:
      - file: doc2
 
-.. warning:: ``numbered`` generally be used as a default
-
-Since numbering cannot be changed by nested subtrees, and sphinx will
-log a warning.
-
 .. note:: title numbering
 
-   By default, title numbering restarts for each subtree.
-   If you want want this numbering to be continuous, check-out the
-   `sphinx-multitoc-numbering extension <https://github.com/executablebooks/sphinx-multitoc-numbering>`_.
+   By default, title numbering restarts for each subtree. For continuous numbering,
+   there is the unmaintained sphinx extension,
+   `sphinx-multitoc-numbering <https://github.com/executablebooks/sphinx-multitoc-numbering>`_.
 
+   Tried it, didn't do the job! For now, ignore *numbered* option and
+   the non-functional sphinx extension
+
+.. warning:: ``numbered`` not as a default
+
+   Since numbering cannot be changed by nested subtrees; sphinx will
+   log a warning
 
 Using different key-mappings
 -----------------------------

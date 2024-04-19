@@ -8,12 +8,11 @@ it should contain:
 
 .. code-block:: python
 
-    import yaml
-    from sphinx_external_toc.parsing import parse_toc_yaml
+    from sphinx_external_toc_strict.parsing_strictyaml import parse_toc_yaml, dump_yaml
 
     path = "path/to/_toc.yml"
     site_map = parse_toc_yaml(path)
-    yaml.dump(site_map.as_json())
+    dump_yaml(site_map)
 
 Would produce e.g.
 
