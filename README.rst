@@ -6,8 +6,9 @@ sphinx-external-toc-strict
 
 A sphinx extension that allows the documentation site-map (a.k.a Table of Contents) to be defined external to the documentation files.
 
-|  |kit| |license| |versions|
-|  |test-status| |codecov| |quality-status| |docs| |black|
+|  |last-commit| |codecov| |license|
+|  |test-status| |quality-status| |docs|
+|  |kit| |versions| |black|
 |  |stars| |mastodon-msftcangoblowm|
 
 In normal Sphinx documentation, the documentation site-map is defined
@@ -562,6 +563,9 @@ Questions / TODOs:
 - some jupyter-book issues point to potential changes in numbering, based on where the ``toctree`` is in the document.
   So could look into placing it e.g. under the first heading/title
 
+.. |last-commit| image:: https://img.shields.io/github/last-commit/msftcangoblowm/sphinx-external-toc-strict/main
+    :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/pulse
+    :alt: last commit to gauge activity
 .. |test-status| image:: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/testsuite.yml/badge.svg?branch=main&event=push
     :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/actions/workflows/testsuite.yml
     :alt: Test suite status

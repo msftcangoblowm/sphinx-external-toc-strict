@@ -8,18 +8,29 @@ Changelog
    Feature request
    .................
 
+   - https://allcontributors.org/
+   - https://shields.io/badges/git-hub-contributors-from-allcontributors-org
+
    Known regressions
    ..................
+
+   In docs, code/user_guide/regressions
 
    Commit items for NEXT VERSION
    ..............................
 
-   - docs(_toc.yml): change to correct repo url
-   - fix(LICENSE): MIT --> Apache 2.0 Was always supposed to be Apache 2.0
-   - style(pyproject.toml): comment out setuptools-scm option, fallback_version
-   - docs: add links to pypi, github, issues, chat, changelog
-
 .. scriv-start-here
+
+.. _changes_1-1-7:
+
+Version 1.1.7 — 2024-04-19
+--------------------------
+
+- docs(_toc.yml): change to correct repo url
+- fix(LICENSE): MIT --> Apache 2.0 Was always supposed to be Apache 2.0
+- style(pyproject.toml): comment out setuptools-scm option, fallback_version
+- docs: add links to pypi, github, issues, chat, changelog
+- docs(README.rst): add badge last commit branch main
 
 .. _changes_1-1-6:
 
