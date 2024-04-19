@@ -18,8 +18,16 @@ subtrees:
       - glob: example/globfolder/*
 - caption: Links
   entries:
-  - title: GitHub Repository
-    url: https://github.com/executablebooks/sphinx-external-toc
+  - title: PyPI
+    url: https://pypi.org/project/sphinx-external-toc-strict
+  - title: Source code
+    url: https://github.com/msftcangoblowm/sphinx-external-toc-strict
+  - title: Issue tracker
+    url: https://github.com/msftcangoblowm/sphinx-external-toc-strict/issues
+  - title: Change log
+    url: https://raw.githubusercontent.com/msftcangoblowm/sphinx-external-toc-strict/main/CHANGES.rst
+  - title: Contact
+    url: https://mastodon.social/@msftcangoblowme
 meta:
   exclude_missing: true
   regress: intro

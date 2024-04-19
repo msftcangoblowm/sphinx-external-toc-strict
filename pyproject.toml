@@ -69,7 +69,7 @@ generate_hashes = false  # From setuptools 69.0.2, parsing dependencies with has
 [tool.setuptools_scm]
 # can be empty if no extra settings are needed, presence enables setuptools_scm
 # SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SPHINX_EXTERNAL_TOC_STRICT="1.0.2" python -m setuptools_scm
-fallback_version = "1.0.2"
+# fallback_version = "1.0.2"
 version_file = "src/sphinx_external_toc_strict/_version.py"
 
 [tool.mypy]
