@@ -21,6 +21,10 @@ Proof, in ToC, can mix markdown and RestructuredText files
 
   Package needs to be tested. There is a waiting PR that needs to be looked at too!
 
+## Dropped support
+
+- hidden document files
+
 ## Enhancements
 
 These are proposed enhancements

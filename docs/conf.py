@@ -37,9 +37,9 @@ proj_master_doc = config.get("master_doc")
 # @@@ editable
 copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "1.1.5"
+version = "1.1.6"
 # The full version, including alpha/beta/rc tags.
-release = "1.1.5"
+release = "1.1.6"
 # The date of release, in "monthname day, year" format.
 release_date = "April 19, 2024"
 # @@@ end
@@ -137,7 +137,7 @@ intersphinx_mapping = {
         "https://docutils.sourceforge.io",
         ("objects-docutils-source.inv", "objects-docutils-source.txt"),
     ),
-    "sphinx-docs": (  # source logging-strict
+    "sphinx-docs": (  # source logging-strict. Alternative? https://www.sphinx-doc.org/objects.inv
         "https://www.sphinx-doc.org/en/master",
         ("objects-sphinx-docs.inv", "objects-sphinx-docs.txt"),
     ),

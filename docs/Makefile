@@ -68,7 +68,7 @@ ifeq ($(is_venv),1)
 endif
 
 .PHONY: htmlall
-htmlall: build_inv		## Sphinx build clean and build html
+htmlall:				## Sphinx build clean and build html
 ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)/html"
 endif
@@ -84,7 +84,7 @@ endif
 ##@ Test
 
 .PHONY: linkcheck
-linkcheck: build_inv	## Sphinx check urls within docs and code base
+linkcheck:				## Sphinx check urls within docs and code base
 ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" || echo "$(err_check_web_conn). exit code $$?"
 endif
@@ -137,7 +137,7 @@ obj_strictyaml:
 # -q quiet
 # --keep-going even if there are warnings
 .PHONY: doctest
-doctest: build_inv		## Confirm in-doc code does what it claims
+doctest:				## Confirm in-doc code does what it claims
 ifeq ($(is_venv),1)
 	@$(MAKE) htmlall
 	$(SPHINXBUILDNOOPT) -b doctest "$(SOURCEDIR)" "$(BUILDDIR)"

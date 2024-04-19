@@ -142,6 +142,7 @@ linkcheck_ignore = [
 ]
 myst_enable_extensions = ["colon_fence", "html_image"]
 external_toc_exclude_missing = true
+todo_include_todos = true
 
 exclude_patterns = [
     "_build",

@@ -11,12 +11,22 @@ Changelog
    Known regressions
    ..................
 
-   1. Dropped support for hidden document files
-
    Commit items for NEXT VERSION
    ..............................
 
 .. scriv-start-here
+
+.. _changes_1-1-6:
+
+Version 1.1.6 — 2024-04-19
+--------------------------
+
+- ci(.gitignore): remove ignore of docs/*.inv
+- ci(tox): in docs do not build_inv after clean_inv
+- ci(pre-commit): remove remove-intersphinx-inventory-files, need docs/*.inv
+- docs(Makefile): store *.inv needed by readthedocs
+- docs: remove objects-python.txt, excessive file size
+- docs: in code manual, add todo list page
 
 .. _changes_1-1-5:
 
