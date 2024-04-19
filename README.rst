@@ -47,7 +47,7 @@ sphinx-external-toc-strict is a fork of sphinx-external-toc
    ".hidden.files.rst", "Yes", "No"
    "docs theme", `sphinx-book-theme <https://sphinx-book-theme.readthedocs.io/en/latest>`_, `alabaster <https://alabaster.readthedocs.io/en/latest/>`_
    "markdown support", "Yes", "Yes"
-   "both", `No <https://github.com/executablebooks/sphinx-external-toc/tree/main#development-notes>`_, "Yes, root doc must be ``index.rst``"
+   "both", `No <https://github.com/executablebooks/sphinx-external-toc/#development-notes>`_, "Yes, root doc must be ``index.rst``"
    "dump yaml", "use yaml.dump", "[package].parsing_strictyaml.dump_yaml"
    "static type checking", "patchy", "Yes (99%)"
    "coverage", "patchy", "maximium"

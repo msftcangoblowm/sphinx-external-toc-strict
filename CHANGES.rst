@@ -18,6 +18,14 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-1-5:
+
+Version 1.1.5 — 2024-04-19
+--------------------------
+
+- docs(Makefile): for targets build_inv and clean_inv only use relative paths
+- docs(Makefile): for targets doctest and linkcheck require target build_inv
+
 .. _changes_1-1-4:
 
 Version 1.1.4 — 2024-04-19

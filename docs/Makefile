@@ -33,8 +33,8 @@ BUILDDIR      := _build
 build_inv:				## inventory base folder only .txt --> .inv
 ifeq ($(is_venv),1)
 	@while read f_path; do
-	  if [[ -f "$(SOURCEDIR)/$${f_path}.txt" ]]; then
-	    [[ ! -f "$(SOURCEDIR)/$${f_path}.inv" ]] && sphobjinv convert -q zlib "$(SOURCEDIR)/$${f_path}.txt" "$(SOURCEDIR)/$${f_path}.inv" ||:
+	  if [[ -f "$${f_path}.txt" ]]; then
+	    [[ ! -f "$${f_path}.inv" ]] && sphobjinv convert -q zlib "$${f_path}.txt" "$${f_path}.inv" ||:
 	  fi
 	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.txt" -exec basename {} .txt \;)
 endif
@@ -47,8 +47,8 @@ inv2txt: | _inv2txt clean_inv
 .PHONY: _inv2txt
 _inv2txt:
 	@while read f_path; do
-	  if [[ -f "$(SOURCEDIR)/$${f_path}.inv" ]] && [[ ! -f "$(SOURCEDIR)/$${f_path}.txt" ]]; then
-	    sphobjinv convert -q plain "$(SOURCEDIR)/$${f_path}.inv" "$(SOURCEDIR)/$${f_path}.txt" ||:
+	  if [[ -f "$${f_path}.inv" ]] && [[ ! -f "$${f_path}.txt" ]]; then
+	    sphobjinv convert -q plain "$${f_path}.inv" "$${f_path}.txt" ||:
 	  fi
 	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.inv" -exec basename {} .inv \;)
 
@@ -57,7 +57,7 @@ _inv2txt:
 clean_inv:				## remove .inv files that have cooresponding .txt file
 	@while read f_path; do
 	  if [[ -f "$${f_path}.txt" ]]; then
-	    [[ -f "$(SOURCEDIR)/$${f_path}.inv" ]] && /bin/rm --preserve-root=all "$(SOURCEDIR)/$${f_path}.inv" ||:
+	    [[ -f "$${f_path}.inv" ]] && /bin/rm --preserve-root=all "$${f_path}.inv" ||:
 	  fi
 	done < <(/bin/find $(SOURCEDIR) -maxdepth 1 -type f -name "*.txt" -exec basename {} .txt \;)
 
@@ -84,7 +84,7 @@ endif
 ##@ Test
 
 .PHONY: linkcheck
-linkcheck:				## Sphinx check urls within docs and code base
+linkcheck: build_inv	## Sphinx check urls within docs and code base
 ifeq ($(is_venv),1)
 	@$(SPHINXBUILD) -b linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" || echo "$(err_check_web_conn). exit code $$?"
 endif
@@ -137,7 +137,7 @@ obj_strictyaml:
 # -q quiet
 # --keep-going even if there are warnings
 .PHONY: doctest
-doctest:				## Confirm in-doc code does what it claims
+doctest: build_inv		## Confirm in-doc code does what it claims
 ifeq ($(is_venv),1)
 	@$(MAKE) htmlall
 	$(SPHINXBUILDNOOPT) -b doctest "$(SOURCEDIR)" "$(BUILDDIR)"
