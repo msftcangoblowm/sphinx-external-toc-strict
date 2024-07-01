@@ -86,7 +86,7 @@ jobs:
           set -xe
           pytest --showlocals --quiet --cov=sphinx_external_toc_strict --cov-report=xml tests
       - name: "Upload to Codecov"
-        uses: codecov/codecov-action@v4.3.0
+        uses: codecov/codecov-action@v4.5.0
         with:
           name: unittest-py3.9
           token: ${{ secrets.CODECOV_TOKEN }}
