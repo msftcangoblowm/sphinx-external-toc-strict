@@ -16,6 +16,11 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 
 * Python 3.9 through 3.12, and 3.13.0a3 and up.
 
+**New in 1.2.x:**
+
+create_site no overwrite and existing files informative message;
+SiteMap.file_format ignore unknown use cases;
+
 **New in 1.1.x:**
 
 fork project; drop pyyaml support transition to strictyaml; use both markdown and restructuredtext;

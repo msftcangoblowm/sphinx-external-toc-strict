@@ -65,13 +65,17 @@ jsonschema-specifications==2023.12.1
 livereload==2.6.3
     # via sphinx-autobuild
 markdown-it-py==3.0.0
-    # via scriv
+    # via
+    #   -c docs/../requirements/prod.pip
+    #   scriv
 markupsafe==2.1.5
     # via
     #   -c docs/../requirements/prod.pip
     #   jinja2
 mdurl==0.1.2
-    # via markdown-it-py
+    # via
+    #   -c docs/../requirements/prod.pip
+    #   markdown-it-py
 natsort==8.4.0
     # via domdf-python-tools
 packaging==24.0
@@ -147,13 +151,13 @@ tomli==2.0.1
     # via dom-toml
 tornado==6.4
     # via livereload
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via domdf-python-tools
 urllib3==2.2.1
     # via
     #   -c docs/../requirements/prod.pip
     #   requests
-zipp==3.18.1
+zipp==3.20.0
     # via
     #   -c docs/../requirements/prod.pip
     #   importlib-metadata

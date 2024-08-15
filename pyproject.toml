@@ -104,7 +104,7 @@ precision = 2
 ignore_errors = true
 skip_covered = true
 skip_empty = true
-fail_under = 70
+fail_under = 90
 show_missing = true
 
 [tool.sphinx-pyproject]

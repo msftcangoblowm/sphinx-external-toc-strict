@@ -183,6 +183,44 @@ def create_site_from_toc(
     return site_map
 
 
+def site_map_guess_titles(
+    site_map,
+    index,
+    is_guess=False,
+):
+    """In _toc.yml if titles in files, option can take titles from file names
+
+    :param site_map: site map. Later converted into toc
+    :type site_map: SiteMap
+    :param index: File stem of root file. Coding convention is ``index``
+    :type index: str
+    :param is_guess: Default False. True to take titles from file names
+    :type is_guess: typing.Any | None
+    """
+    # ensure bool
+    if is_guess is None or not isinstance(is_guess, bool):
+        is_modify_titles = False
+    else:
+        is_modify_titles = is_guess
+
+    root_docname = site_map.root.docname
+    docnames = [
+        docname
+        for docname in site_map
+        if docname != root_docname and is_modify_titles is True
+    ]
+    for docname in docnames:
+        # Take titles from file names
+        filepath = PurePosixPath(docname)
+        # use the folder name for index files
+        name = filepath.parent.name if filepath.name == index else filepath.name
+        # split into words
+        words = name.split("_")
+        # remove first word if is an integer
+        words = words[1:] if words and all(c.isdigit() for c in words[0]) else words
+        site_map[docname].title = " ".join(words).capitalize()
+
+
 def create_site_map_from_path(
     root_path,
     *,
@@ -219,16 +257,22 @@ def create_site_map_from_path(
     :rtype: SiteMap
     :raises:
 
-       - :py:exc:`IOError` -- Path does not contain a root file
+       - :py:exc:`NotADirectoryError` -- root folder is not a folder
+       - :py:exc:`FileNotFoundError` -- Path does not contain a root file
 
     """
     root_path = Path(root_path)
-    # assess root
+    # assess root. raises NotADirectoryError
     root_index, root_files, root_folders = _assess_folder(
         root_path, suffixes, default_index, ignore_matches
     )
-    if not root_index:
-        raise IOError(f"path does not contain a root file: {root_path}")
+
+    is_no_index = root_index is None or root_index != default_index
+    if is_no_index:
+        msg_err = f"path does not contain a root file: {root_path}"
+        raise FileNotFoundError(msg_err)
+    else:  # pragma: no cover
+        pass
 
     # create root item and child folders
     root_item, indexed_folders = _doc_item_from_path(
@@ -324,6 +368,7 @@ def _doc_item_from_path(
     index_items = []
     for folder_name in folder_names:
         sub_folder = folder / folder_name
+        # raises NotADirectoryError if root folder is not a folder
         child_index, child_files, child_folders = _assess_folder(
             sub_folder, suffixes, default_index, ignore_matches
         )
@@ -390,12 +435,12 @@ def _assess_folder(
     :rtype: tuple[str | None, collections.abc.Sequence[str], collections.abc.Sequence[str]]
     :raises:
 
-       - :py:exc:`IOError` -- path must be a directory
+       - :py:exc:`NotADirectoryError` -- path must be a directory
 
     :meta private:
     """
     if not folder.is_dir():
-        raise IOError(f"path must be a directory: {folder}")
+        raise NotADirectoryError(f"path must be a directory: {folder}")
 
     # conversion to a set is to remove duplicates, e.g. doc.rst and doc.md
     sub_files = natural_sort(
@@ -572,7 +617,8 @@ def migrate_jupyter_book(toc):
     try:
         site_map = parse_toc_data(toc)
     except MalformedError as err:
-        raise MalformedError(f"Error parsing migrated output: {err}") from err
+        msg_err = f"Error parsing migrated output: {err}"
+        raise MalformedError(msg_err) from err
     # change the file format and convert back to a dict
     site_map.file_format = file_format
     return create_toc_dict(site_map, skip_defaults=True)

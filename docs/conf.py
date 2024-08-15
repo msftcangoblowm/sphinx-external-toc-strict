@@ -37,11 +37,11 @@ proj_master_doc = config.get("master_doc")
 # @@@ editable
 copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "1.1.7"
+version = "1.2.0"
 # The full version, including alpha/beta/rc tags.
-release = "1.1.7"
+release = "1.2.0"
 # The date of release, in "monthname day, year" format.
-release_date = "April 19, 2024"
+release_date = "August 15, 2024"
 # @@@ end
 
 v = parse(release)
@@ -55,7 +55,7 @@ project = f"{proj_project} {version}"
 ###############
 rst_epilog = """
 .. |project_name| replace:: {slug}
-.. |package-equals-release| replace:: logging_strict=={release}
+.. |package-equals-release| replace:: sphinx_external_toc_strict=={release}
 """.format(
     release=release, slug=slug
 )
@@ -75,6 +75,7 @@ latex_documents = [
         f"{proj_project} Documentation",
         proj_authors,
         "manual",  # manual, howto, jreport (Japanese)
+        True,
     )
 ]
 man_pages = [
@@ -137,7 +138,7 @@ intersphinx_mapping = {
         "https://docutils.sourceforge.io",
         ("objects-docutils-source.inv", "objects-docutils-source.txt"),
     ),
-    "sphinx-docs": (  # source logging-strict. Alternative? https://www.sphinx-doc.org/objects.inv
+    "sphinx-docs": (  # Alternative? https://www.sphinx-doc.org/objects.inv
         "https://www.sphinx-doc.org/en/master",
         ("objects-sphinx-docs.inv", "objects-sphinx-docs.txt"),
     ),

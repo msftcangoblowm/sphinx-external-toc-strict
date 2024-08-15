@@ -1,4 +1,6 @@
 """
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
+
 Command line functions
 
 Usage
@@ -25,14 +27,11 @@ commands:
 
 from __future__ import annotations
 
-from pathlib import (
-    Path,
-    PurePosixPath,
-)
+from pathlib import Path
 
 import click
 
-from . import __version__
+from .constants import __version_app
 from .parsing_shared import FILE_FORMATS
 from .parsing_strictyaml import (
     dump_yaml,
@@ -43,11 +42,12 @@ from .tools_strictyaml import (
     create_site_from_toc,
     create_site_map_from_path,
     migrate_jupyter_book,
+    site_map_guess_titles,
 )
 
 
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
-@click.version_option(version=__version__)
+@click.version_option(version=__version_app)
 def main():
     """Command-line for sphinx-external-toc-strict. Prints usage"""
 
@@ -108,12 +108,29 @@ def create_site(toc_file, path, extension, overwrite):
        nice here, ey?
 
     :type overwrite: bool
+
+    .. todo:: conf.py
+
+       Option to add basic conf.py?
+
     """
-    create_site_from_toc(
-        toc_file, root_path=path, default_ext="." + extension, overwrite=overwrite
-    )
-    # TODO option to add basic conf.py?
-    click.secho("SUCCESS!", fg="green")
+    if not extension.startswith("."):
+        default_ext = f".{extension}"
+    else:  # pragma: no cover
+        default_ext = extension
+
+    try:
+        create_site_from_toc(
+            toc_file,
+            root_path=path,
+            default_ext=default_ext,
+            overwrite=overwrite,
+        )
+    except IOError:
+        msg_err = "Existing file found. Overwrite permission not granted"
+        click.secho(msg_err, fg="green")
+    else:
+        click.secho("SUCCESS!", fg="green")
 
 
 @main.command("from-project")
@@ -194,19 +211,8 @@ def create_toc(site_dir, extension, index, skip_match, guess_titles, file_format
         ignore_matches=skip_match,
         file_format=file_format,
     )
-    if guess_titles:
-        for docname in site_map:
-            # don't give a title to the root document
-            if docname == site_map.root.docname:
-                continue
-            filepath = PurePosixPath(docname)
-            # use the folder name for index files
-            name = filepath.parent.name if filepath.name == index else filepath.name
-            # split into words
-            words = name.split("_")
-            # remove first word if is an integer
-            words = words[1:] if words and all(c.isdigit() for c in words[0]) else words
-            site_map[docname].title = " ".join(words).capitalize()
+    # May raise NotADirectoryError or FileNotFoundError
+    site_map_guess_titles(site_map, index, is_guess=guess_titles)
 
     # yaml.dump(data, sort_keys=False, default_flow_style=False)
     yml_2 = dump_yaml(site_map)

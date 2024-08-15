@@ -146,7 +146,7 @@ endif
 # pip install --disable-pip-version-check --no-color --find-links=file://///$HOME/Downloads/git_decimals/sphinx_external_toc_strict/dist sphinx-external-toc-strict
 
 REPO_OWNER := msftcangoblowm/sphinx-external-toc-strict
-REPO := $(REPO_OWNER)/logging_strict
+REPO := $(REPO_OWNER)/sphinx_external_toc_strict
 
 .PHONY: edit_for_release cheats relbranch kit_check kit_build kit_upload
 .PHONY: test_upload kits_build kits_download github_releases

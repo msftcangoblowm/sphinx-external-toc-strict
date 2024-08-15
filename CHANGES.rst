@@ -14,12 +14,25 @@ Changelog
    Known regressions
    ..................
 
-   In docs, code/user_guide/regressions
+   - in cli, create_toc not gracefully handling exceptions
+
+   - In docs, code/user_guide/regressions
 
    Commit items for NEXT VERSION
    ..............................
 
 .. scriv-start-here
+
+.. _changes_1-2-0:
+
+Version 1.2.0 — 2024-08-15
+--------------------------
+
+- feat: validate SiteMap.file_format setter only. If unknown use case, do nothing
+- fix: upgrade dependencies zipp and typing-extension
+- fix(cli): create_site print error msg when existing files and no overwrite flag
+- test: add test from toc --> create site
+- test: coverage fail from 70% --> 90%
 
 .. _changes_1-1-7:
 

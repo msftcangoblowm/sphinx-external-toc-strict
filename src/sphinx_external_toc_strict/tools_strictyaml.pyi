@@ -30,6 +30,11 @@ def create_site_from_toc(
     overwrite: bool | None = False,
     toc_name: str | None = "_toc.yml",
 ) -> SiteMap: ...
+def site_map_guess_titles(
+    site_map: SiteMap,
+    index: str,
+    is_guess: Any | None = False,
+) -> None: ...
 def create_site_map_from_path(
     root_path: Path | str,
     *,

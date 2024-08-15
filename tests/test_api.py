@@ -1,3 +1,17 @@
+"""
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
+
+..
+
+test of basic classes
+
+.. code-block:: shell
+
+   pytest --showlocals --log-level INFO tests/test_api.py
+   pytest --showlocals --cov="drain_swamp" --cov-report=term-missing tests/test_api.py
+
+"""
+
 from sphinx_external_toc_strict.api import (
     Document,
     FileItem,

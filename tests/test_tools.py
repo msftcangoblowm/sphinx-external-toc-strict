@@ -1,3 +1,17 @@
+"""
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
+
+..
+
+Unittest for entrypoint, cli
+
+.. code-block:: shell
+
+   pytest --showlocals --log-level INFO tests/test_tools.py
+   pytest --showlocals --cov="drain_swamp" --cov-report=term-missing tests/test_tools.py
+
+"""
+
 import sys
 from pathlib import Path
 
@@ -10,6 +24,7 @@ from sphinx_external_toc_strict.tools_strictyaml import (
     create_site_from_toc,
     create_site_map_from_path,
     migrate_jupyter_book,
+    site_map_guess_titles,
 )
 
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
@@ -47,7 +62,9 @@ def test_file_to_sitemap_file_already_exists(path: Path, tmp_path: Path):
 
 
 def test_create_site_map_from_path(tmp_path: Path, data_regression):
-    # create project files
+    # pytest --showlocals --log-level INFO -k "test_create_site_map_from_path" tests
+    # prepare
+    #    will create root file (index.rst) later
     files = [
         "index.rst",
         "1_other.rst",
@@ -63,11 +80,37 @@ def test_create_site_map_from_path(tmp_path: Path, data_regression):
         "subfolder14/subsubfolder/index.rst",
         "subfolder14/subsubfolder/other.rst",
     ]
+
     for posix in files:
-        path = tmp_path.joinpath(*posix.split("/"))
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.touch()
+        path_f = tmp_path.joinpath(*posix.split("/"))
+        path_f.parent.mkdir(parents=True, exist_ok=True)
+        path_f.touch()
+
+    # act
+    #    remove root file
+    path_root_file = tmp_path.joinpath("index.rst")
+    path_root_file.unlink()
+
+    with pytest.raises(FileNotFoundError):
+        create_site_map_from_path(tmp_path)
+
+    # prepare
+    #    add root file
+    path_root_file.touch()
+
+    # act
     site_map = create_site_map_from_path(tmp_path)
+
+    #    from doc file names' don't guess title
+    invalids = (
+        None,
+        0.1234,
+    )
+    index = "index"
+    for invalid in invalids:
+        site_map_guess_titles(site_map, index, is_guess=invalid)
+
+    # verify the file is unchanged against previous run
     data_regression.check(site_map.as_json())
     # data = create_toc_dict(site_map)
     # data_regression.check(data)
@@ -90,7 +133,7 @@ def test_assess_folder_expecting_folder():
     suffixes = (".sh",)
     default_index = "index"
     ignore_matches = (".*",)
-    with pytest.raises(IOError):
+    with pytest.raises(NotADirectoryError):
         _assess_folder(folder, suffixes, default_index, ignore_matches)
 
 

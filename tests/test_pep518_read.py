@@ -243,7 +243,7 @@ if __name__ == "__main__":  # pragma: no cover
        python -m tests.test_pep518_read
 
        coverage run --data-file=".coverage-combine-14" \
-       -m unittest discover -t. -s tests/util -p "test_pep518_read*.py" --buffer
+       -m unittest discover -t. -s tests -p "test_pep518_read*.py" --buffer
 
        coverage report --include="*pep518_read*" --no-skip-covered \
        --data-file=".coverage-combine-14"

@@ -56,7 +56,10 @@ from ._compat import (
     optional,
     validate_fields,
 )
-from .constants import URL_PATTERN
+from .constants import (
+    URL_PATTERN,
+    use_cases,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -241,6 +244,7 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         self[root.docname] = root
         self._root: Document = root
         self._meta: dict[str, Any] = meta or {}
+        # bypasses property setter. Could be unsupported or mistaken file format
         self._file_format = file_format
 
     @property
@@ -278,7 +282,7 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         return self._file_format
 
     @file_format.setter
-    def file_format(self, value):
+    def file_format(self, val):
         """Set the format of the file
 
         :param value: file format
@@ -291,7 +295,12 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
            :py:data:`sphinx_external_toc_strict.constants.use_cases`
 
         """
-        self._file_format = value
+        is_valid = val is not None and val in use_cases
+        if is_valid:
+            self._file_format = val
+        else:  # pragma: no cover
+            # do nothing
+            pass
 
     def globs(self):
         """All globs present across all toctrees
@@ -394,6 +403,9 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         }
         if self.file_format:
             data["file_format"] = self.file_format
+        else:  # pragma: no cover
+            pass
+
         return data
 
     def get_changed(self, previous):

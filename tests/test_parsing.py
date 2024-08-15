@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from sphinx_external_toc_strict.constants import use_cases
 from sphinx_external_toc_strict.exceptions import MalformedError
 from sphinx_external_toc_strict.parsing_shared import (
     FILE_FORMATS,
@@ -114,14 +115,39 @@ def test_parse_item_testable():
         )
 
 
-def test_create_toc_dict_bad_file_format():
-    """Unknown usecase ... fail!"""
-    path = os.path.abspath(Path(__file__).parent.joinpath("_toc_files", "basic.yml"))
-    site_map = parse_toc_yaml(path)
-    # Not a known usecase
-    site_map.file_format = "Trevor"
+testdata_create_toc_dict_bad_file_format = (
+    (
+        Path(__file__).parent.joinpath("_toc_files", "basic.yml"),
+        "Trevor",
+    ),
+)
+ids_create_toc_dict_bad_file_format = ("invalid file format",)
+
+
+@pytest.mark.parametrize(
+    "path_toc, file_format",
+    testdata_create_toc_dict_bad_file_format,
+    ids=ids_create_toc_dict_bad_file_format,
+)
+def test_create_toc_dict_bad_file_format(path_toc, file_format):
+    """site map with invalid file format (aka use case)"""
+    # pytest --showlocals --log-level INFO -k "test_create_toc_dict_bad_file_format" tests
+    # create site map with invalid file format (aka use case)
+    assert file_format not in use_cases
+
+    # prepare
+    #    create a site_map with an unknown file format
+    site_map = parse_toc_yaml(str(path_toc))
+    site_map._file_format = file_format
+
     with pytest.raises(KeyError):
         create_toc_dict(site_map)
+
+    # setter ignores invalid file formats
+    ff_before = site_map.file_format
+    site_map.file_format = "fdsadfdsfsafsadfasdf"
+    ff_after = site_map.file_format
+    assert ff_before == ff_after
 
 
 testdata = [
