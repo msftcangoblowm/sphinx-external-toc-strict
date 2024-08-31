@@ -25,6 +25,13 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-2-2p0:
+
+Version 1.2.2.post0 — 2024-08-31
+--------------------------------
+
+- ci: prevent run on main branch multiple contains
+
 .. _changes_1-2-2:
 
 Version 1.2.2 — 2024-08-31
