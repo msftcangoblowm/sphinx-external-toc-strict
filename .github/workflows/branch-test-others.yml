@@ -29,7 +29,7 @@ jobs:
     # hours needlessly.
     timeout-minutes: 60
     if:
-      ${{ "!(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref))" }}
+      ${{ !(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref)) }}
     strategy:
       matrix:
         os:
@@ -80,7 +80,7 @@ jobs:
     name: Jobs successful
     # The tests didn't run if the branch name includes "-notests"
     if:
-      ${{ "!(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref))" }}
+      ${{ !(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref)) }}
     needs:
       - tests-other
     runs-on: ubuntu-latest

@@ -23,9 +23,21 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - ci(branch-test-others): fix if conditions. Mismatched single quotes
-
 .. scriv-start-here
+
+.. _changes_1-2-2p2:
+
+Version 1.2.2.post2 — 2024-08-31
+--------------------------------
+
+- ci(branch-test-others: remove surround double quotes in if contains condition
+
+.. _changes_1-2-2p1:
+
+Version 1.2.2.post1 — 2024-08-31
+--------------------------------
+
+- ci(branch-test-others): fix if conditions. Mismatched single quotes
 
 .. _changes_1-2-2p0:
 
