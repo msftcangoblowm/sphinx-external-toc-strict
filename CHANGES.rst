@@ -8,6 +8,8 @@ Changelog
    Feature request
    .................
 
+   - migrate docs from rtd --> gh pages
+
    - https://allcontributors.org/
    - https://shields.io/badges/git-hub-contributors-from-allcontributors-org
 
@@ -22,6 +24,16 @@ Changelog
    ..............................
 
 .. scriv-start-here
+
+.. _changes_1-2-2:
+
+Version 1.2.2 — 2024-08-31
+--------------------------
+
+- ci(python-nightly): fix ubuntu versions
+- ci(branch-test-others): add branches test Windows and MacOS
+- ci(test-coverage): codecov/codecov-action 4.3.0 --> 4.5.0
+- test: coverage omit igor.py and setup.py and vendered packages
 
 .. _changes_1-2-0:
 

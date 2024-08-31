@@ -19,7 +19,7 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 **New in 1.2.x:**
 
 create_site no overwrite and existing files informative message;
-SiteMap.file_format ignore unknown use cases;
+SiteMap.file_format ignore unknown use cases; branches test Windows and MacOS;
 
 **New in 1.1.x:**
 

@@ -91,6 +91,12 @@ ignore_missing_imports = true
 [tool.coverage.run]
 source_pkgs = ["sphinx_external_toc_strict"] # **REQUIRED** to be set correctly. Your package name
 branch = true
+omit = [
+    "setup.py",
+    "igor.py",
+    # Don't worry about covering vendored libraries
+    "src/sphinx_external_toc_strict/_vendored/*",
+]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -99,6 +105,7 @@ exclude_lines = [
     "@abc.abstractproperty",
     "if TYPE_CHECKING:",
     "if typing.TYPE_CHECKING:",
+    "^\\s*pass\\s*$",
 ]
 precision = 2
 ignore_errors = true

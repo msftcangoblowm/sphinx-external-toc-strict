@@ -33,7 +33,7 @@ It also allows for documents not specified in the ToC to be auto-excluded.
 **New in 1.2.x:**
 
 create_site no overwrite and existing files informative message;
-SiteMap.file_format ignore unknown use cases;
+SiteMap.file_format ignore unknown use cases; branches test Windows and MacOS;
 
 **New in 1.1.x:**
 

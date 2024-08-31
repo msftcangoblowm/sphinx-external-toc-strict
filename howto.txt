@@ -64,6 +64,7 @@
       $ git switch main
       $ git merge -S -m "Your merge commit message" [source_branch]
     - Check web connection then push. Don't trigger a release until a tag push
+    - Check build sdist first
       $ git push
 - Start the kits:
     - Update logging_strict/src/_version.py with next version and build (not tagged yet)
