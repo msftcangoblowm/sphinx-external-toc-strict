@@ -23,6 +23,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - ci(branch-test-others): fix if conditions. Mismatched single quotes
+
 .. scriv-start-here
 
 .. _changes_1-2-2p0:

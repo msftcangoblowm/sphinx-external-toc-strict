@@ -2,6 +2,8 @@
 # For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 # For contributors working in a branch, not main/master, test on Windows and MacOS
 # Quick, not exhaustive. Minimum interpreter versions
+name: "branch only test"
+
 on:
   push:
     branches:
@@ -19,19 +21,15 @@ env:
 permissions:
   contents: read
 
-concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
-  cancel-in-progress: true
-
 jobs:
   tests-other:
-    name: "${{ matrix.python-version }} on ${{ matrix.os-short }}"
+    name: "${{ matrix.python-version }} on ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}"
     # If it doesn't finish in an hour, it's not going to. Don't spin for six
     # hours needlessly.
     timeout-minutes: 60
     if:
-      ${{ !(contains('-notests, github.ref) || contains(refs/heads/$default-branch', github.ref)) }}
+      ${{ "!(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref))" }}
     strategy:
       matrix:
         os:
@@ -82,7 +80,7 @@ jobs:
     name: Jobs successful
     # The tests didn't run if the branch name includes "-notests"
     if:
-      ${{ !(contains('-notests, github.ref) || contains(refs/heads/$default-branch', github.ref)) }}
+      ${{ "!(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref))" }}
     needs:
       - tests-other
     runs-on: ubuntu-latest
