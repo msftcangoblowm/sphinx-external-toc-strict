@@ -25,6 +25,14 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-2-2p3:
+
+Version 1.2.2.post3 — 2024-08-31
+--------------------------------
+
+- test(branch-test-others): if condition before matrix
+- test(version_semantic): no test version file current version str and tuple
+
 .. _changes_1-2-2p2:
 
 Version 1.2.2.post2 — 2024-08-31

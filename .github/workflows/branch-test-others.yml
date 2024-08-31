@@ -24,12 +24,12 @@ permissions:
 jobs:
   tests-other:
     name: "${{ matrix.python-version }} on ${{ matrix.os }}"
+    if:
+      ${{ !(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref)) }}
     runs-on: "${{ matrix.os }}"
     # If it doesn't finish in an hour, it's not going to. Don't spin for six
     # hours needlessly.
     timeout-minutes: 60
-    if:
-      ${{ !(contains('-notests', github.ref) || contains('refs/heads/$default-branch', github.ref)) }}
     strategy:
       matrix:
         os:
