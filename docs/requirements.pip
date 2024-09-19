@@ -78,7 +78,7 @@ mdurl==0.1.2
     #   markdown-it-py
 natsort==8.4.0
     # via domdf-python-tools
-packaging==24.0
+packaging==24.1
     # via
     #   -c docs/../requirements/prod.pip
     #   sphinx

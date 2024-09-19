@@ -6,10 +6,12 @@ sphinx-external-toc-strict
 
 A sphinx extension that allows the documentation site-map (a.k.a Table of Contents) to be defined external to the documentation files.
 
-|  |last-commit| |codecov| |license|
-|  |test-status| |quality-status| |docs|
-|  |kit| |versions| |black|
-|  |stars| |mastodon-msftcangoblowm|
+|  |kit| |codecov| |license|
+|  |last-commit| |test-status| |quality-status| |docs|
+|  |versions| |implementations|
+|  |platforms| |black|
+|  |downloads| |stars|
+|  |mastodon-msftcangoblowm|
 
 In normal Sphinx documentation, the documentation site-map is defined
 *via* a bottom-up approach - adding
@@ -598,5 +600,8 @@ Questions / TODOs:
 .. |codecov| image:: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict/branch/main/graph/badge.svg?token=HCBC74IABR
     :target: https://codecov.io/gh/msftcangoblowm/sphinx-external-toc-strict
     :alt: sphinx-external-toc-strict coverage percentage
+.. |downloads| image:: https://img.shields.io/pypi/dm/sphinx-external-toc-strict
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
+.. |implementations| image:: https://img.shields.io/pypi/implementation/sphinx-external-toc-strict
+.. |platforms| image:: https://img.shields.io/badge/platform-linux-lightgrey

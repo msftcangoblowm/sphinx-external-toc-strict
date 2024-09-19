@@ -41,6 +41,7 @@ jobs:
       matrix:
         os:
           - ubuntu
+          - macos
         python-version:
           # When changing this list, be sure to check the [gh] list in
           # tox.ini so that tox will run properly. PYVERSIONS

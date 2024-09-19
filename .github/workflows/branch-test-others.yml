@@ -33,10 +33,9 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-latest
           - windows-latest
         python-version:
-          - "3.9"
+          - "pypy-3.9-nightly"
           - "3.12"
           - "3.13"
       fail-fast: false
@@ -47,9 +46,9 @@ jobs:
 
       - name: "Install ${{ matrix.python-version }} with setup-python"
         uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
-        if: "startsWith(matrix.python-version, 'pypy-')"
         with:
           python-version: "${{ matrix.python-version }}"
+          allow-prereleases: true
 
       - name: "Show diagnostic info"
         run: |

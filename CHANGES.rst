@@ -25,6 +25,23 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_1-2-3:
+
+Version 1.2.3 — 2024-09-19
+--------------------------
+
+- ci(branch-test-others): limit matrix.os to windows-latest
+- chore: all badges
+- chore: update gha versions
+- chore: update requirement packaging 24.0 --> 24.1
+
+.. _changes_1-2-2p4:
+
+Version 1.2.2.post4 — 2024-08-31
+--------------------------------
+
+- test(branch-test-others): os.matrix runners append -latest
+
 .. _changes_1-2-2p3:
 
 Version 1.2.2.post3 — 2024-08-31
