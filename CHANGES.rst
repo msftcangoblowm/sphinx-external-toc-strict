@@ -30,6 +30,7 @@ Changelog
 Version 1.2.3 — 2024-09-19
 --------------------------
 
+- ci(python-nightly): update deadsnakes/action
 - ci(branch-test-others): limit matrix.os to windows-latest
 - chore: all badges
 - chore: update gha versions
