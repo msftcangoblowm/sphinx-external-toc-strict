@@ -26,14 +26,19 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - chore(tox): build current not tag
+   - chore(igor): remove commented out code
+   - ci(test-coverage): fix dependency relative path
+   - ci(release): python version str needs double quotes
+   - ci(python-nightly): fix deadsnakes/action actions/setup-python tags
    - feat: sphinx drop py39 support, do the same
    - feat: add intersphinx support. ref > url
-   - feat: add Makefile targets version-override fix-upgrade
    - fix: myst-parser use latest commit
    - fix: click.Path parameters receive as pathlib.Path. Previously str
    - ci: python base version py39 --> py310
    - docs: complete code documentation
-   - refactor: remove pytest-cov dependency
+   - chore: add Makefile targets version-override fix-upgrade
+   - chore: remove pytest-cov dependency
 
 .. scriv-start-here
 

@@ -68,7 +68,7 @@ jobs:
         run: |
           set -xe
           python -m pip install -r requirements/kit.pip
-          python -m pip install -r requirements/prod.pip
+          python -m pip install -r requirements/prod.unlock
           python -m pip install -r requirements/dev.pip
       - name: "Build sdist and whl"
         env:

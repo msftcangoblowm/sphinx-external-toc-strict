@@ -66,13 +66,13 @@ jobs:
         uses: actions/checkout@6d193bf28034eafb982f37bd894289fe649468fc # v4.1.7
 
       - name: "Install ${{ matrix.python-version }} with deadsnakes"
-        uses: deadsnakes/action@v3.2
+        uses: deadsnakes/action@v3.2.0
         if: "!startsWith(matrix.python-version, 'pypy-')"
         with:
           python-version: "${{ matrix.python-version }}"
 
       - name: "Install ${{ matrix.python-version }} with setup-python"
-        uses: actions/setup-python@v5.2
+        uses: actions/setup-python@v5.2.0
         if: "startsWith(matrix.python-version, 'pypy-')"
         with:
           python-version: "${{ matrix.python-version }}"
