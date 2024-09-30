@@ -3,21 +3,99 @@
 
 ..
 
-test of basic classes
+Unittest of api module
+
+Unit test -- Module
 
 .. code-block:: shell
 
-   pytest --showlocals --log-level INFO tests/test_api.py
-   pytest --showlocals --cov="drain_swamp" --cov-report=term-missing tests/test_api.py
+   python -m coverage run --source='strict_external_toc_strict.api' -m pytest \
+   --showlocals tests/test_api.py && coverage report \
+   --data-file=.coverage --include="**/api.py"
 
 """
+
+from contextlib import nullcontext as does_not_raise
+
+import pytest
 
 from sphinx_external_toc_strict.api import (
     Document,
     FileItem,
+    GlobItem,
     SiteMap,
     TocTree,
+    UrlItem,
 )
+
+testdata_urlitem_validation = (
+    (
+        "https://blahblahblah.com/whatever.html",
+        "this is my title",
+        does_not_raise(),
+    ),
+    (
+        "https://blahblahblah.com/whatever.html",
+        None,
+        does_not_raise(),
+    ),
+    (
+        "not a url",
+        None,
+        pytest.raises(ValueError),
+    ),
+    (
+        0.2345,
+        None,
+        pytest.raises(TypeError),
+    ),
+)
+ids_urlitem_validation = (
+    "with title",
+    "without title",
+    "not a url",
+    "url not a str",
+)
+
+
+@pytest.mark.parametrize(
+    "url, title, expectation",
+    testdata_urlitem_validation,
+    ids=ids_urlitem_validation,
+)
+def test_urlitem_validation(url, title, expectation):
+    """Test UrlItem validation."""
+    # pytest --showlocals --log-level INFO -k "test_urlitem_validation" tests
+    with expectation:
+        actual = UrlItem(url, title)
+    if isinstance(expectation, does_not_raise):
+        assert isinstance(actual, UrlItem)
+
+
+testdata_globitem_validation = (
+    (
+        ["a_a_a", "a_a_b", "a_b_a", "a_b_c"],
+        "a_b_*",
+        ["a_b_a", "a_b_c"],
+    ),
+)
+ids_globitem_validation = ("Get pattern a_b_wildcard",)
+
+
+@pytest.mark.parametrize(
+    "all_docnames, patname, docnames_expected",
+    testdata_globitem_validation,
+    ids=ids_globitem_validation,
+)
+def test_globitem_validation(all_docnames, patname, docnames_expected):
+    """Test GlobItem. ``all_docnames`` must be type list."""
+    # pytest --showlocals --log-level INFO -k "test_globitem_validation" tests
+    item = GlobItem(patname)
+    assert patname == str(item)
+    gen = item.render(all_docnames)
+    t_pairs = list(gen)
+    docnames_actual = [docname for _, docname in t_pairs]
+    assert docnames_actual == docnames_expected
 
 
 def test_sitemap_get_changed_identical():

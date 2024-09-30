@@ -58,7 +58,6 @@ jobs:
           - "3.12"
           - "3.13"
           # https://github.com/actions/setup-python#available-versions-of-pypy
-          - "pypy-3.9-nightly"
           - "pypy-3.10-nightly"
       fail-fast: false
 

@@ -2,9 +2,10 @@
 # For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
 
 -c pins.pip
--c pip.pip
+-r pip.in
 
 # "make upgrade-one package=pip-tools"
 # "make upgrade" turns this into requirements/pip-tools.pip
 
 pip-tools
+get-pypi-latest-version

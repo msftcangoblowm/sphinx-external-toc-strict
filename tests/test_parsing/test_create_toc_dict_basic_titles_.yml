@@ -1,0 +1,19 @@
+entries:
+- file: doc1
+- file: doc2
+- entries:
+  - file: subfolder/doc4
+  - title: Great example
+    url: https://example.com
+  - ref: The-Julia-Domain
+    title: Source code
+  file: doc3
+  options:
+    titlesonly: true
+meta:
+  regress: intro
+options:
+  caption: Part Caption
+  numbered: true
+  titlesonly: true
+root: intro

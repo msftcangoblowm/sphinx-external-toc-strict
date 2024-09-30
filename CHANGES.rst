@@ -16,12 +16,24 @@ Changelog
    Known regressions
    ..................
 
+   - For an external url, get Sphinx to open in new window
+     target="_blank" rel="noopener noreferrer"
+
    - in cli, create_toc not gracefully handling exceptions
 
    - In docs, code/user_guide/regressions
 
    Commit items for NEXT VERSION
    ..............................
+
+   - feat: sphinx drop py39 support, do the same
+   - feat: add intersphinx support. ref > url
+   - feat: add Makefile targets version-override fix-upgrade
+   - fix: myst-parser use latest commit
+   - fix: click.Path parameters receive as pathlib.Path. Previously str
+   - ci: python base version py39 --> py310
+   - docs: complete code documentation
+   - refactor: remove pytest-cov dependency
 
 .. scriv-start-here
 
@@ -30,6 +42,7 @@ Changelog
 Version 1.2.3 — 2024-09-19
 --------------------------
 
+- fix: gh-action-sigstore-python tag
 - ci(python-nightly): update deadsnakes/action
 - ci(branch-test-others): limit matrix.os to windows-latest
 - chore: all badges

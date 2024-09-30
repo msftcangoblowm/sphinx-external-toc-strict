@@ -1,0 +1,6 @@
+# Sphinx inventory version 2
+# Project: Sphinx 8.0.2
+# Version: 8.0.2
+# The remainder of this file is compressed using zlib.
+sphinx.ext.intersphinx py:module 0 blob/abb3ead01a76093f0d48068743c6fce7dc6d57c0/sphinx/ext/intersphinx/__init__.py -
+sphinx.ext.intersphinx.missing_reference py:function 1 blob/abb3ead01a76093f0d48068743c6fce7dc6d57c0/sphinx/ext/intersphinx/_resolve.py#L253 -

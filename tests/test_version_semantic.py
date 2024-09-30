@@ -1,3 +1,18 @@
+"""
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
+
+Test semantic versioning module. Not dry cuz package drain-swamp is authoritative.
+
+Unit test -- Module
+
+.. code-block:: shell
+
+   python -m coverage run --source='strict_external_toc_strict.version_semantic' -m pytest \
+   --showlocals tests/test_version_semantic.py && coverage report \
+   --data-file=.coverage --include="**/version_semantic.py"
+
+"""
+
 import pytest
 
 from sphinx_external_toc_strict.version_semantic import (
@@ -137,6 +152,7 @@ def test_setuptools_scm_version_file(
     ids=ids_invalids,
 )
 def test_sanitize_invalids(v_in, expected):
+    """Test sanitize_tag exceptions."""
     with pytest.raises(ValueError):
         sanitize_tag(v_in)
 
@@ -223,6 +239,7 @@ def test_finals(args, kwargs, actual):
 
 
 def test_final_allow():
+    """Test get_version."""
     # Allow final
     actual = "1.0.1"
     l_actual = actual.split(".")
@@ -260,6 +277,7 @@ ids_dev_pres = (
     ids=ids_dev_pres,
 )
 def test_dev_and_prerelease(v_in, expected_in):
+    """Test sanitize_tag with dev and pre-release version str."""
     # Has both dev and is a prerelease
     expected = sanitize_tag(v_in)
     expect_info, expect_dev = get_version(expected)
@@ -364,6 +382,7 @@ ids_package_name = [
 
 @pytest.mark.parametrize("package_name", testdata_package_name, ids=ids_package_name)
 def test_readthedocs_package_name(package_name):
+    """Test readthedocs_url."""
     ver_ = (
         None,
         "latest",

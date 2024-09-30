@@ -63,15 +63,15 @@ _upgrade: export CUSTOM_COMPILE_COMMAND=make upgrade
 _upgrade:
 ifeq ($(is_venv),1)
   ifeq ($(is_piptools), pip-tools)
-	@pip install --quiet --disable-pip-version-check --requirement requirements/pip-tools.pip
+	@pip install --quiet --disable-pip-version-check -r requirements/pip-tools.pip
 	$(PIP_COMPILE) -o requirements/pip-tools.pip requirements/pip-tools.in
 	$(PIP_COMPILE) -o requirements/pip.pip requirements/pip.in
 	$(PIP_COMPILE) -o requirements/kit.pip requirements/kit.in
-	$(PIP_COMPILE) -o requirements/prod.pip requirements/prod.in
+	$(PIP_COMPILE) --no-strip-extras -o requirements/mypy.pip requirements/mypy.in
 	$(PIP_COMPILE) --no-strip-extras -o requirements/tox.pip requirements/tox.in
+
 	$(PIP_COMPILE) --no-strip-extras -o requirements/manage.pip requirements/manage.in
 	$(PIP_COMPILE) --no-strip-extras -o requirements/dev.pip requirements/dev.in
-	$(PIP_COMPILE) --no-strip-extras -o requirements/mypy.pip requirements/mypy.in
   endif
 endif
 
@@ -79,7 +79,7 @@ doc_upgrade: export CUSTOM_COMPILE_COMMAND=make doc_upgrade
 doc_upgrade: $(VENV_BIN)	## Update the doc/requirements.pip file
 ifeq ($(is_venv),1)
   ifeq ($(is_piptools), pip-tools)
-	@$(VENV_BIN)/pip install --quiet --disable-pip-version-check --requirement requirements/pip-tools.pip
+	@$(VENV_BIN)/pip install --quiet --disable-pip-version-check -r requirements/pip-tools.pip
 	$(VENV_BIN)/$(PIP_COMPILE) -o docs/requirements.pip docs/requirements.in
   endif
 endif
@@ -92,6 +92,28 @@ diff_upgrade:			## Summarize the last `make upgrade`
 	@#      -build==0.9.0
 	@#      +build==0.10.0
 	@/bin/git diff -U0 | /bin/grep -v '^@' | /bin/grep == | /bin/sort -k1.2,1.99 -k1.1,1.1r -u -V
+
+.PHONY: version-override
+version-override:			## Apply fixes only
+	@echo "Restriction caused by myst-parser. Force upgrade Sphinx and docutils" 1>&2
+	fix_pkgs=(Sphinx docutils)
+	affects=(requirements/prod.pip requirements/manage.pip requirements/dev.pip docs/requirements.pip)
+
+	for pkg_upper in $${fix_pkgs[@]}; do
+	version=$$(get_pypi_latest_version $$pkg_upper)
+	pkg_lower=$$(echo "$$pkg_upper" | tr '[:upper:]' '[:lower:]')
+
+	for f in $${affects[@]}; do
+	echo "$$pkg_upper --> $$version $$f" 1>&2
+	sed -e "/^$${pkg_lower}==/s/.*/$${pkg_lower}==$${version}/g" $${f} > $${f}.tmp && mv $${f}.tmp $${f}
+	done
+
+	done
+
+# https://unix.stackexchange.com/questions/596180/awk-how-to-replace-a-line-beginning-with
+.PHONY: fix-upgrade
+fix-upgrade: | upgrade doc_upgrade version-override
+fix-upgrade:				## Upgrade and apply fixes
 
 ##@ Testing
 
@@ -133,11 +155,15 @@ endif
 # --cov-report=xml
 # Dependencies: pytest, pytest-cov, pytest-regressions
 # make [v=1] coverage
+# @$(VENV_BIN)/pytest --showlocals --cov=sphinx_external_toc_strict --cov-report=term-missing tests
 .PHONY: coverage
 coverage: private verbose_text = $(if $(v),"--verbose")
 coverage:				## Run tests, generate coverage reports -- make [v=1] coverage
 ifeq ($(is_venv),1)
-	@$(VENV_BIN)/pytest --showlocals --cov=sphinx_external_toc_strict --cov-report=term-missing tests
+	-@$(VENV_BIN_PYTHON) -m coverage erase
+	$(VENV_BIN_PYTHON) -m coverage run --parallel -m pytest --showlocals $(verbose_text) tests
+	$(VENV_BIN_PYTHON) -m coverage combine
+	$(VENV_BIN_PYTHON) -m coverage report --fail-under=90
 endif
 
 ##@ Kitting

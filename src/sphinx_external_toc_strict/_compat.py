@@ -47,11 +47,6 @@ if sys.version_info >= (3, 9):  # pragma: no cover
 else:  # pragma: no cover
     from typing import Sequence
 
-if sys.version_info >= (3, 10):  # pragma: no cover
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
-
 # Use dataclasses slots True for reduced memory usage and performance gain
 if sys.version_info >= (3, 10):  # pragma: no cover
     DC_SLOTS: dict[str, bool] = {"slots": True}
@@ -63,6 +58,8 @@ else:  # pragma: no cover
 @runtime_checkable
 @dc.dataclass
 class DataclassProtocol(Protocol):
+    """Mimic a dataclasses decorated class instance."""
+
     pass
 
 
@@ -113,8 +110,8 @@ def validate_fields(inst: DataclassProtocol) -> None:
 
 
 # https://github.com/python/mypy/issues/12155
-UnionAB: TypeAlias = Union[Any, Sequence[Any]]
-ValidatorType: TypeAlias = Callable[[Any, dc.Field[Any], UnionAB], None]
+UnionAB = Union[Any, Sequence[Any]]
+ValidatorType = Callable[[Any, dc.Field[Any], UnionAB], None]
 
 
 def instance_of(type_: UnionAB) -> ValidatorType:
@@ -188,6 +185,15 @@ def matches_re(regex: str | Pattern[str], flags: int = 0) -> ValidatorType:
         match_func = pattern.match
 
     def _validator(inst: Any, attr: dc.Field[Any], value: str) -> None:
+        """Validate iterable item.
+
+        :param inst: object instance with attribute
+        :type inst: typing.Any
+        :param attr: A dataclass field
+        :type attr: dataclasses.Field[typing.Any]
+        :param value: Value to set attribute to
+        :type value: sphinx_external_toc_strict._compat.UnionAB
+        """
         if not match_func(value):
             raise ValueError(
                 f"'{attr.name}' must match regex {pattern!r} ({value!r} doesn't)"
@@ -212,6 +218,15 @@ def optional(validator: ValidatorType) -> ValidatorType:
     """
 
     def _validator(inst: Any, attr: dc.Field[Any], value: UnionAB) -> None:
+        """Validate iterable item.
+
+        :param inst: object instance with attribute
+        :type inst: typing.Any
+        :param attr: A dataclass field
+        :type attr: dataclasses.Field[typing.Any]
+        :param value: Value to set attribute to
+        :type value: sphinx_external_toc_strict._compat.UnionAB
+        """
         if value is None:
             return
 
@@ -236,6 +251,15 @@ def deep_iterable(
     """
 
     def _validator(inst: Any, attr: dc.Field[Any], value: UnionAB) -> None:
+        """Validate iterable item.
+
+        :param inst: object instance with attribute
+        :type inst: typing.Any
+        :param attr: A dataclass field
+        :type attr: dataclasses.Field[typing.Any]
+        :param value: Value to set attribute to
+        :type value: sphinx_external_toc_strict._compat.UnionAB
+        """
         if iterable_validator is not None:
             iterable_validator(inst, attr, value)
 

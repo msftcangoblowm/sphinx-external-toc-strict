@@ -1,11 +1,7 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
 
-# Version pins, for use as a constraints file.
-# myst-parser restricts docutils<0.21
-# To downgrade docutils --> 0.20.1
-# pip install --force-install -v "docutils==0.20.1"
-
-# strictyaml --> python-dateutil
-# python -m piptools compile not seeing this postrelease. Instead chooses python-dateutil-2.8.2
-# python-dateutil==2.9.0.post0
+# myst-parser has ridiculous restrictions.
+# During development of the pytest for RefItem need latest version of Sphinx
+# Sphinx>=8.0.2
+# docutils>=0.21.2

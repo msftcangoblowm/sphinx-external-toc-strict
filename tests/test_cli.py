@@ -1,14 +1,15 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-..
-
 Unittest for entrypoint, cli
+
+Unit test -- Module
 
 .. code-block:: shell
 
-   pytest --showlocals --log-level INFO tests/test_cli.py
-   pytest --showlocals --cov="drain_swamp" --cov-report=term-missing tests/test_cli.py
+   python -m coverage run --source='strict_external_toc_strict.cli' -m pytest \
+   --showlocals tests/test_cli.py && coverage report \
+   --data-file=.coverage --include="**/cli.py"
 
 """
 
@@ -47,7 +48,7 @@ def invoke_cli():
     :param args: args to cli function being tested
     :type args: collections.abc.Sequence[str]
     :param assert_exit: Default True. If True AssertionError when error encountered
-    ]type assert_exit: bool | None
+    :type assert_exit: bool | None
 
     .. seealso::
 
@@ -56,6 +57,7 @@ def invoke_cli():
     """
 
     def _func(command, args: list[str], assert_exit: bool | None = True) -> Result:
+        """Using Click runner, invoke cli function."""
         runner = CliRunner()
         result = runner.invoke(command, args)
         is_assert_exit = (
@@ -85,6 +87,7 @@ def is_ok():
     """
 
     def _func(val: Any) -> bool:
+        """Fixture which tests is non-empty str and strips any whitespace."""
         return val is not None and isinstance(val, str) and len(val.strip()) != 0
 
     yield _func
@@ -222,6 +225,7 @@ def test_create_site_cli_existing_files(
     ids=ids_create_site_cli,
 )
 def test_create_site_cli_normal(path_toc_yml, root, extension, tmp_path, invoke_cli):
+    """Test create sitemap from a toc."""
     # pytest --showlocals --log-level INFO -k "test_create_site_cli_normal" tests
     # prepare
     #    doc1.rst file is created. When shown the toc would exclude doc1.rst

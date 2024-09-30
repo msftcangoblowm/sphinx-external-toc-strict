@@ -13,4 +13,4 @@ tox-gh
 # https://github.com/tox-dev/tox/blob/master/setup.cfg#L44
 #   colorama>=0.4.1 ;platform_system=="Windows"
 # We copy it here so it can get pinned.
-colorama>=0.4.6
+colorama>=0.4.6; sys_platform == 'win32'

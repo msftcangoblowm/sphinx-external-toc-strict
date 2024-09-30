@@ -136,6 +136,13 @@ def find_project_root(srcs, stdin_filename=None):
     """
 
     def is_sequence_empty(some_sequence: Sequence[Any] | None) -> bool:
+        """Check if Sequence is empty.
+
+        :param some_sequence: Can be None or a Sequence
+        :type: collections.abc.Sequence[typing.Any] | None
+        :returns: True if a Sequence and is empty
+        :rtype: bool
+        """
         ret = (
             some_sequence is not None
             and isinstance(some_sequence, Sequence)
@@ -144,10 +151,24 @@ def find_project_root(srcs, stdin_filename=None):
         return ret
 
     def is_none(arg: Any) -> bool:
+        """Check if None.
+
+        :param arg: Can be anything
+        :type: typing.Any
+        :returns: True if is None
+        :rtype: bool
+        """
         ret = arg is None
         return ret
 
     def is_sequence_none(some_sequence: Sequence[Any] | None) -> bool:
+        """Check a Sequence that contains one item, None.
+
+        :param some_sequence: Can be None or a Sequence
+        :type: collections.abc.Sequence[typing.Any] | None
+        :returns: True if a Sequence with one item, None
+        :rtype: bool
+        """
         ret = (
             some_sequence is not None
             and isinstance(some_sequence, Sequence)

@@ -135,12 +135,16 @@ intersphinx_mapping = {
         ("objects-strictyaml-source.inv", "objects-strictyaml-source.txt"),
     ),
     "docutils-source": (
-        "https://docutils.sourceforge.io",
+        "https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils",
         ("objects-docutils-source.inv", "objects-docutils-source.txt"),
     ),
     "sphinx-docs": (  # Alternative? https://www.sphinx-doc.org/objects.inv
         "https://www.sphinx-doc.org/en/master",
         ("objects-sphinx-docs.inv", "objects-sphinx-docs.txt"),
+    ),
+    "sphinx-source": (
+        "https://github.com/sphinx-doc/sphinx",
+        ("objects-sphinx-source.inv", "objects-sphinx-source.txt"),
     ),
     "toc-strict": (
         "https://sphinx-external-toc-strict.readthedocs.io/en/latest",

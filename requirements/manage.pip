@@ -1,45 +1,65 @@
+alabaster==0.7.16
+    # via sphinx
+babel==2.14.0
+    # via sphinx
 backports-tarfile==1.0.0
     # via jaraco-context
 bleach==6.1.0
     # via readme-renderer
-certifi==2024.2.2
+cachetools==5.5.0
     # via
-    #   -c requirements/prod.pip
-    #   requests
+    #   -r requirements/tox.pip
+    #   tox
+certifi==2024.2.2
+    # via requests
 cffi==1.16.0
     # via cryptography
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.3.2
+chardet==5.2.0
     # via
-    #   -c requirements/prod.pip
-    #   requests
+    #   -r requirements/tox.pip
+    #   tox
+charset-normalizer==3.3.2
+    # via requests
+click==8.1.7
+    # via -r requirements/prod.unlock
+colorama==0.4.6
+    # via
+    #   -r requirements/tox.pip
+    #   tox
 cryptography==42.0.5
     # via secretstorage
 distlib==0.3.8
     # via
-    #   -c requirements/tox.pip
+    #   -r requirements/tox.pip
     #   virtualenv
-docutils==0.20.1
+docutils==0.21.2
     # via
-    #   -c requirements/prod.pip
+    #   -r requirements/prod.unlock
+    #   myst-parser
     #   readme-renderer
     #   restview
-filelock==3.13.4
+    #   sphinx
+exceptiongroup==1.2.2
+    # via pytest
+filelock==3.16.1
     # via
-    #   -c requirements/tox.pip
+    #   -r requirements/tox.pip
+    #   tox
     #   virtualenv
 identify==2.5.35
     # via pre-commit
 idna==3.6
-    # via
-    #   -c requirements/prod.pip
-    #   requests
+    # via requests
+imagesize==1.4.1
+    # via sphinx
 importlib-metadata==7.1.0
     # via
-    #   -c requirements/prod.pip
     #   keyring
     #   twine
+iniconfig==2.0.0
+    # via pytest
 jaraco-classes==3.4.0
     # via keyring
 jaraco-context==5.3.0
@@ -50,41 +70,78 @@ jeepney==0.8.0
     # via
     #   keyring
     #   secretstorage
+jinja2==3.1.3
+    # via
+    #   myst-parser
+    #   sphinx
 keyring==25.1.0
     # via twine
+linkify-it-py==2.0.3
+    # via myst-parser
 markdown-it-py==3.0.0
     # via
-    #   -c requirements/prod.pip
+    #   mdit-py-plugins
+    #   myst-parser
     #   rich
+markupsafe==2.1.5
+    # via jinja2
+mdit-py-plugins==0.4.2
+    # via myst-parser
 mdurl==0.1.2
-    # via
-    #   -c requirements/prod.pip
-    #   markdown-it-py
+    # via markdown-it-py
 more-itertools==10.2.0
     # via
     #   jaraco-classes
     #   jaraco-functools
+myst-parser[linkify,testing-docutils] @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
+    # via -r requirements/prod.unlock
 nodeenv==1.8.0
     # via pre-commit
+packaging==24.1
+    # via
+    #   -r requirements/tox.pip
+    #   pyproject-api
+    #   pytest
+    #   sphinx
+    #   tox
 pkginfo==1.10.0
     # via twine
-platformdirs==4.2.0
+platformdirs==4.3.6
     # via
-    #   -c requirements/tox.pip
+    #   -r requirements/tox.pip
+    #   tox
     #   virtualenv
+pluggy==1.5.0
+    # via
+    #   -r requirements/tox.pip
+    #   pytest
+    #   tox
 pre-commit==3.7.0
     # via -r requirements/manage.in
 pycparser==2.22
     # via cffi
 pygments==2.17.2
     # via
-    #   -c requirements/prod.pip
+    #   myst-parser
     #   readme-renderer
     #   restview
     #   rich
+    #   sphinx
+pyproject-api==1.8.0
+    # via
+    #   -r requirements/tox.pip
+    #   tox
+pytest==8.3.3
+    # via
+    #   myst-parser
+    #   pytest-param-files
+pytest-param-files==0.6.0
+    # via myst-parser
+python-dateutil==2.9.0.post0
+    # via strictyaml
 pyyaml==6.0.1
     # via
-    #   -c requirements/prod.pip
+    #   myst-parser
     #   pre-commit
 readme-renderer==36.0
     # via
@@ -92,8 +149,8 @@ readme-renderer==36.0
     #   twine
 requests==2.31.0
     # via
-    #   -c requirements/prod.pip
     #   requests-toolbelt
+    #   sphinx
     #   twine
 requests-toolbelt==1.0.0
     # via twine
@@ -103,30 +160,67 @@ rfc3986==2.0.0
     # via twine
 rich==13.7.1
     # via twine
+ruamel-yaml==0.18.6
+    # via pytest-param-files
+ruamel-yaml-clib==0.2.8
+    # via ruamel-yaml
 secretstorage==3.3.3
     # via keyring
 six==1.16.0
     # via
-    #   -c requirements/prod.pip
     #   bleach
+    #   python-dateutil
+snowballstemmer==2.2.0
+    # via sphinx
+sphinx==8.0.2
+    # via
+    #   -r requirements/prod.unlock
+    #   myst-parser
+sphinxcontrib-applehelp==1.0.8
+    # via sphinx
+sphinxcontrib-devhelp==1.0.6
+    # via sphinx
+sphinxcontrib-htmlhelp==2.0.5
+    # via sphinx
+sphinxcontrib-jsmath==1.0.1
+    # via sphinx
+sphinxcontrib-qthelp==1.0.7
+    # via sphinx
+sphinxcontrib-serializinghtml==1.1.10
+    # via sphinx
+strictyaml==1.7.3
+    # via -r requirements/prod.unlock
+tomli==2.0.1
+    # via
+    #   -r requirements/tox.pip
+    #   pyproject-api
+    #   pytest
+    #   sphinx
+    #   tox
+tox==4.20.0
+    # via
+    #   -r requirements/tox.pip
+    #   tox-gh
+tox-gh==1.4.1
+    # via -r requirements/tox.pip
 twine==5.0.0
     # via -r requirements/manage.in
+uc-micro-py==1.0.3
+    # via linkify-it-py
 urllib3==2.2.1
     # via
-    #   -c requirements/prod.pip
     #   requests
     #   twine
-virtualenv==20.25.1
+virtualenv==20.26.5
     # via
-    #   -c requirements/tox.pip
+    #   -r requirements/tox.pip
     #   pre-commit
+    #   tox
 webencodings==0.5.1
     # via bleach
 zipp==3.20.0
-    # via
-    #   -c requirements/prod.pip
-    #   importlib-metadata
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==69.2.0
+setuptools==75.1.0
     # via nodeenv

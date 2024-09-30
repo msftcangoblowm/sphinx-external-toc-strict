@@ -1,4 +1,9 @@
+# myst-parser might be abandonware
+#    pinned restrictions on docutils and sphinx.
+#    sphinx major version change overrides myst-parser desires
+# python -m pip install -U --upgrade-strategy=eager Sphinx docutils
 click
 strictyaml
-sphinx
-myst-parser  # needed by both testing and docs. Short jump to make it always available
+docutils>=0.21.2
+sphinx>=8,<9
+myst-parser[linkify,testing-docutils] @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1

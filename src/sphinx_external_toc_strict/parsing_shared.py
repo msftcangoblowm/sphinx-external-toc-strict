@@ -32,6 +32,7 @@ from ._compat import (
 from .api import (
     FileItem,
     GlobItem,
+    RefItem,
     TocTree,
     UrlItem,
 )
@@ -41,6 +42,7 @@ from .constants import (
     FILE_FORMAT_KEY,
     FILE_KEY,
     GLOB_KEY,
+    REF_KEY,
     ROOT_KEY,
     TOCTREE_OPTIONS,
     URL_KEY,
@@ -186,13 +188,16 @@ def _parse_item_testable(
     skip_defaults,
     parsed_docnames,
 ):
-    """Parse one item: FileItem, GlobItem, or UrlItem
+    """Parse one item: FileItem, GlobItem, UrlItem, or RefItem
 
     Was inline fcn, _parse_item, within _docitem_to_dict
 
     :param site_map: site map
     :type site_map: SiteMap
-    :param item: Should be a FileItem, GlobItem, or UrlItem, but assuming nothing
+    :param item:
+
+       Should be a FileItem, GlobItem, UrlItem or RefItem, but assuming nothing
+
     :type item: typing.Any
     :param depth: Within document, nesting depth
     :type depth: int
@@ -235,6 +240,11 @@ def _parse_item_testable(
             d_ret = {URL_KEY: item.url, "title": item.title}
         else:
             d_ret = {URL_KEY: item.url}
+    elif isinstance(item, RefItem):
+        if item.title is not None:
+            d_ret = {REF_KEY: item.ref_id, "title": item.title}
+        else:
+            d_ret = {REF_KEY: item.ref_id}
     else:
         raise TypeError(item)
 

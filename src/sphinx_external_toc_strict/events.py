@@ -11,7 +11,6 @@ Sphinx extension machinary
 
 from __future__ import annotations
 
-import glob
 from pathlib import (
     Path,
     PurePosixPath,
@@ -23,17 +22,14 @@ from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransform
 from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
-from sphinx.util.matching import (
-    Matcher,
-    patfilter,
-    patmatch,
-)
+from sphinx.util.matching import Matcher
 
 from ._compat import findall
 from .api import (
     Document,
     FileItem,
     GlobItem,
+    RefItem,
     SiteMap,
     UrlItem,
 )
@@ -62,7 +58,7 @@ def create_warning(
     :type: sphinx.application.Sphinx
     :param doctree: document where the issue occurred
     :type doctree: docutils.nodes.document
-    :param category: category of warning
+    :param category: category of warning (ref, glob, toctree, tableofcontents)
     :type category: str
     :param message: warning message to log
     :type message: str
@@ -72,7 +68,8 @@ def create_warning(
     :type append_to: docutils.nodes.Element | None
     :param wtype:
 
-       Default "etoc". Warning type. ``etoc`` means coming from Sphinx extension ``etoc``
+       Default "etoc". Warning type. ``etoc`` means coming from Sphinx
+       extension ``etoc``
 
     :type wtype: str
     :returns: docutils system message
@@ -158,40 +155,17 @@ def parse_toc_to_env(app, config):
 
     if config["external_toc_exclude_missing"]:
         # add files not specified in ToC file to exclude list
-        new_excluded: list[str] = []
-        already_excluded = Matcher(config["exclude_patterns"])
-        for suffix in config["source_suffix"]:
-            # recurse files in source directory, with this suffix, note
-            # we do not use `Path.glob` here, since it does not ignore hidden files:
-            # https://stackoverflow.com/questions/49862648/why-do-glob-glob-and-pathlib-path-glob-treat-hidden-files-differently
-            for path_str in glob.iglob(
-                str(Path(app.srcdir) / "**" / f"*{suffix}"), recursive=True
-            ):
-                path = Path(path_str)
-                if not path.is_file():
-                    continue
-                posix = path.relative_to(app.srcdir).as_posix()
-                posix_no_suffix = posix[: -len(suffix)]
-                components = posix.split("/")
-                if not (
-                    # files can be stored with or without suffixes
-                    posix in site_map
-                    or posix_no_suffix in site_map
-                    # ignore anything already excluded, we have to check against
-                    # the file path and all its sub-directory paths
-                    or any(
-                        already_excluded("/".join(components[: i + 1]))
-                        for i in range(len(components))
-                    )
-                    # don't exclude docnames matching globs
-                    or any(patmatch(posix_no_suffix, pat) for pat in site_map.globs())
-                ):
-                    new_excluded.append(posix)
+        new_excluded = site_map.new_excluded(
+            app.srcdir,
+            config["source_suffix"],
+            config["exclude_patterns"],
+        )
         if new_excluded:
-            logger.info(
-                "[etoc] Excluded %s extra file(s) not in toc", len(new_excluded)
-            )
-            logger.debug("[etoc] Excluded extra file(s) not in toc: %r", new_excluded)
+            excluded_count = len(new_excluded)
+            msg_info = f"[etoc] Excluded {excluded_count!s} extra file(s) not in toc"
+            logger.info(msg_info)
+            msg_debug = f"[etoc] Excluded extra file(s) not in toc: {new_excluded!r}"
+            logger.debug(msg_debug)
             # Note, don't `extend` list, as it alters the default `Config.config_values`
             config["exclude_patterns"] = config["exclude_patterns"] + new_excluded
 
@@ -240,6 +214,7 @@ class TableOfContentsNode(nodes.Element):
     """
 
     def __init__(self, **attributes):
+        """Class constructor."""
         super().__init__(rawsource="", **attributes)
 
 
@@ -307,7 +282,8 @@ def insert_toctrees(app, doctree):
                 # docname -- matching suffix
                 doc_item = site_map.get(doc_stem)
 
-    if doc_item is None or not doc_item.subtrees:
+    is_no_document_or_descendants = doc_item is None or not doc_item.subtrees
+    if is_no_document_or_descendants:
         if toc_placeholders:
             create_warning(
                 app,
@@ -363,36 +339,44 @@ def insert_toctrees(app, doctree):
 
         for entry in toctree.items:
             if isinstance(entry, UrlItem):
-                subnode["entries"].append((entry.title, entry.url))
-
+                t_sphinx_renderable: tuple[str, str] = next(entry.render())
+                subnode["entries"].append(t_sphinx_renderable)
+            elif isinstance(entry, RefItem):
+                # Very similiar to UrlItem, except needs app to retrieve from inventory
+                t_sphinx_renderable: tuple[str, str] = next(entry.render(app))
+                subnode["entries"].append(t_sphinx_renderable)
             elif isinstance(entry, FileItem):
-                child_doc_item = site_map[entry]
-                docname = str(entry)
-                title = child_doc_item.title
-
-                # docname = remove_suffix(docname, app.config.source_suffix)
-                docname = stem_natural(docname)
+                t_sphinx_renderable: tuple[str, str] = next(entry.render(site_map))
+                _, docname = t_sphinx_renderable
 
                 if docname not in app.env.found_docs:
                     if excluded(app.env.doc2path(docname, base=False)):
-                        message = f"toctree contains reference to excluded document {docname!r}"
+                        message = (
+                            "toctree contains reference to excluded "
+                            f"document {docname!r}"
+                        )
                     else:
-                        message = f"toctree contains reference to nonexisting document {docname!r}"
+                        message = (
+                            "toctree contains reference to nonexisting "
+                            f"document {docname!r}"
+                        )
 
                     create_warning(app, doctree, "ref", message, append_to=node_list)
                     app.env.note_reread()
                 else:
-                    subnode["entries"].append((title, docname))
+                    subnode["entries"].append(t_sphinx_renderable)
                     subnode["includefiles"].append(docname)
-
             elif isinstance(entry, GlobItem):
-                patname = str(entry)
-                docnames = sorted(patfilter(all_docnames, patname))
-                for docname in docnames:
+                doc_count = 0
+                for t_sphinx_renderable in entry.render(all_docnames):
+                    _, docname = t_sphinx_renderable
                     all_docnames.remove(docname)  # don't include it again
-                    subnode["entries"].append((None, docname))
+                    subnode["entries"].append(t_sphinx_renderable)
                     subnode["includefiles"].append(docname)
-                if not docnames:
+                    doc_count += 1
+
+                is_no_docs = doc_count == 0
+                if is_no_docs:
                     message = (
                         f"toctree glob pattern '{entry}' didn't match any documents"
                     )

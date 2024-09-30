@@ -13,7 +13,7 @@ license = {file = "LICENSE"}
 description = "A sphinx extension that allows the site-map to be defined in a single YAML file."
 keywords = ["sphinx","extension", "toc", "strictyaml"]
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -50,7 +50,7 @@ include = ["sphinx_external_toc_strict*"]
 [tool.setuptools.dynamic]
 optional-dependencies.pip = { file = ["requirements/pip.pip"] }
 optional-dependencies.pip_tools = { file = ["requirements/pip-tools.pip"] }
-dependencies = { file = ["requirements/prod.pip"] }
+dependencies = { file = ["requirements/prod.unlock"] }
 optional-dependencies.dev = { file = ["requirements/dev.pip"] }
 optional-dependencies.manage = { file = ["requirements/manage.pip"] }
 optional-dependencies.docs = { file = ["docs/requirements.pip"] }
@@ -148,6 +148,9 @@ linkcheck_ignore = [
     "https://github.com/csachs/pyproject-flake8/blob/16b9dd4d2f19dcf0bfb3a3110f98227627cd67fe/pflake8/__init__.py#L22",
     "https://github.com/csachs/pyproject-flake8/blob/16b9dd4d2f19dcf0bfb3a3110f98227627cd67fe/pflake8/__init__.py#L86",
     "https://github.com/executablebooks/sphinx-external-toc/#development-notes",
+    "https://github.com/sphinx-doc/sphinx/blob/0a162fa8da21154011a2c890bb82fd0ce96ebf16/tests/test_extensions/test_ext_intersphinx.py#L49",
+    "https://github.com/sphinx-doc/sphinx/blob/abb3ead01a76093f0d48068743c6fce7dc6d57c0/sphinx/ext/intersphinx/_resolve.py#L253",
+    "https://github.com/sphinx-doc/sphinx/blob/7487e764cbd45269ef8be9976af67ce8bd37b48f/sphinx/ext/intersphinx/_resolve.py#L253C5-L253C22",
 ]
 myst_enable_extensions = ["colon_fence", "html_image"]
 external_toc_exclude_missing = true
@@ -199,3 +202,20 @@ filterwarnings = [
     "ignore::DeprecationWarning:myst_parser.*:",
     "ignore::DeprecationWarning:optparse.*:",
 ]
+
+[tool.interrogate]
+color = true
+exclude = [
+    'src/sphinx_external_toc_strict/_version.py',
+    'docs',
+    'build',
+    'retired',
+    'setup.py',
+    'igor.py',
+]
+fail-under = 95
+ignore-init-module = true
+quiet = false
+omit-covered-files = true
+# possible values 0 (minimal output), 1 (-v), 2 (-vv)
+verbose = 2

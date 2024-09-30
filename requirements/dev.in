@@ -2,7 +2,7 @@
 # For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
 
 -c pins.pip
--c prod.pip
+-r prod.unlock
 
 black
 blackdoc
@@ -13,7 +13,6 @@ mypy  # pyright would require node/npm/TypeScript
 coverage
 twine
 validate-pyproject
-# sphinx-external-toc[-strict] uses pytest
 pytest>=7.1
-pytest-cov
 pytest-regressions
+sphobjinv

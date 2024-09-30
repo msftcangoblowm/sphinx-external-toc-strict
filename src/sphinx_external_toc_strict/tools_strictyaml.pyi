@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import sys
 from pathlib import Path
 from typing import Any
@@ -12,15 +10,20 @@ from .api import (
 if sys.version_info >= (3, 9):  # pragma: no cover
     from collections.abc import (
         Iterable,
+        MutableSet,
         Sequence,
     )
 else:  # pragma: no cover
     from typing import (
         Iterable,
+        MutableSet,
         Sequence,
     )
 
-def _default_affinity(additional_files: Sequence[str], default_ext: str) -> str: ...
+def _default_affinity(
+    additional_files: Sequence[str] | MutableSet[str],
+    default_ext: str,
+) -> str: ...
 def create_site_from_toc(
     toc_path: str | Path,
     *,

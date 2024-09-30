@@ -1,0 +1,19 @@
+defaults:
+  titlesonly: true
+root: intro
+subtrees:
+  - caption: Part Caption
+    numbered: true
+    entries:
+    - file: doc1
+    - file: doc2
+    - file: doc3
+      subtrees:
+      - entries:
+        - file: subfolder/doc4
+        - url: https://example.com
+          title: Great example
+        - ref: The-Julia-Domain
+          title: Source code
+meta:
+  regress: intro

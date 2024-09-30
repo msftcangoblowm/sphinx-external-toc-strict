@@ -35,7 +35,6 @@ jobs:
         os:
           - windows-latest
         python-version:
-          - "pypy-3.9-nightly"
           - "3.12"
           - "3.13"
       fail-fast: false

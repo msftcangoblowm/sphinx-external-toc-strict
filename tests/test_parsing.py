@@ -1,3 +1,16 @@
+"""
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
+
+Unit test -- Module
+
+.. code-block:: shell
+
+   python -m coverage run --source='strict_external_toc_strict.parsing_strictyaml' -m pytest \
+   --showlocals tests/test_parsing.py && coverage report \
+   --data-file=.coverage --include="**/parsing_strictyaml.py"
+
+"""
+
 import os
 from pathlib import Path
 
@@ -25,6 +38,7 @@ TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
 def test_file_to_sitemap(path: Path, data_regression):
+    """Test parse_toc_yaml with good files."""
     site_map = parse_toc_yaml(path)
     data_regression.check(site_map.as_json())
 
@@ -33,6 +47,7 @@ def test_file_to_sitemap(path: Path, data_regression):
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
 def test_create_toc_dict(path: Path, data_regression):
+    """Test create_toc_dict with good files."""
     site_map = parse_toc_yaml(path)
     data = create_toc_dict(site_map)
     data_regression.check(data)
@@ -70,14 +85,21 @@ ERROR_MESSAGES = {
     "path", TOC_FILES_BAD, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES_BAD]
 )
 def test_malformed_file_parse(path: Path):
+    """Test parse_toc_yaml with bad files."""
     message = ERROR_MESSAGES[path.name]
     with pytest.raises(MalformedError, match=message):
         parse_toc_yaml(path)
 
 
 testdata_parse_toc_yaml_bad_input = [
-    None,
-    1.12345,
+    (
+        None,
+        pytest.raises(ValueError),
+    ),
+    (
+        1.12345,
+        pytest.raises(ValueError),
+    ),
 ]
 ids_parse_toc_yaml_bad_input = [
     "data source None",
@@ -86,12 +108,13 @@ ids_parse_toc_yaml_bad_input = [
 
 
 @pytest.mark.parametrize(
-    "path",
+    "path, expectation",
     testdata_parse_toc_yaml_bad_input,
     ids=ids_parse_toc_yaml_bad_input,
 )
-def test_parse_toc_yaml_bad_input(path):
-    with pytest.raises(ValueError):
+def test_parse_toc_yaml_bad_input(path, expectation):
+    """Test parse_toc_yaml."""
+    with expectation:
         parse_toc_yaml(path)
 
 
@@ -174,9 +197,18 @@ def test_affinity_val(key, val, mapping, expected):
 
 
 testdata_parse_toc_data = [
-    ({"defaults": {"caption": 1.12345}}),
-    ({"defaults": {"maxdepth": 1.12345}}),
-    ({"defaults": {"maxdepth": 1}, "root": "intro", "meta": {"unknown": 1.12345}}),
+    (
+        {"defaults": {"caption": 1.12345}},
+        pytest.raises(MalformedError),
+    ),
+    (
+        {"defaults": {"maxdepth": 1.12345}},
+        pytest.raises(MalformedError),
+    ),
+    (
+        {"defaults": {"maxdepth": 1}, "root": "intro", "meta": {"unknown": 1.12345}},
+        pytest.raises(MalformedError),
+    ),
 ]
 ids_parse_toc_data = [
     "Field value unexpected",
@@ -186,12 +218,14 @@ ids_parse_toc_data = [
 
 
 @pytest.mark.parametrize(
-    "data",
+    "data, expectation",
     testdata_parse_toc_data,
     ids=ids_parse_toc_data,
 )
-def test_parse_toc_data(data):
-    with pytest.raises(MalformedError):
+def test_parse_toc_data(data, expectation):
+    """Test parse_toc_data."""
+    # pytest --showlocals --log-level INFO -k "test_parse_toc_data" tests
+    with expectation:
         parse_toc_data(data)
 
 

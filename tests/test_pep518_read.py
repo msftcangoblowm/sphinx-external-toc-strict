@@ -1,17 +1,13 @@
 """
-.. module:: tests.util.test_pep518_read
-   :platform: Unix
-   :synopsis: pyproject.toml read table sections
+.. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-.. moduleauthor:: Dave Faulkmore <faulkmore telegram>
+Unit test -- Module
 
-..
+.. code-block:: shell
 
-.. seealso::
-
-   coverage/inorout.py:523: CoverageWarning: Module logging_strict was previously
-   imported, but not measured (module-not-measured)
-   https://stackoverflow.com/a/18104544
+   python -m coverage run --source='strict_external_toc_strict.pep518_read' -m pytest \
+   --showlocals tests/test_pep518_read.py && coverage report \
+   --data-file=.coverage --include="**/pep518_read.py"
 
 """
 
@@ -37,7 +33,10 @@ else:  # pragma: no cover
 
 
 class Pep518Sections(unittest.TestCase):
+    """Pep518 sections tests."""
+
     def setUp(self):
+        """Setup unittest. cwd and tests folder paths."""
         if "__pycache__" in __file__:
             # cached
             self.path_tests = Path(__file__).parent.parent

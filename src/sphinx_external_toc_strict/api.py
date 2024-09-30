@@ -37,14 +37,21 @@ Even if using markdown, the root index file **must be** ``index.rst``
 
 from __future__ import annotations
 
-import sys
+import glob
 from dataclasses import (
     asdict,
     dataclass,
 )
+from pathlib import Path
 from typing import (
     Any,
     Union,
+)
+
+from sphinx.util.matching import (
+    Matcher,
+    patfilter,
+    patmatch,
 )
 
 from ._compat import (
@@ -60,10 +67,12 @@ from .constants import (
     URL_PATTERN,
     use_cases,
 )
+from .filename_suffix import stem_natural
+from .sphinx_node import query_intersphinx
 
-if sys.version_info >= (3, 9):
+try:
     from collections.abc import MutableMapping
-else:
+except (ModuleNotFoundError, ImportError):  # pragma: no cover
     from typing import MutableMapping
 
 
@@ -74,18 +83,60 @@ class FileItem(str):
     source directory, and can be with or without an extension.
     """
 
+    def render(self, site_map):
+        """Supply Sphinx a tuple to render this toctree item.
+
+        :param site_map:
+
+           Retrieves file title from
+           :py:class:`~sphinx_external_toc_strict.api.SiteMap` entry
+
+        :type site_map: sphinx_external_toc_strict.api.SiteMap
+        :returns: Generator of Sphinx renderable items' tuple
+        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        """
+        child_doc_item = site_map[self]
+        docname = str(self)
+        title = child_doc_item.title
+        # docname = remove_suffix(docname, app.config.source_suffix)
+        docname = stem_natural(docname)
+
+        ret = (title, docname)
+        yield ret
+
 
 class GlobItem(str):
     """A document glob in a toctree list."""
+
+    def render(self, all_docnames):
+        """Supply Sphinx a generator of tuple to render these toctree items.
+
+        :param all_docnames: All docnames in SiteMap
+        :type all_docnames: collections.abc.Iterable[str]
+        :returns: Generator of Sphinx renderable items' tuple
+        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        """
+        patname = str(self)
+        docnames = sorted(patfilter(all_docnames, patname))
+        for doc_name in docnames:
+            ret = (None, doc_name)
+            yield ret
 
 
 @dataclass(**DC_SLOTS)
 class UrlItem:
     """A URL in a toctree
+
     :ivar url: URL str
     :vartype url: str
     :ivar title: Title shown rather than the raw URL
-    :vartype title: sre | None
+    :vartype title: str | None
+
+    :raises:
+
+       - :py:exc:`TypeError` -- Unexpected type. Expecting a str (or None for title)
+       - :py:exc:`ValueError` -- Not a url. Expecting prefix like ``https://``
+
     .. note: url pattern
 
        regex should match sphinx.util.url_re
@@ -96,7 +147,61 @@ class UrlItem:
     title: str | None = field(default=None, validator=optional(instance_of(str)))
 
     def __post_init__(self):
+        """Run field validation after class instantiation."""
         validate_fields(self)
+
+    def render(self):
+        """Supply Sphinx a tuple to render this toctree item.
+
+        :returns: Generator of Sphinx renderable items' tuple
+        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        """
+        ret = (self.title, self.url)
+        yield ret
+
+
+@dataclass(**DC_SLOTS)
+class RefItem:
+    """Queries intersphinx inventories for docname and url.
+
+    :ivar ref_id:
+
+       Usually for a std:label, a reference id. e.g. ``gh_great_page:main``
+       Should be an existing entry within an intersphinx inventory.
+
+    :vartype ref_id: str
+    """
+
+    ref_id: str = field(validator=[instance_of(str)])
+    title: str | None = field(default=None, validator=optional(instance_of(str)))
+
+    def __post_init__(self):
+        """Run field validation after class instantiation."""
+        validate_fields(self)
+
+    def render(self, app):
+        """Supply Sphinx a tuple to render this toctree item.
+        Retrieves docname and url by
+
+        :param app: sphinx instance
+        :type: sphinx.application.Sphinx
+        :returns: Generator of Sphinx renderable items' tuple
+        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        """
+        rendering_adjust = self.title if self.title is not None else self.ref_id
+
+        t_out = query_intersphinx(app, self.ref_id, contents=rendering_adjust)
+        assert isinstance(t_out, tuple)
+        title, url = t_out
+
+        is_title_provided = (
+            self.title is not None
+            and isinstance(self.title, str)
+            and len(self.title.strip()) != 0
+        )
+        ret = (self.title, url) if is_title_provided else (title, url)
+
+        yield ret
 
 
 @dataclass(**DC_SLOTS)
@@ -104,7 +209,7 @@ class TocTree:
     """An individual toctree within a document
 
     :ivar items: List of one ToC level's items: glob, file, or url
-    :vartype items: list[sphinx_external_toc_strict.api.GlobItem | sphinx_external_toc_strict.api.FileItem | sphinx_external_toc_strict.api.UrlItem]
+    :vartype items: list[sphinx_external_toc_strict.api.GlobItem | sphinx_external_toc_strict.api.FileItem | sphinx_external_toc_strict.api.UrlItem, sphinx_external_toc_strict.api.RefItem]
     :ivar caption: Default None. This ToC level's caption
     :vartype caption: str | None
     :ivar hidden: Default True. Whether to show the ToC within (inline of) the document
@@ -135,9 +240,9 @@ class TocTree:
     """
 
     # TODO validate uniqueness of docnames (at least one item)
-    items: list[GlobItem | FileItem | UrlItem] = field(
+    items: list[GlobItem | FileItem | UrlItem | RefItem] = field(
         validator=deep_iterable(
-            instance_of((GlobItem, FileItem, UrlItem)), instance_of(list)
+            instance_of((GlobItem, FileItem, UrlItem, RefItem)), instance_of(list)
         )
     )
     caption: str | None = field(
@@ -152,6 +257,7 @@ class TocTree:
     titlesonly: bool = field(default=False, kw_only=True, validator=instance_of(bool))
 
     def __post_init__(self):
+        """Run field validation after class instantiation."""
         validate_fields(self)
 
     def files(self):
@@ -200,6 +306,7 @@ class Document:
     title: str | None = field(default=None, validator=optional(instance_of(str)))
 
     def __post_init__(self) -> None:
+        """Run field validation after class instantiation."""
         validate_fields(self)
 
     def child_files(self):
@@ -240,6 +347,7 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         meta: dict[str, Any] | None = None,
         file_format: str | None = None,
     ) -> None:
+        """Class constructor."""
         self._docs: dict[str, Document] = {}
         self[root.docname] = root
         self._root: Document = root
@@ -309,6 +417,69 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         :rtype: set[str]
         """
         return {glob for item in self._docs.values() for glob in item.child_globs()}
+
+    def match_globs(self, posix_no_suffix):
+        """Within sitemap, check file relative path matches one of the globs.
+
+        :param posix_no_suffix: relative path without suffix to a file within the sitemap
+        :type posix_no_suffix: str
+        :returns: True if matches one of the globs
+        :rtype: bool
+        """
+        ret = any(patmatch(posix_no_suffix, pat) for pat in self.globs())
+        return ret
+
+    def new_excluded(self, srcdir, cfg_source_suffix, cfg_exclude_patterns):
+        """Inspect the files in the site. Create a list of excluded files
+
+        - not in sitemap (with or w/o extension)
+        - already excludes
+        - not included by globs
+
+        :param srcdir: Destination ``docs/`` folder
+        :type srcdir: str | pathlib.Path
+        :param cfg_source_suffix: Document file suffixes config setting
+        :type cfg_source_suffix: collections.abc.Sequence[str]
+        :param cfg_exclude_patterns: glob patterns of documents to exclude
+        :type cfg_exclude_patterns: collections.abc.Sequence[str]
+        :returns: list of documents to exclude
+        :rtype: collections.abc.Sequence[str]
+        """
+        new_excluded = []
+        already_excluded = Matcher(cfg_exclude_patterns)
+        for suffix in cfg_source_suffix:
+            # recurse files in source directory, with this suffix, note
+            # we do not use `Path.glob` here, since it does not ignore hidden files:
+            # https://stackoverflow.com/questions/49862648/why-do-glob-glob-and-pathlib-path-glob-treat-hidden-files-differently
+            for path_str in glob.iglob(
+                str(Path(srcdir) / "**" / f"*{suffix}"), recursive=True
+            ):
+                path = Path(path_str)
+                if not path.is_file():  # pragma: no cover
+                    continue
+                else:  # pragma: no cover
+                    pass
+                posix = path.relative_to(srcdir).as_posix()
+                posix_no_suffix = posix[: -len(suffix)]
+                components = posix.split("/")
+                if not (
+                    # files can be stored with or without suffixes
+                    posix in self
+                    or posix_no_suffix in self
+                    # ignore anything already excluded, we have to check against
+                    # the file path and all its sub-directory paths
+                    or any(
+                        already_excluded("/".join(components[: i + 1]))
+                        for i in range(len(components))
+                    )
+                    # don't exclude docnames matching globs
+                    or self.match_globs(posix_no_suffix)
+                ):
+                    new_excluded.append(posix)
+                else:  # pragma: no cover
+                    pass
+
+        return new_excluded
 
     def __getitem__(self, docname):
         """Enable retrieving a document by name using the indexing operator.

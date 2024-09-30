@@ -1,3 +1,5 @@
+"""Creating sitemap from toc or path."""
+
 from __future__ import annotations
 
 import re
@@ -52,7 +54,7 @@ def _default_affinity(additional_files, default_ext):
     Rather than fix the setting, be able to override it on the fly
 
     :param additional_files: Files specified in yaml meta section --> ``create_files``
-    :type additional_files: collections.abc.Sequence[str]
+    :type additional_files: collections.abc.Sequence[str] | collections.abc.MutableSet[str]
     :param default_ext: **A** default ext specified in config option, ``source_suffix``
     :type default_ext: str
     :returns: By looking thru the create_files, the file extension is actually used
@@ -113,7 +115,7 @@ def create_site_from_toc(
     :type default_ext: str | None
     :param encoding: encoding for writing files
     :type encoding:  str | None
-    :param overwrite: overwrite existing files (otherwise raise ``IOError``)
+    :param overwrite: overwrite existing files (otherwise raise ``OSError``)
     :type overwrite: bool | None
     :param toc_name: copy ToC file to root with this name
     :type toc_name: str | None
@@ -121,32 +123,74 @@ def create_site_from_toc(
     :rtype: sphinx_external_toc_strict.api.SiteMap
     :raises:
 
-       - :py:exc:`IOError` -- Path already exists
+       - :py:exc:`OSError` -- Path already exists
 
     """
+    msg_path_exists = "Path already exists: {}"
     assert default_ext in {".rst", ".md"}
+
+    # SiteMap
     site_map = parse_toc_yaml(toc_path)
 
-    root_path = Path(toc_path).parent if root_path is None else Path(root_path)
-    root_path.mkdir(parents=True, exist_ok=True)
-
-    # retrieve and validate meta variables
+    #    retrieve and validate meta variables
     additional_files = site_map.meta.get("create_files", [])
-
-    # check create_files, if a file extension specified. If so, use that not default_ext
-    default_affinity = _default_affinity(additional_files, default_ext)
-
     assert isinstance(additional_files, Sequence), "'create_files' should be a list"
+
     append_text = site_map.meta.get("create_append", {})
     assert isinstance(append_text, Mapping), "'create_append' should be a mapping"
 
-    # copy toc file to root
+    # The ``create`` in ``create_append`` implies a :code:`touch [file]` will occur.
+    # Do not also require a ``create_files`` entry.
+    # ``create_files`` by itself, creates an empty file.
+    set_additionals = set()
+    set_additionals.update(append_text.keys())
+    set_additionals.update(additional_files)
+
+    # toc
+    root_path = Path(toc_path).parent if root_path is None else Path(root_path)
+    root_path.mkdir(parents=True, exist_ok=True)
+
+    #    copy --> root folder
     if toc_name and not root_path.joinpath(toc_name).exists():
         shutil.copyfile(toc_path, root_path.joinpath(toc_name))
 
-    # create files
+    # non-document files
+    # Wouldn't be in site_map. Could be in create_files (and create_append)
+    what_about_these = ("Makefile", "conf.py")
+
+    #    cannot iterate and remove at same time
+    # set_additionals_orig = set_additionals.copy()
+
+    for filename in set_additionals:
+        if filename in what_about_these:
+            additional_files.remove(filename)
+            docpath = root_path.joinpath(PurePosixPath(filename))
+            if docpath.exists() and not overwrite:
+                raise OSError(msg_path_exists.format(docpath))
+            else:  # pragma: no cover
+                pass
+            docpath.parent.mkdir(parents=True, exist_ok=True)
+
+            content = []
+
+            # append extra text
+            extra_lines = append_text.get(filename, "").splitlines()
+            if extra_lines:
+                content.extend(extra_lines + [""])
+            else:  # pragma: no cover
+                pass
+
+            # note \n works when writing for all platforms:
+            # https://docs.python.org/3/library/os.html#os.linesep
+            docpath.write_text("\n".join(content), encoding=encoding)
+        else:  # pragma: no cover
+            pass
+
+    # create documents
+    #    check create_files, if a file extension specified. If so, use that not default_ext
+    default_affinity = _default_affinity(set_additionals, default_ext)
+
     for docname in chain(site_map, additional_files):
-        # create document
         filename = docname
         is_unknown_ext = not any(docname.endswith(ext) for ext in {".rst", ".md"})
         if is_unknown_ext is True:
@@ -157,7 +201,9 @@ def create_site_from_toc(
 
         docpath = root_path.joinpath(PurePosixPath(filename))
         if docpath.exists() and not overwrite:
-            raise IOError(f"Path already exists: {docpath}")
+            raise OSError(msg_path_exists.format(docpath))
+        else:  # pragma: no cover
+            pass
         docpath.parent.mkdir(parents=True, exist_ok=True)
 
         content = []
@@ -191,7 +237,7 @@ def site_map_guess_titles(
     """In _toc.yml if titles in files, option can take titles from file names
 
     :param site_map: site map. Later converted into toc
-    :type site_map: SiteMap
+    :type site_map: sphinx_external_toc_strict.api.SiteMap
     :param index: File stem of root file. Coding convention is ``index``
     :type index: str
     :param is_guess: Default False. True to take titles from file names
@@ -254,7 +300,7 @@ def create_site_map_from_path(
     :param file_format: Default None. File format if specified
     :type file_format: str | None
     :returns: Site map created from folder tree starting at ``root_path``
-    :rtype: SiteMap
+    :rtype: sphinx_external_toc_strict.api.SiteMap
     :raises:
 
        - :py:exc:`NotADirectoryError` -- root folder is not a folder
@@ -332,7 +378,8 @@ def _doc_item_from_path(
     default_index,
     ignore_matches,
 ):
-    """Return the ``Document`` and children folders that contain an index.
+    """Return the :py:class:`sphinx_external_toc_strict.api.Document`
+    and children folders that contain an index.
 
     :param root: Path of root file
     :type root: pathlib.Path
@@ -355,7 +402,7 @@ def _doc_item_from_path(
        tuple containing: Document, list of sub_folder, child_index,
        child_files, child_folders
 
-    :rtype: tuple[Document, list[tuple[pathlib.Path, str, collections.abc.Sequence[str], collections.abc.Sequence[str]]]]
+    :rtype: tuple[sphinx_external_toc_strict.api.Document, list[tuple[pathlib.Path, str, collections.abc.Sequence[str], collections.abc.Sequence[str]]]]
     :meta private:
     """
     file_items = [
@@ -406,9 +453,24 @@ def natural_sort(iterable):
     """
 
     def _convert(text: str) -> int | str:
+        """So as to have a natural sort occur, convert digit to int.
+        And lowercase any str.
+
+        :param text: A text str
+        :type text: str
+        :returns: Output that is easier to sort
+        :rtype: int | str
+        """
         return int(text) if text.isdigit() else text.lower()
 
     def _alphanum_key(key: str) -> list[int | str]:
+        """Converter for int chars
+
+        :param key: A char
+        :type key: str
+        :returns: list containing both int and str characters
+        :rtype: list[int | str]
+        """
         return [_convert(c) for c in re.split("([0-9]+)", key)]
 
     return sorted(iterable, key=_alphanum_key)

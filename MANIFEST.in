@@ -1,0 +1,2 @@
+prune tests/roots/test-root/_build
+prune tests/roots/test-skeleton/_build

@@ -53,7 +53,14 @@ def main():
 
 
 @main.command("parse")
-@click.argument("toc_file", type=click.Path(exists=True, file_okay=True))
+@click.argument(
+    "toc_file",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        path_type=Path,
+    ),
+)
 def parse_toc(toc_file):
     """Parse a ToC file to a site-map YAML
 
@@ -69,12 +76,24 @@ def parse_toc(toc_file):
 
 
 @main.command("to-project")
-@click.argument("toc_file", type=click.Path(exists=True, file_okay=True))
+@click.argument(
+    "toc_file",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        path_type=Path,
+    ),
+)
 @click.option(
     "-p",
     "--path",
     default=None,
-    type=click.Path(exists=False, file_okay=False, dir_okay=True),
+    type=click.Path(
+        exists=False,
+        file_okay=False,
+        dir_okay=True,
+        path_type=Path,
+    ),
     help="The root directory [default: ToC file directory].",
 )
 @click.option(
@@ -126,7 +145,7 @@ def create_site(toc_file, path, extension, overwrite):
             default_ext=default_ext,
             overwrite=overwrite,
         )
-    except IOError:
+    except OSError:
         msg_err = "Existing file found. Overwrite permission not granted"
         click.secho(msg_err, fg="green")
     else:
@@ -135,7 +154,13 @@ def create_site(toc_file, path, extension, overwrite):
 
 @main.command("from-project")
 @click.argument(
-    "site_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True)
+    "site_dir",
+    type=click.Path(
+        exists=True,
+        file_okay=False,
+        dir_okay=True,
+        path_type=Path,
+    ),
 )
 @click.option(
     "-e",
@@ -220,7 +245,14 @@ def create_toc(site_dir, extension, index, skip_match, guess_titles, file_format
 
 
 @main.command("migrate")
-@click.argument("toc_file", type=click.Path(exists=True, file_okay=True))
+@click.argument(
+    "toc_file",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        path_type=Path,
+    ),
+)
 @click.option(
     "-f",
     "--format",
@@ -230,7 +262,13 @@ def create_toc(site_dir, extension, index, skip_match, guess_titles, file_format
 @click.option(
     "-o",
     "--output",
-    type=click.Path(allow_dash=True, exists=False, file_okay=True, dir_okay=False),
+    type=click.Path(
+        allow_dash=True,
+        exists=False,
+        file_okay=True,
+        dir_okay=False,
+        path_type=Path,
+    ),
     help="Write to a file path.",
 )
 def migrate_toc(toc_file, format, output):
@@ -244,14 +282,14 @@ def migrate_toc(toc_file, format, output):
     :type output: pathlib.Path
     """
 
-    toc = migrate_jupyter_book(Path(toc_file))
+    toc = migrate_jupyter_book(toc_file)
     # content = yaml.dump(toc, sort_keys=False, default_flow_style=False)
     content = dump_yaml(toc)
 
     if output:
-        path = Path(output)
-        path.parent.mkdir(exist_ok=True, parents=True)
-        path.write_text(content, encoding="utf8")
-        click.secho(f"Written to: {path}", fg="green")
+        path_out = output
+        path_out.parent.mkdir(exist_ok=True, parents=True)
+        path_out.write_text(content, encoding="utf8")
+        click.secho(f"Written to: {path_out!s}", fg="green")
     else:
         click.echo(content)

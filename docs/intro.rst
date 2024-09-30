@@ -14,7 +14,7 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 
 .. PYVERSIONS
 
-* Python 3.9 through 3.12, and 3.13.0a3 and up.
+* Python 3.10 through 3.12, and 3.13.0a3 and up.
 
 **New in 1.2.x:**
 
@@ -35,14 +35,15 @@ sphinx-external-toc-strict is a fork of sphinx-external-toc
    :header: "Matric", "TOC", "TOC-Strict"
    :widths: auto
 
+   "intersphinx support", "No", "Yes!"
    "yaml package", `pyyaml / yaml <https://hitchdev.com/strictyaml/why-not/>`_, `strictyaml / ruemel.yaml <https://hitchdev.com/strictyaml/why/>`_
    ".hidden.files.rst", "Yes", "No"
    "docs theme", `sphinx-book-theme <https://sphinx-book-theme.readthedocs.io/en/latest>`_, `alabaster <https://alabaster.readthedocs.io/en/latest/>`_
    "markdown support", "Yes", "Yes"
    "both", `No <https://github.com/executablebooks/sphinx-external-toc/#development-notes>`_, "Yes, root doc must be ``index.rst``"
    "dump yaml", "use yaml.dump", :py:func:`parsing_strictyaml.dump_yaml <sphinx_external_toc_strict.parsing_strictyaml.dump_yaml>`
-   "static type checking", "patchy", "Yes (99%)"
-   "coverage", "patchy", "maximium"
+   "static type checking", "patchy", "100%"
+   "coverage", "patchy", "90%+"
    "in-code manual", "No", "Yes"
 
 The core APIs should be compatible. To avoid confusion, on the command

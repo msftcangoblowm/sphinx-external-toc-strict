@@ -54,6 +54,7 @@ from .api import (
     Document,
     FileItem,
     GlobItem,
+    RefItem,
     SiteMap,
     TocTree,
     UrlItem,
@@ -62,6 +63,7 @@ from .constants import (
     FILE_FORMAT_KEY,
     FILE_KEY,
     GLOB_KEY,
+    REF_KEY,
     ROOT_KEY,
     TOCTREE_OPTIONS,
     URL_KEY,
@@ -408,7 +410,7 @@ def _parse_doc_item(
     else:
         subtrees_data = []
 
-    _known_link_keys = {FILE_KEY, GLOB_KEY, URL_KEY}
+    _known_link_keys = {FILE_KEY, GLOB_KEY, URL_KEY, REF_KEY}
 
     toctrees = []
     for toc_idx, toc_data in enumerate(subtrees_data):
@@ -425,7 +427,7 @@ def _parse_doc_item(
             raise MalformedError(f"'{items_key}' not a non-empty list @ '{toc_path}'")
 
         # generate items list
-        items: list[GlobItem | FileItem | UrlItem] = []
+        items: list[GlobItem | FileItem | UrlItem | RefItem] = []
         for item_idx, item_data in enumerate(items_data):
             if not isinstance(item_data, Mapping):
                 raise MalformedError(
@@ -445,7 +447,7 @@ def _parse_doc_item(
                     f"entry contains incompatible keys "
                     f"{link_keys!r} @ '{toc_path}{items_key}/{item_idx}'"
                 )
-            for item_key in (GLOB_KEY, URL_KEY):
+            for item_key in (GLOB_KEY, URL_KEY, REF_KEY):
                 for other_key in (subtrees_key, items_key):
                     if link_keys == {item_key} and other_key in item_data:
                         raise MalformedError(
@@ -460,6 +462,8 @@ def _parse_doc_item(
                     items.append(GlobItem(item_data[GLOB_KEY]))
                 elif link_keys == {URL_KEY}:
                     items.append(UrlItem(item_data[URL_KEY], item_data.get("title")))
+                elif link_keys == {REF_KEY}:
+                    items.append(RefItem(item_data[REF_KEY], item_data.get("title")))
                 else:  # pragma: no cover unknown link key already handled
                     pass
             except (ValueError, TypeError) as exc:

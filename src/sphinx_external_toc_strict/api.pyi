@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import (
+    Iterable,
+    Sequence,
+)
 from dataclasses import dataclass
+from pathlib import Path
 from typing import (
     Any,
     Union,
@@ -19,11 +24,15 @@ from .constants import URL_PATTERN
 
 if sys.version_info >= (3, 9):
     from collections.abc import (
+        Generator,
+        Iterable,
         Iterator,
         MutableMapping,
     )
 else:
     from typing import (
+        Generator,
+        Iterable,
         Iterator,
         MutableMapping,
     )
@@ -33,8 +42,17 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-class FileItem(str): ...
-class GlobItem(str): ...
+class FileItem(str):
+    def render(
+        self,
+        site_map: SiteMap,
+    ) -> Generator[tuple[str, str], None, None]: ...
+
+class GlobItem(str):
+    def render(
+        self,
+        all_docnames: Iterable[str],
+    ) -> Generator[tuple[str, str], None, None]: ...
 
 @dataclass(**DC_SLOTS)
 class UrlItem:
@@ -42,6 +60,7 @@ class UrlItem:
     title: str | None = field(default=None, validator=optional(instance_of(str)))
 
     def __post_init__(self) -> None: ...
+    def render(self) -> Generator[tuple[str, str], None, None]: ...
 
 @dataclass(**DC_SLOTS)
 class TocTree:
@@ -94,6 +113,13 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
     @file_format.setter
     def file_format(self, val: str | None) -> None: ...
     def globs(self) -> set[str]: ...
+    def match_globs(self, posix_no_suffix: str) -> bool: ...
+    def new_excluded(
+        self,
+        srcdir: str | Path,
+        cfg_source_suffix: Sequence[str],
+        cfg_exclude_patterns: Sequence[str],
+    ) -> Sequence[str]: ...
     def __getitem__(self, docname: str) -> Document: ...
     def __setitem__(self, docname: str, item: Document) -> None: ...
     def __delitem__(self, docname: str) -> None: ...

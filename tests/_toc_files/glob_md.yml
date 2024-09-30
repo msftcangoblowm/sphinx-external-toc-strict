@@ -42,5 +42,6 @@ meta:
   - doc1.md
   - doc2.md
   - doc3.md
+  - conf.py
   exclude_missing: true
   regress: intro

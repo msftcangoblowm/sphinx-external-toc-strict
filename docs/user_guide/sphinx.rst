@@ -134,6 +134,101 @@ can set an alternative title for a document. and also for ``url``:
      - url: https://example.com
        title: Example URL Title
 
+External URLs
+^^^^^^^^^^^^^^
+
+``intersphinx_mapping`` contains the base url(s). This is found in ``docs/conf.py``.
+
+``sphinx.ext.intersphinx`` inventories contain the ``std:label`` entries;
+the rest of the url.
+
+Placing urls in the ``_toc.yml`` is still supported. For those who avoided the
+learning curve and are not looking to use intersphinx, ``url:`` is not going away.
+
+``ref:`` is now preferred over ``url:``. intersphinx is made for managing all the
+urls in our documentation. Use it!
+
+This is how external urls are stored. For internal docs, use ``file:``.
+
+The ``title:`` is optional. If not provided, the title is taken from the
+inventory entry. In the example, the title would become, ``The Julia Domain``.
+
+Sphinx inventory v2
+
+.. code-block:: text
+
+   Sphinx inventory version 2
+   Project: foo
+   Version: 2.0
+   The remainder of this file is compressed with zlib.
+   The-Julia-Domain std:label -1 write_inventory/#$ The Julia Domain
+
+^^ write this into ``docs/objects-test.txt``
+
+.. code:: shell
+
+   cd docs
+   sphobjinv co -q zlib objects-test.txt objects.test.inv
+
+_toc.yml
+
+.. code:: yaml
+
+   root: intro
+   subtrees:
+   - entries:
+     - file: doc1
+       title: Document 1 Title
+     - ref: The-Julia-Domain
+       title: btw who is Julia?
+
+Create files: ``docs/doc1.rst`` and ``docs/intro.rst``. Empty files ... ok.
+
+conf.py
+
+.. code-block:: text
+
+   extensions = [
+       "sphinx_external_toc_strict",
+       "sphinx.ext.intersphinx",
+       "myst-parser",
+   ]
+   master_doc = intro
+   source_suffix = [".md", ".rst"]
+   intersphinx_mapping = {
+       "python": (
+            "https://docs.python.org/3",
+            ("objects-test.inv", "objects-test.txt"),
+        ),
+    }
+    myst_enable_extensions = ["colon_fence", "html_image"]
+    external_toc_exclude_missing = true
+
+Makefile not shown. Make that too.
+
+.. code-block:: shell
+
+   cd docs
+   touch doc1.rst
+   touch intro.rst
+   make html
+
+
+**KNOWN LIMITATIONS**
+
+1. Not being able to open an external URL in a new window or tab is a Sphinx limitation.
+In the TOC, an external URL not opening in a new window or tab is very confusing UX.
+
+2. When there is no inventory entry for a ``ref:``, there is no warning, the link will
+just not be displayed.
+
+The workflow should be:
+
+1. inventory entry
+2. ``ref:`` into the ``_toc.yml``
+
+`intersphinx-data <https://raw.githubusercontent.com/sphinx-doc/sphinx/refs/heads/master/tests/test_util/intersphinx_data.py>`_
+
 ToC tree options
 -----------------
 

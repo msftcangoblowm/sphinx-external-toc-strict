@@ -43,6 +43,13 @@ Seperate constants out so independent of any dependencies
    :value: "glob"
 
    Default url key
+
+.. py:data:: REF_KEY
+   :type: str
+   :value: "ref"
+
+   Default intersphinx reference id lookup key
+
 .. py:data:: URL_KEY
    :type: str
    :value: "url"
@@ -64,7 +71,7 @@ Seperate constants out so independent of any dependencies
    :type: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str]
    :value: ("g_app_name", "__version_app", "__url__", "URL_PATTERN", \
    "DEFAULT_SUBTREES_KEY", "DEFAULT_ITEMS_KEY", "FILE_FORMAT_KEY", \
-   "ROOT_KEY", "FILE_KEY", "GLOB_KEY", "URL_KEY", "TOCTREE_OPTIONS", \
+   "ROOT_KEY", "FILE_KEY", "GLOB_KEY", "REF_KEY", "URL_KEY", "TOCTREE_OPTIONS", \
    "use_cases")
 
 
@@ -87,6 +94,7 @@ __all__ = (
     "ROOT_KEY",
     "FILE_KEY",
     "GLOB_KEY",
+    "REF_KEY",
     "URL_KEY",
     "TOCTREE_OPTIONS",
     "use_cases",
@@ -104,6 +112,7 @@ FILE_FORMAT_KEY = "format"
 ROOT_KEY = "root"
 FILE_KEY = "file"
 GLOB_KEY = "glob"
+REF_KEY = "ref"
 URL_KEY = "url"
 
 TOCTREE_OPTIONS = (
