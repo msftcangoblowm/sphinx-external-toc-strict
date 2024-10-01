@@ -82,7 +82,7 @@ jobs:
       - name: "Install dependencies"
         run: |
           set -xe
-          python -m pip install pip<24.2 -r requirements/tox.pip
+          python -m pip install 'pip<24.2' -r requirements/tox.pip
 
       - name: "Run tox for ${{ matrix.python-version }}"
         run: |
