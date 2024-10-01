@@ -237,7 +237,9 @@ zipp==3.20.0
 
 # The following packages are considered to be unsafe in a requirements file:
 pip==24.0
-    # via -r requirements/pip.pip
+    # via
+    #   -r requirements/pip.pip
+    #   -r requirements/prod.unlock
 setuptools==69.2.0
     # via
     #   -r requirements/pip.pip

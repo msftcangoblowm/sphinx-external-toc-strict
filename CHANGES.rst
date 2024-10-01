@@ -26,6 +26,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix: myst-parser ruamel-yaml#521 pip#12884 solution pip<24.2
    - fix: resolve dependency conflict resolution
    - ci(test-coverage): remove pytest-cov. coverage > pytest-cov
    - chore(tox): build current not tag
