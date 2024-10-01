@@ -26,6 +26,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - chore: remove direct dependency
+
 .. scriv-start-here
 
 .. _changes_2-0-0:

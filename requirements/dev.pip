@@ -103,7 +103,7 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
-myst-parser @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
+myst-parser==4.0.0
     # via -r requirements/prod.unlock
 nh3==0.2.17
     # via readme-renderer

@@ -13,7 +13,7 @@
 #   $ cp dist/* /tmp/pypi
 #   $ python -m pip install piprepo
 #   $ piprepo build /tmp/pypi
-#   $ python -m pip install -v logging-strict --index-url=file:///tmp/pypi/simple
+#   $ python -m pip install -v sphinx-external-toc-strict --index-url=file:///tmp/pypi/simple
 #
 # Note that cibuildwheel recommends not shipping wheels for pre-release versions
 # of Python: https://cibuildwheel.readthedocs.io/en/stable/options/#prerelease-pythons
@@ -286,7 +286,7 @@ jobs:
       - name: "Sign artifacts"
         uses: sigstore/gh-action-sigstore-python@v3.0
         with:
-          inputs: logging-strict-*.*
+          inputs: sphinx-external-toc-strict-*.*
 
       - name: "List files"
         run: |

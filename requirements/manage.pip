@@ -90,7 +90,7 @@ more-itertools==10.2.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-myst-parser @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
+myst-parser==4.0.0
     # via -r requirements/prod.unlock
 nodeenv==1.8.0
     # via pre-commit
