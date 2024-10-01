@@ -16,15 +16,14 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 
 * Python 3.10 through 3.12, and 3.13.0a3 and up.
 
+**New in 2.0.x:**
+
+intersphinx support; ref > url; Sphinx py310+ drop py39;
+
 **New in 1.2.x:**
 
 create_site no overwrite and existing files informative message;
 SiteMap.file_format ignore unknown use cases; branches test Windows and MacOS;
-
-**New in 1.1.x:**
-
-fork project; drop pyyaml support transition to strictyaml; use both markdown and restructuredtext;
-code manual; semantic versioning; badges;
 
 Forked
 -------

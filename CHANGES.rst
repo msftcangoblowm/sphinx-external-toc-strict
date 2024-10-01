@@ -26,31 +26,33 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - ci: drop PyPy implementation no support by ruamel-yaml
-   - fix: remove myst-parser testing additional dependencies
-   - fix(tox): add setuptools into build environment
-   - fix: single quote pip<24.2
-   - fix(tox): install_command add constraint pip<24.2
-   - fix: pip installed early pip<24.2
-   - chore: add requirements/myst-parser.pins
-   - fix: myst-parser ruamel-yaml#521 pip#12884 solution pip<24.2
-   - fix: resolve dependency conflict resolution
-   - ci(test-coverage): remove pytest-cov. coverage > pytest-cov
-   - chore(tox): build current not tag
-   - chore(igor): remove commented out code
-   - ci(test-coverage): fix dependency relative path
-   - ci(release): python version str needs double quotes
-   - ci(python-nightly): fix deadsnakes/action actions/setup-python tags
-   - feat: sphinx drop py39 support, do the same
-   - feat: add intersphinx support. ref > url
-   - fix: myst-parser use latest commit
-   - fix: click.Path parameters receive as pathlib.Path. Previously str
-   - ci: python base version py39 --> py310
-   - docs: complete code documentation
-   - chore: add Makefile targets version-override fix-upgrade
-   - chore: remove pytest-cov dependency
-
 .. scriv-start-here
+
+.. _changes_2-0-0:
+
+Version 2.0.0 — 2024-10-01
+--------------------------
+
+- ci: drop PyPy implementation no support by ruamel-yaml
+- fix(tox): add setuptools into build environment
+- fix(tox): install_command add constraint pip<24.2
+- fix: remove myst-parser testing additional dependencies
+- chore: add requirements/myst-parser.pins
+- fix: myst-parser ruamel-yaml#521 pip#12884 solution pip<24.2
+- fix: myst-parser use latest commit
+- chore: remove pytest-cov dependency
+- ci(test-coverage): remove pytest-cov. coverage > pytest-cov
+- chore(tox): build current not tag
+- chore(igor): remove commented out code
+- ci(test-coverage): fix dependency relative path
+- ci(release): python version str needs double quotes
+- ci(python-nightly): fix deadsnakes/action actions/setup-python tags
+- feat: sphinx drop py39 support, do the same
+- feat: add intersphinx support. ref > url
+- fix: click.Path parameters receive as pathlib.Path. Previously str
+- ci: python base version py39 --> py310
+- docs: complete code documentation
+- chore: add Makefile targets version-override fix-upgrade
 
 .. _changes_1-2-3:
 
