@@ -41,8 +41,6 @@ docutils==0.21.2
     #   readme-renderer
     #   restview
     #   sphinx
-exceptiongroup==1.2.2
-    # via pytest
 filelock==3.16.1
     # via
     #   -r requirements/tox.pip
@@ -58,8 +56,6 @@ importlib-metadata==7.1.0
     # via
     #   keyring
     #   twine
-iniconfig==2.0.0
-    # via pytest
 jaraco-classes==3.4.0
     # via keyring
 jaraco-context==5.3.0
@@ -76,8 +72,6 @@ jinja2==3.1.3
     #   sphinx
 keyring==25.1.0
     # via twine
-linkify-it-py==2.0.3
-    # via myst-parser
 markdown-it-py==3.0.0
     # via
     #   -r requirements/pip.pip
@@ -96,7 +90,7 @@ more-itertools==10.2.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-myst-parser[linkify,testing-docutils] @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
+myst-parser @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
     # via -r requirements/prod.unlock
 nodeenv==1.8.0
     # via pre-commit
@@ -105,7 +99,6 @@ packaging==24.1
     #   -r requirements/pip.pip
     #   -r requirements/tox.pip
     #   pyproject-api
-    #   pytest
     #   setuptools-scm
     #   sphinx
     #   tox
@@ -119,7 +112,6 @@ platformdirs==4.3.6
 pluggy==1.5.0
     # via
     #   -r requirements/tox.pip
-    #   pytest
     #   tox
 pre-commit==3.7.0
     # via -r requirements/manage.in
@@ -128,7 +120,6 @@ pycparser==2.22
 pygments==2.18.0
     # via
     #   -r requirements/pip.pip
-    #   myst-parser
     #   readme-renderer
     #   restview
     #   rich
@@ -137,12 +128,6 @@ pyproject-api==1.8.0
     # via
     #   -r requirements/tox.pip
     #   tox
-pytest==8.3.3
-    # via
-    #   myst-parser
-    #   pytest-param-files
-pytest-param-files==0.6.0
-    # via myst-parser
 python-dateutil==2.9.0.post0
     # via strictyaml
 pyyaml==6.0.1
@@ -169,10 +154,6 @@ rich==13.8.1
     #   -r requirements/pip.pip
     #   setuptools-scm
     #   twine
-ruamel-yaml==0.18.6
-    # via pytest-param-files
-ruamel-yaml-clib==0.2.8
-    # via ruamel-yaml
 secretstorage==3.3.3
     # via keyring
 setuptools-scm[rich]==8.1.0
@@ -207,7 +188,6 @@ tomli==2.0.1 ; python_version < "3.11"
     #   -r requirements/pip.pip
     #   -r requirements/tox.pip
     #   pyproject-api
-    #   pytest
     #   setuptools-scm
     #   sphinx
     #   tox
@@ -219,8 +199,6 @@ tox-gh==1.4.1
     # via -r requirements/tox.pip
 twine==5.0.0
     # via -r requirements/manage.in
-uc-micro-py==1.0.3
-    # via linkify-it-py
 urllib3==2.2.1
     # via
     #   requests

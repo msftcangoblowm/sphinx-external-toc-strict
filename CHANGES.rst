@@ -26,6 +26,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix: remove myst-parser testing additional dependencies
    - fix(tox): add setuptools into build environment
    - fix: single quote pip<24.2
    - fix(tox): install_command add constraint pip<24.2

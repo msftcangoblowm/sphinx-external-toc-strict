@@ -3,4 +3,5 @@ strictyaml
 docutils>=0.21.2
 sphinx>=8,<9
 pip<24.2
-myst-parser[linkify,testing-docutils] @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
+# [linkify,testing-docutils]
+myst-parser @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1
