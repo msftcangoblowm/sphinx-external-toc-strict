@@ -26,6 +26,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - ci: drop PyPy implementation no support by ruamel-yaml
    - fix: remove myst-parser testing additional dependencies
    - fix(tox): add setuptools into build environment
    - fix: single quote pip<24.2

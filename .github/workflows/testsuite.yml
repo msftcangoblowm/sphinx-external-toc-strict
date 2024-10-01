@@ -52,7 +52,9 @@ jobs:
           - "3.11"
           - "3.12"
           - "3.13"
-          - "pypy-3.10"
+          # https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/__init__.py
+          # ruamel-yaml does not support PyPy
+          # - "pypy-3.10"
       fail-fast: false
 
     steps:
