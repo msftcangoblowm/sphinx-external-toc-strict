@@ -26,6 +26,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - update rtd config file py39 --> py310
+
 .. scriv-start-here
 
 .. _changes_2-0-0p0:
