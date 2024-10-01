@@ -26,6 +26,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix: resolve dependency conflict resolution
+   - ci(test-coverage): remove pytest-cov. coverage > pytest-cov
    - chore(tox): build current not tag
    - chore(igor): remove commented out code
    - ci(test-coverage): fix dependency relative path

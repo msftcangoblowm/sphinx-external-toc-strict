@@ -12,24 +12,43 @@ html5lib==1.1
     # via get-pypi-latest-version
 idna==3.10
     # via requests
+markdown-it-py==3.0.0
+    # via
+    #   -r requirements/pip.pip
+    #   rich
+mdurl==0.1.2
+    # via
+    #   -r requirements/pip.pip
+    #   markdown-it-py
 packaging==24.1
     # via
+    #   -r requirements/pip.pip
     #   build
     #   setuptools-scm
 pip-tools==7.4.1
     # via -r requirements/pip-tools.in
+pygments==2.18.0
+    # via
+    #   -r requirements/pip.pip
+    #   rich
 pyproject-hooks==1.0.0
     # via
     #   build
     #   pip-tools
 requests==2.32.3
     # via get-pypi-latest-version
-setuptools-scm==8.1.0
-    # via -r requirements/pip.in
+rich==13.8.1
+    # via
+    #   -r requirements/pip.pip
+    #   setuptools-scm
+setuptools-scm[rich]==8.1.0
+    # via -r requirements/pip.pip
 six==1.16.0
     # via html5lib
-tomli==2.0.1
+tomli==2.0.1 ; python_version < "3.11"
     # via
+    #   -c requirements/pins.pip
+    #   -r requirements/pip.pip
     #   build
     #   pip-tools
     #   pyproject-hooks
@@ -42,13 +61,13 @@ wheel==0.43.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==24.2
+pip==24.0
     # via
-    #   -r requirements/pip.in
+    #   -r requirements/pip.pip
     #   get-pypi-latest-version
     #   pip-tools
-setuptools==75.1.0
+setuptools==69.2.0
     # via
-    #   -r requirements/pip.in
+    #   -r requirements/pip.pip
     #   pip-tools
     #   setuptools-scm

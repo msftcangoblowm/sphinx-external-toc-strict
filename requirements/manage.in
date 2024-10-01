@@ -10,6 +10,7 @@
 -c pins.pip
 -r prod.unlock
 -r tox.pip
+-r pip.pip  # avoid setuptools conflict
 
 twine           # pypi.org
 pre-commit

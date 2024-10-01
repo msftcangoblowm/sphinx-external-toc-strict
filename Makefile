@@ -64,8 +64,8 @@ _upgrade:
 ifeq ($(is_venv),1)
   ifeq ($(is_piptools), pip-tools)
 	@pip install --quiet --disable-pip-version-check -r requirements/pip-tools.pip
-	$(PIP_COMPILE) -o requirements/pip-tools.pip requirements/pip-tools.in
 	$(PIP_COMPILE) -o requirements/pip.pip requirements/pip.in
+	$(PIP_COMPILE) -o requirements/pip-tools.pip requirements/pip-tools.in
 	$(PIP_COMPILE) -o requirements/kit.pip requirements/kit.in
 	$(PIP_COMPILE) --no-strip-extras -o requirements/mypy.pip requirements/mypy.in
 	$(PIP_COMPILE) --no-strip-extras -o requirements/tox.pip requirements/tox.in

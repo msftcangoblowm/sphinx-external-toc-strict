@@ -208,8 +208,9 @@ sphobjinv==2.3.1.1
     # via -r requirements/dev.in
 strictyaml==1.7.3
     # via -r requirements/prod.unlock
-tomli==2.0.1
+tomli==2.0.1 ; python_version < "3.11"
     # via
+    #   -c requirements/pins.pip
     #   black
     #   blackdoc
     #   flake8-pyproject

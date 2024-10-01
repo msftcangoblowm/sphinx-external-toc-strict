@@ -2,7 +2,7 @@
 # For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
 
 -c pins.pip
--r pip.in
+-r pip.pip  # avoid setuptools conflict
 
 # "make upgrade-one package=pip-tools"
 # "make upgrade" turns this into requirements/pip-tools.pip

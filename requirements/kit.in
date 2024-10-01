@@ -9,8 +9,9 @@
 auditwheel
 build
 cibuildwheel  # .github/workflows/kit.yml
+# setuptools-scm[rich] @ git+https://github.com/pypa/setuptools-scm.git@d665621e25f091c0de5cd35b3d57cc00bd26e260
+setuptools-scm[rich]
 setuptools
-setuptools-scm  # versioning
 wheel
 
 # Build has a windows-only dependency on colorama:

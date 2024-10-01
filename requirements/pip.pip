@@ -1,11 +1,19 @@
+markdown-it-py==3.0.0
+    # via rich
+mdurl==0.1.2
+    # via markdown-it-py
 packaging==24.1
     # via setuptools-scm
-setuptools-scm==8.0.4
+pygments==2.18.0
+    # via rich
+rich==13.8.1
+    # via setuptools-scm
+setuptools-scm[rich]==8.1.0
     # via -r requirements/pip.in
-tomli==2.0.1
-    # via setuptools-scm
-typing-extensions==4.12.2
-    # via setuptools-scm
+tomli==2.0.1 ; python_version < "3.11"
+    # via
+    #   -c requirements/pins.pip
+    #   setuptools-scm
 
 # The following packages are considered to be unsafe in a requirements file:
 pip==24.0

@@ -81,10 +81,13 @@ jobs:
         run: |
           set -xe
           python -m pip install --disable-pip-version-check -q .
+      # pytest --showlocals --quiet --cov=sphinx_external_toc_strict --cov-report=xml tests
       - name: "Run coverage"
         run : |
           set -xe
-          pytest --showlocals --quiet --cov=sphinx_external_toc_strict --cov-report=xml tests
+          python -m coverage run --parallel -m pytest --showlocals tests
+          python -m coverage combine
+          python -m coverage xml --fail-under=90
       - name: "Upload to Codecov"
         uses: codecov/codecov-action@v4.5.0
         with:
