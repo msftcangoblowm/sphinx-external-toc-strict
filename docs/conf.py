@@ -39,7 +39,7 @@ copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
 version = "2.0.0"
 # The full version, including alpha/beta/rc tags.
-release = "2.0.0"
+release = "2.0.0.post0"
 # The date of release, in "monthname day, year" format.
 release_date = "October 1, 2024"
 # @@@ end

@@ -26,9 +26,14 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - chore: remove direct dependency
-
 .. scriv-start-here
+
+.. _changes_2-0-0p0:
+
+Version 2.0.0.post0 — 2024-10-01
+--------------------------------
+
+- chore: remove direct dependency
 
 .. _changes_2-0-0:
 
