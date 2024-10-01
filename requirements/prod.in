@@ -2,17 +2,7 @@
 #    pinned restrictions on docutils and sphinx.
 #    sphinx major version change overrides myst-parser desires
 # python -m pip install -U --upgrade-strategy=eager Sphinx docutils
+-c myst-parser.pins
+
 click
 strictyaml
-docutils>=0.21.2
-sphinx>=8,<9
-
-# affects pypy3.10 on MacOS
-# myst-parser --> pytest-param-files --> ruamel-yaml --> ruamel-yaml-clib
-# https://github.com/pypa/pip/issues/12884
-# https://sourceforge.net/p/ruamel-yaml/tickets/521/
-# Temporary solution
-# https://github.com/qiskit-community/qiskit-optimization/pull/630/files
-pip<24.2
-
-myst-parser[linkify,testing-docutils] @ git+https://github.com/executablebooks/MyST-Parser.git@6bcba98ef33edd43339ee2db7426466cab0053a1

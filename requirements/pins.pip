@@ -1,11 +1,6 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
 # For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
 
-# myst-parser has ridiculous restrictions.
-# During development of the pytest for RefItem need latest version of Sphinx
-# Sphinx>=8.0.2
-# docutils>=0.21.2
-
 # pip.pip, dev.pip, kit.pip, mypy.pip
 typing-extensions; python_version<"3.10"
 

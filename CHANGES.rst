@@ -26,6 +26,9 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix(tox): install_command add constraint pip<24.2
+   - fix: pip installed early pip<24.2
+   - chore: add requirements/myst-parser.pins
    - fix: myst-parser ruamel-yaml#521 pip#12884 solution pip<24.2
    - fix: resolve dependency conflict resolution
    - ci(test-coverage): remove pytest-cov. coverage > pytest-cov
