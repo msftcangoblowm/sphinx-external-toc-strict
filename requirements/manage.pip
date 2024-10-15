@@ -8,9 +8,9 @@ bleach==6.1.0
     # via readme-renderer
 cachetools==5.5.0
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
-certifi==2024.2.2
+certifi==2024.8.30
     # via requests
 cffi==1.16.0
     # via cryptography
@@ -18,12 +18,12 @@ cfgv==3.4.0
     # via pre-commit
 chardet==5.2.0
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via -r requirements/prod.unlock
+    # via -r prod.unlock
 colorama==0.4.6
     # via
     #   -r requirements/tox.pip
@@ -32,18 +32,18 @@ cryptography==42.0.5
     # via secretstorage
 distlib==0.3.8
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   virtualenv
 docutils==0.21.2
     # via
-    #   -r requirements/prod.unlock
+    #   -r prod.unlock
     #   myst-parser
     #   readme-renderer
     #   restview
     #   sphinx
 filelock==3.16.1
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
     #   virtualenv
 identify==2.5.35
@@ -74,7 +74,7 @@ keyring==25.1.0
     # via twine
 markdown-it-py==3.0.0
     # via
-    #   -r requirements/pip.pip
+    #   -r pip.pip
     #   mdit-py-plugins
     #   myst-parser
     #   rich
@@ -84,20 +84,20 @@ mdit-py-plugins==0.4.2
     # via myst-parser
 mdurl==0.1.2
     # via
-    #   -r requirements/pip.pip
+    #   -r pip.pip
     #   markdown-it-py
 more-itertools==10.2.0
     # via
     #   jaraco-classes
     #   jaraco-functools
 myst-parser==4.0.0
-    # via -r requirements/prod.unlock
+    # via -r prod.unlock
 nodeenv==1.8.0
     # via pre-commit
 packaging==24.1
     # via
-    #   -r requirements/pip.pip
-    #   -r requirements/tox.pip
+    #   -r pip.pip
+    #   -r tox.pip
     #   pyproject-api
     #   setuptools-scm
     #   sphinx
@@ -106,27 +106,27 @@ pkginfo==1.10.0
     # via twine
 platformdirs==4.3.6
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
     #   virtualenv
 pluggy==1.5.0
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
 pre-commit==3.7.0
-    # via -r requirements/manage.in
+    # via -r manage.in
 pycparser==2.22
     # via cffi
 pygments==2.18.0
     # via
-    #   -r requirements/pip.pip
+    #   -r pip.pip
     #   readme-renderer
     #   restview
     #   rich
     #   sphinx
 pyproject-api==1.8.0
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox
 python-dateutil==2.9.0.post0
     # via strictyaml
@@ -146,80 +146,69 @@ requests==2.31.0
 requests-toolbelt==1.0.0
     # via twine
 restview==3.0.1
-    # via -r requirements/manage.in
+    # via -r manage.in
 rfc3986==2.0.0
     # via twine
 rich==13.8.1
     # via
-    #   -r requirements/pip.pip
+    #   -r pip.pip
     #   setuptools-scm
     #   twine
 secretstorage==3.3.3
     # via keyring
 setuptools-scm[rich]==8.1.0
-    # via -r requirements/pip.pip
+    # via -r pip.pip
 six==1.16.0
     # via
     #   bleach
     #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==8.0.2
+sphinx==8.1.3
     # via
-    #   -r requirements/prod.unlock
+    #   -r prod.unlock
     #   myst-parser
-sphinxcontrib-applehelp==1.0.8
+sphinxcontrib-applehelp==2.0.0
     # via sphinx
-sphinxcontrib-devhelp==1.0.6
+sphinxcontrib-devhelp==2.0.0
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.5
+sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.7
+sphinxcontrib-qthelp==2.0.0
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.10
+sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 strictyaml==1.7.3
-    # via -r requirements/prod.unlock
-tomli==2.0.1 ; python_version < "3.11"
+    # via -r prod.unlock
+tomli==2.0.2 ; python_version < "3.11"
     # via
-    #   -c requirements/pins.pip
-    #   -r requirements/pip.pip
-    #   -r requirements/tox.pip
+    #   -c pins.pip
+    #   -r pip.pip
+    #   -r tox.pip
     #   pyproject-api
     #   setuptools-scm
     #   sphinx
     #   tox
 tox==4.20.0
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   tox-gh
 tox-gh==1.4.1
-    # via -r requirements/tox.pip
+    # via -r tox.pip
 twine==5.0.0
-    # via -r requirements/manage.in
-urllib3==2.2.1
+    # via -r manage.in
+urllib3==2.2.3
     # via
     #   requests
     #   twine
 virtualenv==20.26.5
     # via
-    #   -r requirements/tox.pip
+    #   -r tox.pip
     #   pre-commit
     #   tox
 webencodings==0.5.1
     # via bleach
 zipp==3.20.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-pip==24.0
-    # via
-    #   -r requirements/pip.pip
-    #   -r requirements/prod.unlock
-setuptools==69.2.0
-    # via
-    #   -r requirements/pip.pip
-    #   nodeenv
-    #   setuptools-scm

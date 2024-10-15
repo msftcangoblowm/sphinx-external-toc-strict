@@ -35,7 +35,7 @@ pyproject-hooks==1.0.0
     # via
     #   build
     #   pip-tools
-requests==2.32.3
+requests==2.31.0
     # via get-pypi-latest-version
 rich==13.8.1
     # via
@@ -61,7 +61,7 @@ wheel==0.43.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==24.0
+pip==24.1.2
     # via
     #   -r requirements/pip.pip
     #   get-pypi-latest-version

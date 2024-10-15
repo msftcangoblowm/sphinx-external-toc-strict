@@ -37,11 +37,11 @@ proj_master_doc = config.get("master_doc")
 # @@@ editable
 copyright = "2023–2024, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "2.0.0"
+version = "2.0.1"
 # The full version, including alpha/beta/rc tags.
-release = "2.0.0.post1"
+release = "2.0.1"
 # The date of release, in "monthname day, year" format.
-release_date = "October 1, 2024"
+release_date = "October 15, 2024"
 # @@@ end
 
 v = parse(release)
@@ -134,7 +134,7 @@ intersphinx_mapping = {
         "https://github.com/crdoconnor/strictyaml",
         ("objects-strictyaml-source.inv", "objects-strictyaml-source.txt"),
     ),
-    "docutils-source": (
+    "docutils-source": (  # sourceforge.net 403 client foridden
         "https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils",
         ("objects-docutils-source.inv", "objects-docutils-source.txt"),
     ),

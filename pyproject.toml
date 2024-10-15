@@ -151,6 +151,7 @@ linkcheck_ignore = [
     "https://github.com/sphinx-doc/sphinx/blob/0a162fa8da21154011a2c890bb82fd0ce96ebf16/tests/test_extensions/test_ext_intersphinx.py#L49",
     "https://github.com/sphinx-doc/sphinx/blob/abb3ead01a76093f0d48068743c6fce7dc6d57c0/sphinx/ext/intersphinx/_resolve.py#L253",
     "https://github.com/sphinx-doc/sphinx/blob/7487e764cbd45269ef8be9976af67ce8bd37b48f/sphinx/ext/intersphinx/_resolve.py#L253C5-L253C22",
+    "https://sourceforge.net/p/docutils/code/HEAD/tree/trunk/docutils/docutils/nodes.py",
 ]
 myst_enable_extensions = ["colon_fence", "html_image"]
 external_toc_exclude_missing = true

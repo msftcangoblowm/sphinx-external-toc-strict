@@ -28,6 +28,15 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_2-0-1:
+
+Version 2.0.1 — 2024-10-15
+--------------------------
+
+- docs: add to ignore sourceforge.net
+- chore: bump myst-parser to 4.0.0
+- chore: match myst-parser docutils specifier docutils>=0.19,<0.22
+
 .. _changes_2-0-0p1:
 
 Version 2.0.0.post1 — 2024-10-01

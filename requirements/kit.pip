@@ -6,7 +6,7 @@ bracex==2.4
     # via cibuildwheel
 build==1.2.1
     # via -r requirements/kit.in
-certifi==2024.2.2
+certifi==2024.8.30
     # via cibuildwheel
 cibuildwheel==2.17.0
     # via -r requirements/kit.in
@@ -22,7 +22,7 @@ packaging==24.1
     #   build
     #   cibuildwheel
     #   setuptools-scm
-platformdirs==4.2.0
+platformdirs==4.3.6
     # via cibuildwheel
 pyelftools==0.31
     # via auditwheel
@@ -41,13 +41,13 @@ tomli==2.0.1 ; python_version < "3.11"
     #   cibuildwheel
     #   pyproject-hooks
     #   setuptools-scm
-typing-extensions==4.12.2
+typing-extensions==4.12.2; python_version<"3.10"
     # via cibuildwheel
 wheel==0.43.0
     # via -r requirements/kit.in
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==75.1.0
+setuptools==69.2.0
     # via
     #   -r requirements/kit.in
     #   setuptools-scm
