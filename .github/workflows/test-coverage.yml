@@ -89,7 +89,7 @@ jobs:
           python -m coverage combine
           python -m coverage xml --fail-under=90
       - name: "Upload to Codecov"
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v4.6.0
         with:
           name: unittest-py3.10
           token: ${{ secrets.CODECOV_TOKEN }}
