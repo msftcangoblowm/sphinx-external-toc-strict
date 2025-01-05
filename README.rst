@@ -35,6 +35,7 @@ It also allows for documents not specified in the ToC to be auto-excluded.
 **New in 2.0.x:**
 
 intersphinx support; ref > url; Sphinx py310+ drop py39;
+OS Independent;
 
 **New in 1.2.x:**
 

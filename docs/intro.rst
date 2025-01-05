@@ -19,6 +19,7 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 **New in 2.0.x:**
 
 intersphinx support; ref > url; Sphinx py310+ drop py39;
+OS Independent;
 
 **New in 1.2.x:**
 
