@@ -26,6 +26,9 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - ci(testsuite): add platform windows-latest
+   - ci: bump actions version
+
 .. scriv-start-here
 
 .. _changes_2-0-1:

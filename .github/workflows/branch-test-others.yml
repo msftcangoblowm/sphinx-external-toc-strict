@@ -23,16 +23,16 @@ permissions:
 
 jobs:
   tests-other:
-    name: "${{ matrix.python-version }} on ${{ matrix.os }}"
+    name: "${{ matrix.python-version }} on ${{ matrix.platform }}"
     if:
       ${{ !(contains('-notests', github.ref) || contains('refs/heads/main', github.ref)) }}
-    runs-on: "${{ matrix.os }}"
+    runs-on: "${{ matrix.platform }}"
     # If it doesn't finish in an hour, it's not going to. Don't spin for six
     # hours needlessly.
     timeout-minutes: 60
     strategy:
       matrix:
-        os:
+        platform:
           - windows-latest
         python-version:
           - "3.12"
@@ -41,10 +41,10 @@ jobs:
 
     steps:
       - name: "Check out the repo"
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@v4.2.2
 
       - name: "Install ${{ matrix.python-version }} with setup-python"
-        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # v5.1.1
+        uses: actions/setup-python@v5.3.0
         with:
           python-version: "${{ matrix.python-version }}"
           allow-prereleases: true
@@ -85,6 +85,6 @@ jobs:
 
     steps:
       - name: Decide whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe
+        uses: re-actors/alls-green@223e4bb7a751b91f43eda76992bcfbf23b8b0302
         with:
           jobs: ${{ toJSON(needs) }}

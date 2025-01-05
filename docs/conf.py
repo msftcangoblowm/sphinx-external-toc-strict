@@ -35,7 +35,7 @@ proj_master_doc = config.get("master_doc")
 # copyright = "2021, Executable Book Project"
 
 # @@@ editable
-copyright = "2023–2024, Dave Faulkmore"
+copyright = "2023–2025, Dave Faulkmore"
 # The short X.Y.Z version.
 version = "2.0.1"
 # The full version, including alpha/beta/rc tags.

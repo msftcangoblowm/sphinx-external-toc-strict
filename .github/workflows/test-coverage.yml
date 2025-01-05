@@ -1,5 +1,5 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/logging-strict/blob/master/NOTICE.txt
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
 #
 # https://github.com/codecov/codecov-action
 # https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect
@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+        uses: actions/checkout@v4.2.2
         with:
           # fetch all branches and tags instead of only fetching the ref/SHA that triggered the workflow
           fetch-depth: 0
@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
       - name: Set up Python ${{ matrix.python-version }}
-        uses: "actions/setup-python@v5"
+        uses: actions/setup-python@v5.3.0
         with:
           python-version: "${{ matrix.python-version }}"
           # cache: pip
@@ -89,14 +89,14 @@ jobs:
           python -m coverage combine
           python -m coverage xml --fail-under=90
       - name: "Upload to Codecov"
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v5.1.2
         with:
           name: unittest-py3.10
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: msftcangoblowm/sphinx-external-toc-strict
           os: linux
           flags: unittests
-          file: ./coverage.xml
+          files: ./coverage.xml
           env_vars: OS,PYTHON
           fail_ci_if_error: true
           verbose: true

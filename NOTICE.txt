@@ -1,4 +1,4 @@
-Copyright 2023-2024 Dave Faulkmore.  All rights reserved. Apache2 License
+Copyright 2023-2025 Dave Faulkmore.  All rights reserved. Apache2 License
 Copyright 2021-2023 Chris Sewell. All rights reserved. MIT License
 
 Except where noted otherwise, this software is licensed under the Apache
