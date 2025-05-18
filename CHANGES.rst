@@ -41,9 +41,14 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - fix: bump setuptools-scm to pep639 license expression support
-
 .. scriv-start-here
+
+.. _changes_2-0-3.post0:
+
+Version 2.0.3.post0 — 2025-05-18
+--------------------------------
+
+- fix: bump setuptools-scm to pep639 license expression support
 
 .. _changes_2-0-3:
 
