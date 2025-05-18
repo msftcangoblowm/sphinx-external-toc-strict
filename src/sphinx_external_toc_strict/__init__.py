@@ -4,7 +4,7 @@
    :type: str
 
    Hardcoded version in x.y.z format. Not semantic version. Crying out
-   to add setuptools-scm suppport
+   to add setuptools-scm support
 
 """
 

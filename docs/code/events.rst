@@ -7,4 +7,4 @@ Events
    :special-members:
    :private-members:
    :platform: Unix
-   :synopsis: Sphinx extension machinary
+   :synopsis: Sphinx extension machinery

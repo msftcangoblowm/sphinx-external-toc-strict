@@ -14,11 +14,3 @@ tomli==2.0.1 ; python_version < "3.11"
     # via
     #   -c requirements/pins.pip
     #   setuptools-scm
-
-# The following packages are considered to be unsafe in a requirements file:
-pip==24.1.2
-    # via -r requirements/pip.in
-setuptools==69.2.0
-    # via
-    #   -r requirements/pip.in
-    #   setuptools-scm

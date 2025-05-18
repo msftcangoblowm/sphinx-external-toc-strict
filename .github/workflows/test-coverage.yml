@@ -58,7 +58,7 @@ jobs:
         run: |
           echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: "${{ matrix.python-version }}"
           # cache: pip
@@ -89,7 +89,7 @@ jobs:
           python -m coverage combine
           python -m coverage xml --fail-under=90
       - name: "Upload to Codecov"
-        uses: codecov/codecov-action@v5.1.2
+        uses: codecov/codecov-action@v5.4.3
         with:
           name: unittest-py3.10
           token: ${{ secrets.CODECOV_TOKEN }}

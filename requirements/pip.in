@@ -11,7 +11,7 @@
 # https://sourceforge.net/p/ruamel-yaml/tickets/521/
 # Temporary solution
 # https://github.com/qiskit-community/qiskit-optimization/pull/630/files
-pip<24.2
+# pip<24.2
 
 # setuptools-scm[rich] @ git+https://github.com/pypa/setuptools-scm.git@d665621e25f091c0de5cd35b3d57cc00bd26e260
 setuptools-scm[rich]

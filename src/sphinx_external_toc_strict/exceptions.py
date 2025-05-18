@@ -1,7 +1,7 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-Seperate out exceptions
+Separate out exceptions
 
 .. py:data:: __all__
    :type: tuple[str]

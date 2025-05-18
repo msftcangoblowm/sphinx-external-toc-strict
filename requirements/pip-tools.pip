@@ -59,15 +59,3 @@ webencodings==0.5.1
     # via html5lib
 wheel==0.43.0
     # via pip-tools
-
-# The following packages are considered to be unsafe in a requirements file:
-pip==24.1.2
-    # via
-    #   -r requirements/pip.pip
-    #   get-pypi-latest-version
-    #   pip-tools
-setuptools==69.2.0
-    # via
-    #   -r requirements/pip.pip
-    #   pip-tools
-    #   setuptools-scm

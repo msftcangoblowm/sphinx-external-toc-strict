@@ -174,7 +174,7 @@ def affinity_val(
 
 def load_yaml(path, encoding="utf8"):
     """Using strictyaml dirty load converts all values into str,
-    preventing most yaml shenanegans.
+    preventing most yaml shenanigans.
 
     Uses schema :py:class:`strictyaml.Any`. Which converts all scalars into str!
 

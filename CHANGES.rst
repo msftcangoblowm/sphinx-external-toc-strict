@@ -26,6 +26,10 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - chore(re-commit): add repo typos
+   - chore: remove pip and setuptools pins
+   - ci: bump versions
+
 .. scriv-start-here
 
 .. _changes_2-0-2:

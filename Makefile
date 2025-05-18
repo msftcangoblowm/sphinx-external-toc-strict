@@ -37,7 +37,7 @@ ifeq ($(is_venv),1)
   is_wheel ?= $(call IS_PACKAGE,wheel)
   is_piptools ?= $(call IS_PACKAGE,pip-tools)
 
-  find_whl = $(shell [[ -z "$(3)" ]] && extention=".whl" || extention="$(3)"; [[ -z "$(2)" ]] && srcdir="dist" || srcdir="$(2)/dist"; [[ -z "$(1)" ]] && whl=$$(ls $$srcdir/$(APP_NAME)*.whl  --format="single-column") || whl=$$(ls $$srcdir/$(1)*.whl --format="single-column"); echo $${whl##*/})
+  find_whl = $(shell [[ -z "$(3)" ]] && extension=".whl" || extension="$(3)"; [[ -z "$(2)" ]] && srcdir="dist" || srcdir="$(2)/dist"; [[ -z "$(1)" ]] && whl=$$(ls $$srcdir/$(APP_NAME)*.whl  --format="single-column") || whl=$$(ls $$srcdir/$(1)*.whl --format="single-column"); echo $${whl##*/})
 endif
 
 ##@ Helpers
@@ -152,20 +152,6 @@ ifeq ($(is_venv),1)
 	$(VENV_BIN_PYTHON) -m flake8 tests/
 endif
 
-# --cov-report=xml
-# Dependencies: pytest, pytest-cov, pytest-regressions
-# make [v=1] coverage
-# @$(VENV_BIN)/pytest --showlocals --cov=sphinx_external_toc_strict --cov-report=term-missing tests
-.PHONY: coverage
-coverage: private verbose_text = $(if $(v),"--verbose")
-coverage:				## Run tests, generate coverage reports -- make [v=1] coverage
-ifeq ($(is_venv),1)
-	-@$(VENV_BIN_PYTHON) -m coverage erase
-	$(VENV_BIN_PYTHON) -m coverage run --parallel -m pytest --showlocals $(verbose_text) tests
-	$(VENV_BIN_PYTHON) -m coverage combine
-	$(VENV_BIN_PYTHON) -m coverage report --fail-under=90
-endif
-
 ##@ Kitting
 # Initial build
 # mkdir dist/ ||:; python -m build --outdir dist/ .
@@ -175,7 +161,7 @@ REPO_OWNER := msftcangoblowm/sphinx-external-toc-strict
 REPO := $(REPO_OWNER)/sphinx_external_toc_strict
 
 .PHONY: edit_for_release cheats relbranch kit_check kit_build kit_upload
-.PHONY: test_upload kits_build kits_download github_releases
+.PHONY: test_upload kits_download github_releases
 
 edit_for_release:               ## Edit sources to insert release facts (see howto.txt)
 	python igor.py edit_for_release
@@ -191,9 +177,6 @@ kit_check:                              ## Check that dist/* are well-formed
 	python -m twine check dist/*
 	@echo $$(ls -1 dist | wc -l) distribution kits
 
-kit_build:                              ## Make the source distribution
-	python igor.py build_next ""
-
 kit_upload:                             ## Upload the built distributions to PyPI
 	twine upload --verbose dist/*
 
@@ -208,6 +191,13 @@ kits_download:                  ## Download the built kits from GitHub
 
 github_releases: $(DOCBIN)              ## Update GitHub releases.
 	$(DOCBIN)/python -m scriv github-release --all
+
+##@ GNU Make standard targets
+
+# kind tag current or semantic version str
+.PHONY: build
+build:				## Make the source distribution
+	@python igor.py build_next ""
 
 .PHONY: install
 install: override usage := make [force=1]
@@ -230,3 +220,17 @@ endif
 .PHONY: install-force
 install-force: force := 1
 install-force: install	## Force install even if exact same version
+
+# --cov-report=xml
+# Dependencies: pytest, pytest-cov, pytest-regressions
+# make [v=1] check
+# @$(VENV_BIN)/pytest --showlocals --cov=sphinx_external_toc_strict --cov-report=term-missing tests
+.PHONY: check
+check: private verbose_text = $(if $(v),"--verbose")
+check:					## Run tests, generate coverage reports -- make [v=1] coverage
+ifeq ($(is_venv),1)
+	-@$(VENV_BIN_PYTHON) -m coverage erase
+	$(VENV_BIN_PYTHON) -m coverage run --parallel -m pytest --showlocals $(verbose_text) tests
+	$(VENV_BIN_PYTHON) -m coverage combine
+	$(VENV_BIN_PYTHON) -m coverage report --fail-under=90
+endif

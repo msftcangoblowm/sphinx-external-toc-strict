@@ -174,9 +174,9 @@ def test_create_toc_dict_bad_file_format(path_toc, file_format):
 
 
 testdata = [
-    ("entires", {"file": "bob"}, None, {"file": "bob"}),
-    ("entires", {"file": "bob"}, 1.12345, {"file": "bob"}),
-    ("entires", {"file": "bob"}, _scalar_affinity_map, {"file": "bob"}),
+    ("entries", {"file": "bob"}, None, {"file": "bob"}),
+    ("entries", {"file": "bob"}, 1.12345, {"file": "bob"}),
+    ("entries", {"file": "bob"}, _scalar_affinity_map, {"file": "bob"}),
 ]
 ids = [
     "not scalar, mapping None",
@@ -191,7 +191,8 @@ ids = [
     ids=ids,
 )
 def test_affinity_val(key, val, mapping, expected):
-    """Use type affinity and a mapping to coerse value data type"""
+    """Use type affinity and a mapping to coerce value data type"""
+    # pytest --showlocals --log-level INFO -k "test_affinity_val" tests
     val_out = affinity_val(key, val, mapping=mapping)
     assert val_out == expected
 

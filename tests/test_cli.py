@@ -212,7 +212,7 @@ def test_create_site_cli_existing_files(
     ]
 
     # act
-    #    file aleady exists and overwrite not allowed
+    #    file already exists and overwrite not allowed
     result = invoke_cli(create_site, cmd)
     out = result.output.rstrip()
     # verify

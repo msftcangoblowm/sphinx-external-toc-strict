@@ -1,7 +1,7 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-Seperate constants out so independent of any dependencies
+Separate constants out so independent of any dependencies
 
 .. py:data:: URL_PATTERN
    :type: str
@@ -12,7 +12,7 @@ Seperate constants out so independent of any dependencies
    :type: str
    :value: "subtrees"
 
-   Default subtrees key. Is overrided for jb-book and jb-article
+   Default subtrees key. Overridden for jb-book and jb-article
 
 .. py:data:: DEFAULT_ITEMS_KEY
    :type: str

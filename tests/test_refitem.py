@@ -113,13 +113,13 @@ testdata_querying_inv = (
         INVENTORY_V2,
         "std",
         "ref",
-        "nonexistant",
+        "nonexistent",
         ("", ""),
     ),
 )
 ids_querying_inv = (
     "Query sphinx.ext.intersphinx INVENTORY_V2",
-    "nonexistant ref",
+    "nonexistent ref",
 )
 
 

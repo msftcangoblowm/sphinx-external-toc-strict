@@ -36,7 +36,7 @@ __all__ = ("strip_suffix", "stem_natural")
 
 
 def stem_natural(name):
-    """Similiar to Path.stem, but removes all suffixes and doesn't fail
+    """Similar to Path.stem, but removes all suffixes and doesn't fail
     if there is no stem
 
     :param name: file name, not file path

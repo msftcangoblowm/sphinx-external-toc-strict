@@ -1,6 +1,6 @@
 """Sphinx event functions and directives.
 
-Sphinx extension machinary
+Sphinx extension machinery
 
 .. py:data:: logger
    :type: sphinx.util.logging.SphinxLoggerAdapter
@@ -342,7 +342,7 @@ def insert_toctrees(app, doctree):
                 t_sphinx_renderable: tuple[str, str] = next(entry.render())
                 subnode["entries"].append(t_sphinx_renderable)
             elif isinstance(entry, RefItem):
-                # Very similiar to UrlItem, except needs app to retrieve from inventory
+                # Very similar to UrlItem, except needs app to retrieve from inventory
                 t_sphinx_renderable: tuple[str, str] = next(entry.render(app))
                 subnode["entries"].append(t_sphinx_renderable)
             elif isinstance(entry, FileItem):

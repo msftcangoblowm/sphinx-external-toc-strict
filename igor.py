@@ -396,7 +396,7 @@ def do_current_version() -> None:
         print(str_out)
 
 
-def _arbritary_version(next_version: str) -> str | None:
+def _arbitrary_version(next_version: str) -> str | None:
     path_cwd = Path.cwd()
     cwd_path = str(path_cwd)
     scm_override_key = scm_key(g_app_name)
@@ -436,7 +436,7 @@ def _arbritary_version(next_version: str) -> str | None:
 def _tag_version(next_version: str | None = "") -> str | None:
     """Get version potentially overriding it"""
     # empty str means take current tag version
-    ret = _arbritary_version(next_version)
+    ret = _arbitrary_version(next_version)
 
     return ret
 
@@ -522,7 +522,7 @@ def do_build_next(next_version: str) -> None:
         print(msg)
     else:
         # Updates src/[prog name]/_version.py with bumped version
-        scm_override_val = _arbritary_version(next_version)
+        scm_override_val = _arbitrary_version(next_version)
         # https://peps.python.org/pep-0584/
         scm_override_key = scm_key(g_app_name)
         env |= {scm_override_key: scm_override_val}

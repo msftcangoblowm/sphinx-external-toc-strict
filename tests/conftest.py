@@ -128,7 +128,7 @@ def inventory_v2():
 
 @pytest.fixture()
 def augment_intersphinx_mapping():
-    """Fixture to adjust the ``app.config`` rather than editting a
+    """Fixture to adjust the ``app.config`` rather than editing a
     Sphinx config (python) file.
 
     :param mapping: intersphinx_mapping dict
@@ -137,8 +137,8 @@ def augment_intersphinx_mapping():
 
     def _func(app, mapping):
         """Make small alterations to Sphinx ``app.config``.
-        The ``conf.py``, shouldn't be editted. Instead adjusts
-        ``app.config``. Changes are not persistant. ``conf.py``
+        The ``conf.py``, shouldn't be edited. Instead adjusts
+        ``app.config``. Changes are not persistent. ``conf.py``
         is unchanged.
         """
         # copy *mapping* so that normalization does not alter it

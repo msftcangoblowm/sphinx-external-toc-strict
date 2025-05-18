@@ -33,7 +33,7 @@ Enhancements
 Dependencies
 -------------
 
-Simplier toolchain
+Simpler toolchain
 ^^^^^^^^^^^^^^^^^^^
 
 Switched these dependencies

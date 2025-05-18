@@ -140,13 +140,13 @@ jobs:
           platforms: arm64
 
       - name: "Check out the repo"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           # fetch all branches and tags instead of only fetching the ref/SHA that triggered the workflow
           fetch-depth: 0
 
       - name: "Install Python 3.10"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           # PYVERSIONS
           python-version: "3.10"
@@ -182,7 +182,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out the repo"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           # fetch all branches and tags instead of only fetching the ref/SHA that triggered the workflow
           fetch-depth: 0
@@ -195,7 +195,7 @@ jobs:
           echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
 
       - name: "Install Python 3.10"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           # PYVERSIONS
           python-version: "3.10"
@@ -229,13 +229,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out the repo"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           # fetch all branches and tags instead of only fetching the ref/SHA that triggered the workflow
           fetch-depth: 0
 
       - name: "Install PyPy"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: "pypy-3.10" # Minimum of PyPy PYVERSIONS
           # cache: pip
