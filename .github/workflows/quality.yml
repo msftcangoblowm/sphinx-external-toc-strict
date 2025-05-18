@@ -89,7 +89,7 @@ jobs:
       - name: "Install Python"
         uses: actions/setup-python@v5.6.0
         with:
-          python-version: "3.10" # Doc version from PYVERSIONS
+          python-version: "3.13" # Doc version from PYVERSIONS
           # cache: pip
           cache-dependency-path: 'requirements/*.pip'
 
