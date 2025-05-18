@@ -26,11 +26,16 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - chore(re-commit): add repo typos
-   - chore: remove pip and setuptools pins
-   - ci: bump versions
-
 .. scriv-start-here
+
+.. _changes_2-0-3:
+
+Version 2.0.3 — 2025-05-18
+--------------------------
+
+- chore(re-commit): add repo typos
+- chore: remove pip and setuptools pins
+- ci: bump versions
 
 .. _changes_2-0-2:
 
