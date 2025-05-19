@@ -1,8 +1,8 @@
 [build-system]
-# "setuptools_scm>=8.3.1" removed due to failure to parse project.license field
-# in release.yml, :code:`python igor.py build_next "tag"` triggers setuptools_scm
 requires = ["setuptools>=80.7.1", "wheel", "build"]
 build-backend = "setuptools.build_meta"
+# "setuptools_scm>=8.3.1" removed due to failure to parse project.license field
+# in release.yml, :code:`python igor.py build_next "tag"` triggers setuptools_scm
 
 [project]
 name = "sphinx-external-toc-strict"
@@ -73,11 +73,11 @@ resolver = "backtracking"
 no_allow_unsafe = true
 generate_hashes = false  # From setuptools 69.0.2, parsing dependencies with hashes is broken
 
-[tool.setuptools_scm]
+# [tool.setuptools_scm]
 # can be empty if no extra settings are needed, presence enables setuptools_scm
 # SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SPHINX_EXTERNAL_TOC_STRICT="1.0.2" python -m setuptools_scm
 # fallback_version = "1.0.2"
-version_file = "src/sphinx_external_toc_strict/_version.py"
+# version_file = "src/sphinx_external_toc_strict/_version.py"
 
 [tool.mypy]
 mypy_path = "src"
