@@ -8,10 +8,10 @@ Changelog
    Feature request
    .................
 
-   - purge setuptools-scm see wreck release.yml workflow
+   - Like python -m build add -o option to `python igor.py build_next "current"`
 
    - :code:`python igor.py build_next "current"`
-     places whl in a ``/dist/[some temp folder]/*.whl``
+     places whl in a `/dist/[some temp folder]/*.whl`
 
    - tests/test_util/sphinx_conftest.py:88, during tests, patches
      sphinx.util.requests._Session.request
