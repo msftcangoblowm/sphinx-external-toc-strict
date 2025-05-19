@@ -1,5 +1,7 @@
 [build-system]
-requires = ["setuptools>=78.1.0", "wheel", "build", "setuptools_scm>=8.3.1"]
+# "setuptools_scm>=8.3.1" removed due to failure to parse project.license field
+# in release.yml, :code:`python igor.py build_next "tag"` triggers setuptools_scm
+requires = ["setuptools>=80.7.1", "wheel", "build"]
 build-backend = "setuptools.build_meta"
 
 [project]

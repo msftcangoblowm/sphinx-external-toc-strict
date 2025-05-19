@@ -8,6 +8,8 @@ Changelog
    Feature request
    .................
 
+   - purge setuptools-scm see wreck release.yml workflow
+
    - :code:`python igor.py build_next "current"`
      places whl in a ``/dist/[some temp folder]/*.whl``
 

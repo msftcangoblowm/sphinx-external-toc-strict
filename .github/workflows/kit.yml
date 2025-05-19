@@ -210,8 +210,9 @@ jobs:
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
-          echo "python igor.py build_next $RELEASE_VERSION"
-          python igor.py build_next "$RELEASE_VERSION"
+          # echo "python igor.py build_next $RELEASE_VERSION"
+          # python igor.py build_next "$RELEASE_VERSION"
+          python -m build
 
       - name: "List tarballs"
         run: |
