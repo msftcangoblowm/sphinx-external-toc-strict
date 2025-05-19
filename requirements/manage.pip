@@ -1,6 +1,6 @@
-alabaster==0.7.16
+alabaster==1.0.0
     # via sphinx
-babel==2.14.0
+babel==2.16.0
     # via sphinx
 backports-tarfile==1.0.0
     # via jaraco-context
@@ -20,7 +20,7 @@ chardet==5.2.0
     # via
     #   -r tox.pip
     #   tox
-charset-normalizer==3.3.2
+charset-normalizer==3.4.2
     # via requests
 click==8.2.0
     # via -r prod.unlock
@@ -30,7 +30,7 @@ colorama==0.4.6
     #   tox
 cryptography==45.0.2
     # via secretstorage
-distlib==0.3.8
+distlib==0.3.9
     # via
     #   -r tox.pip
     #   virtualenv
@@ -46,9 +46,9 @@ filelock==3.16.1
     #   -r tox.pip
     #   tox
     #   virtualenv
-identify==2.5.35
+identify==2.6.5
     # via pre-commit
-idna==3.6
+idna==3.10
     # via requests
 imagesize==1.4.1
     # via sphinx
@@ -66,13 +66,13 @@ jeepney==0.8.0
     # via
     #   keyring
     #   secretstorage
-jinja2==3.1.3
+jinja2==3.1.5
     # via
     #   myst-parser
     #   sphinx
 keyring==25.1.0
     # via twine
-markdown-it-py==3.0.0
+markdown-it-py==3.0.2
     # via
     #   -r pip.pip
     #   mdit-py-plugins
@@ -86,7 +86,7 @@ mdurl==0.1.2
     # via
     #   -r pip.pip
     #   markdown-it-py
-more-itertools==10.2.0
+more-itertools==10.6.0
     # via
     #   jaraco-classes
     #   jaraco-functools
@@ -109,7 +109,7 @@ platformdirs==4.3.6
     #   -r tox.pip
     #   tox
     #   virtualenv
-pluggy==1.5.0
+pluggy==1.6.0
     # via
     #   -r tox.pip
     #   tox
@@ -149,15 +149,13 @@ restview==3.0.1
     # via -r manage.in
 rfc3986==2.0.0
     # via twine
-rich==13.8.1
+rich==13.9.4
     # via
     #   -r pip.pip
     #   setuptools-scm
     #   twine
 secretstorage==3.3.3
     # via keyring
-# setuptools-scm[rich]==8.3.1
-    # via -r pip.pip
 six==1.17.0
     # via
     #   bleach
@@ -203,7 +201,7 @@ urllib3==2.2.3
     # via
     #   requests
     #   twine
-virtualenv==20.26.5
+virtualenv==20.29.0
     # via
     #   -r tox.pip
     #   pre-commit

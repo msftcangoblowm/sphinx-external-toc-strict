@@ -1,6 +1,6 @@
 certifi==2025.4.26
     # via requests
-charset-normalizer==3.3.2
+charset-normalizer==3.4.2
     # via requests
 click==8.2.0
     # via pip-tools

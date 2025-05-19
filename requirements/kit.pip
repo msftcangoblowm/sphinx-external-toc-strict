@@ -8,7 +8,7 @@ certifi==2025.4.26
     # via cibuildwheel
 cibuildwheel==2.17.0
     # via -r requirements/kit.in
-filelock==3.13.4
+filelock==3.16.1
     # via cibuildwheel
 importlib-metadata==8.7.0; python_version < "3.10"
     # via setuptools-scm
