@@ -182,7 +182,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 strictyaml==1.7.3
     # via -r prod.unlock
-tomli==2.0.2 ; python_version < "3.11"
+tomli==2.2.1; python_version < "3.11"
     # via
     #   -c pins.pip
     #   -r pip.pip

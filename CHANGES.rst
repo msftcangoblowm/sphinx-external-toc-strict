@@ -43,6 +43,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix: tox dependency pyproject-api requires bump tomli
+
 .. scriv-start-here
 
 .. _changes_2-0-3.post0:
