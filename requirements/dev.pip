@@ -79,7 +79,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 keyring==25.1.0
     # via twine
-markdown-it-py==3.0.2
+markdown-it-py==3.0.0
     # via
     #   mdit-py-plugins
     #   myst-parser
