@@ -10,9 +10,9 @@ cachetools==5.5.0
     # via
     #   -r tox.pip
     #   tox
-certifi==2024.8.30
+certifi==2025.4.26
     # via requests
-cffi==1.16.0
+cffi==1.17.1
     # via cryptography
 cfgv==3.4.0
     # via pre-commit
@@ -22,13 +22,13 @@ chardet==5.2.0
     #   tox
 charset-normalizer==3.3.2
     # via requests
-click==8.1.7
+click==8.2.0
     # via -r prod.unlock
 colorama==0.4.6
     # via
     #   -r requirements/tox.pip
     #   tox
-cryptography==42.0.5
+cryptography==45.0.2
     # via secretstorage
 distlib==0.3.8
     # via
@@ -52,7 +52,7 @@ idna==3.6
     # via requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==7.1.0
+importlib-metadata==8.7.0; python_version < "3.10"
     # via
     #   keyring
     #   twine
@@ -117,7 +117,7 @@ pre-commit==3.7.0
     # via -r manage.in
 pycparser==2.22
     # via cffi
-pygments==2.18.0
+pygments==2.19.1
     # via
     #   -r pip.pip
     #   readme-renderer
@@ -158,7 +158,7 @@ secretstorage==3.3.3
     # via keyring
 # setuptools-scm[rich]==8.3.1
     # via -r pip.pip
-six==1.16.0
+six==1.17.0
     # via
     #   bleach
     #   python-dateutil
@@ -210,5 +210,5 @@ virtualenv==20.26.5
     #   tox
 webencodings==0.5.1
     # via bleach
-zipp==3.20.0
+zipp==3.21.0
     # via importlib-metadata

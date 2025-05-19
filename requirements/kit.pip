@@ -4,9 +4,7 @@ bashlex==0.18
     # via cibuildwheel
 bracex==2.4
     # via cibuildwheel
-build==1.2.2.post1
-    # via -r requirements/kit.in
-certifi==2024.8.30
+certifi==2025.4.26
     # via cibuildwheel
 cibuildwheel==2.17.0
     # via -r requirements/kit.in
@@ -24,10 +22,8 @@ platformdirs==4.3.6
     # via cibuildwheel
 pyelftools==0.31
     # via auditwheel
-pyproject-hooks==1.0.0
+pyproject-hooks==1.2.0
     # via build
-setuptools-scm==8.3.1
-    # via -r requirements/kit.in
 tomli==2.2.1; python_version < "3.11"
     # via
     #   -c requirements/pins.pip
@@ -40,5 +36,3 @@ typing-extensions==4.12.2; python_version<"3.10"
     #   -c requirements/pins.pip
     #   cibuildwheel
     #   setuptools-scm
-wheel==0.43.0
-    # via -r requirements/kit.in

@@ -1,10 +1,8 @@
-build==1.2.2.post1
-    # via pip-tools
-certifi==2024.8.30
+certifi==2025.4.26
     # via requests
 charset-normalizer==3.3.2
     # via requests
-click==8.1.7
+click==8.2.0
     # via pip-tools
 get-pypi-latest-version==0.0.12
     # via -r requirements/pip-tools.in
@@ -21,15 +19,13 @@ packaging==25.0
     #   setuptools-scm
 pip-tools==7.4.1
     # via -r requirements/pip-tools.in
-pyproject-hooks==1.0.0
+pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
 requests==2.31.0
     # via get-pypi-latest-version
-setuptools-scm==8.3.1
-    # via -r requirements/pip.pip
-six==1.16.0
+six==1.17.0
     # via html5lib
 tomli==2.2.1; python_version < "3.11"
     # via
@@ -45,5 +41,3 @@ urllib3==2.2.3
     # via requests
 webencodings==0.5.1
     # via html5lib
-wheel==0.43.0
-    # via pip-tools
