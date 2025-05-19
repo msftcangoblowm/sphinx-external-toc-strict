@@ -73,10 +73,12 @@ jobs:
       - name: "Build sdist and whl"
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        # echo "python igor.py build_next $RELEASE_VERSION"
+        # python igor.py build_next "$RELEASE_VERSION"
         run: |
           set -xe
-          echo "python igor.py build_next $RELEASE_VERSION"
-          python igor.py build_next "$RELEASE_VERSION"
+          echo "VERSION $RELEASE_VERSION"
+
       - name: "Install"
         run: |
           set -xe

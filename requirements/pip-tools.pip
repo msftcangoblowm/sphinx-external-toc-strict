@@ -37,11 +37,11 @@ pyproject-hooks==1.0.0
     #   pip-tools
 requests==2.31.0
     # via get-pypi-latest-version
-rich==13.8.1
+# rich==13.8.1
     # via
     #   -r requirements/pip.pip
     #   setuptools-scm
-setuptools-scm[rich]==8.3.1
+# setuptools-scm[rich]==8.3.1
     # via -r requirements/pip.pip
 six==1.16.0
     # via html5lib

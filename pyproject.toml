@@ -53,12 +53,12 @@ where = ["src"]
 include = ["sphinx_external_toc_strict*"]
 
 [tool.setuptools.dynamic]
-optional-dependencies.pip = { file = ["requirements/pip.pip"] }
-optional-dependencies.pip_tools = { file = ["requirements/pip-tools.pip"] }
-dependencies = { file = ["requirements/prod.unlock"] }
-optional-dependencies.dev = { file = ["requirements/dev.pip"] }
-optional-dependencies.manage = { file = ["requirements/manage.pip"] }
-optional-dependencies.docs = { file = ["docs/requirements.pip"] }
+optional-dependencies.pip = { file = ['requirements/pip.pip'] }
+optional-dependencies.pip_tools = { file = ['requirements/pip-tools.pip'] }
+dependencies = { file = ['requirements/prod.unlock'] }
+optional-dependencies.dev = { file = ['requirements/dev.pip'] }
+optional-dependencies.manage = { file = ['requirements/manage.pip'] }
+optional-dependencies.docs = { file = ['docs/requirements.pip'] }
 version = {attr = "sphinx_external_toc_strict._version.__version__"}
 
 [project.entry-points]

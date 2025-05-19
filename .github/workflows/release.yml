@@ -55,9 +55,9 @@ jobs:
     - name: build
       env:
         RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+      # echo "python igor.py build_next $RELEASE_VERSION"
+      # python igor.py build_next "$RELEASE_VERSION"
       run: |
-        # echo "python igor.py build_next $RELEASE_VERSION"
-        # python igor.py build_next "$RELEASE_VERSION"
         python -m build
 
     - name: Store the distribution packages
