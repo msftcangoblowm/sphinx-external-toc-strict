@@ -10,9 +10,6 @@ Changelog
 
    - Like python -m build add -o option to `python igor.py build_next "current"`
 
-   - :code:`python igor.py build_next "current"`
-     places whl in a `/dist/[some temp folder]/*.whl`
-
    - tests/test_util/sphinx_conftest.py:88, during tests, patches
      sphinx.util.requests._Session.request
      This causes Sphinx API deprecation warnings:
@@ -43,9 +40,15 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - fix: tox dependency pyproject-api requires bump tomli
-
 .. scriv-start-here
+
+.. _changes_2-0-3.post1:
+
+Version 2.0.3.post1 — 2025-05-19
+--------------------------------
+
+- refactor: remove setup.py
+- fix: tox dependency pyproject-api requires bump tomli
 
 .. _changes_2-0-3.post0:
 
