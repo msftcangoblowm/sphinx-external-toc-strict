@@ -1,4 +1,4 @@
-build==1.2.1
+build==1.2.2.post1
     # via pip-tools
 certifi==2024.8.30
     # via requests
@@ -12,14 +12,8 @@ html5lib==1.1
     # via get-pypi-latest-version
 idna==3.10
     # via requests
-markdown-it-py==3.0.0
-    # via
-    #   -r requirements/pip.pip
-    #   rich
-mdurl==0.1.2
-    # via
-    #   -r requirements/pip.pip
-    #   markdown-it-py
+importlib-metadata==8.7.0; python_version < "3.10"
+    # via setuptools-scm
 packaging==25.0
     # via
     #   -r requirements/pip.pip
@@ -27,21 +21,13 @@ packaging==25.0
     #   setuptools-scm
 pip-tools==7.4.1
     # via -r requirements/pip-tools.in
-pygments==2.18.0
-    # via
-    #   -r requirements/pip.pip
-    #   rich
 pyproject-hooks==1.0.0
     # via
     #   build
     #   pip-tools
 requests==2.31.0
     # via get-pypi-latest-version
-# rich==13.8.1
-    # via
-    #   -r requirements/pip.pip
-    #   setuptools-scm
-# setuptools-scm[rich]==8.3.1
+setuptools-scm==8.3.1
     # via -r requirements/pip.pip
 six==1.16.0
     # via html5lib
@@ -53,6 +39,8 @@ tomli==2.0.1 ; python_version < "3.11"
     #   pip-tools
     #   pyproject-hooks
     #   setuptools-scm
+typing-extensions==4.12.2; python_version<"3.10"
+    # via setuptools-scm
 urllib3==2.2.3
     # via requests
 webencodings==0.5.1

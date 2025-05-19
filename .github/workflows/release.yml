@@ -19,6 +19,7 @@ defaults:
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: 1
   DEST_FOLDER: dist/
+  dists-artifact-name: python-package-distributions
 
 permissions:
   contents: read  # This is required for actions/checkout
@@ -55,15 +56,16 @@ jobs:
     - name: build
       env:
         RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-      # echo "python igor.py build_next $RELEASE_VERSION"
-      # python igor.py build_next "$RELEASE_VERSION"
       run: |
-        python -m build
+        echo "build $RELEASE_VERSION"
+        echo "Before build, generate _version.py, not saved in vcs"
+        echo "without _version.py build would fail"
+        python igor.py build_next "$RELEASE_VERSION"
 
     - name: Store the distribution packages
       uses: actions/upload-artifact@v4.6.2
       with:
-        name: python-package-distributions
+        name: ${{ env.dists-artifact-name }}
         path: ${{ env.DEST_FOLDER }}
 
   publish-to-pypi:
@@ -83,7 +85,7 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4.3.0
       with:
-        name: python-package-distributions
+        name: ${{ env.dists-artifact-name }}
         path: ${{ env.DEST_FOLDER }}
 
     - name: Publish package
@@ -107,7 +109,7 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4.3.0
       with:
-        name: python-package-distributions
+        name: ${{ env.dists-artifact-name }}
         path: ${{ env.DEST_FOLDER }}
     - name: Sign the dists with Sigstore
       uses: sigstore/gh-action-sigstore-python@v3.0.0
@@ -152,7 +154,7 @@ jobs:
     - name: Download all the dists
       uses: actions/download-artifact@v4.3.0
       with:
-        name: python-package-distributions
+        name: ${{ env.dists-artifact-name }}
         path: ${{ env.DEST_FOLDER }}
 
     - name: Publish distribution to TestPyPI

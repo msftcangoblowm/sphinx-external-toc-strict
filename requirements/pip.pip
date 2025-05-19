@@ -1,16 +1,12 @@
-markdown-it-py==3.0.0
-    # via rich
-mdurl==0.1.2
-    # via markdown-it-py
+importlib-metadata==8.7.0; python_version < "3.10"
+    # via setuptools-scm
 packaging==25.0
     # via setuptools-scm
-pygments==2.18.0
-    # via rich
-# rich==13.8.1
-    # via setuptools-scm
-# setuptools-scm[rich]==8.3.1
+setuptools-scm==8.3.1
     # via -r requirements/pip.in
-tomli==2.0.1 ; python_version < "3.11"
+tomli==2.0.1; python_version < "3.11"
     # via
     #   -c requirements/pins.pip
     #   setuptools-scm
+typing-extensions==4.12.2; python_version<"3.10"
+    # via setuptools-scm
