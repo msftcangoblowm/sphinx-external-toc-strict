@@ -3,7 +3,7 @@
 
 file name suffix handling module.
 
-Unit test -- Module
+With coverage
 
 .. code-block:: shell
 
@@ -14,6 +14,7 @@ Unit test -- Module
 """
 
 from contextlib import nullcontext as does_not_raise
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -23,118 +24,184 @@ from sphinx_external_toc_strict.filename_suffix import (
     strip_suffix,
 )
 
-testdata_strip_suffix_natural = [
+if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+        Sequence,
+    )
+
+    from tests.typing_only import DOES_NOT_OR_DOES
+
+
+@pytest.mark.parametrize(
+    "fcn, name, suffixes, expectation",
     (
-        "file.tar.gz",
-        (".tar.gz",),
-        pytest.raises(AssertionError),
-    ),
-    (
-        "file.tar.gz",
-        [
+        pytest.param(
+            _strip_suffix_natural,
+            "file.tar.gz",
+            (".tar.gz",),
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-tuple-expects-str",
+        ),
+        pytest.param(
+            _strip_suffix_natural,
+            "file.tar.gz",
+            [
+                ".tar.gz",
+            ],
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-list-expects-str",
+        ),
+        pytest.param(
+            _strip_suffix_natural,
+            "file.tar.gz",
+            1.1234,
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-float-expects-str",
+        ),
+        pytest.param(
+            _strip_suffix_or,
+            "file.tar.gz",
             ".tar.gz",
-        ],
-        pytest.raises(AssertionError),
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-str-expects-list",
+        ),
+        pytest.param(
+            _strip_suffix_or,
+            "file.tar.gz",
+            (".tar.gz",),
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-tuple-expects-list",
+        ),
+        pytest.param(
+            _strip_suffix_or,
+            "file.tar.gz",
+            1.1234,
+            pytest.raises(AssertionError),
+            id="suffix-is-of-type-float-expects-list",
+        ),
+        pytest.param(
+            strip_suffix,
+            "bob",
+            1.1234,
+            pytest.raises(ValueError),
+            id="cause-a-ValueError",
+        ),
     ),
-    (
-        "file.tar.gz",
-        1.1234,
-        pytest.raises(AssertionError),
-    ),
-]
-ids_strip_suffix_natural = [
-    "suffix is of type tuple, expects str",
-    "suffix is of type list, expects str",
-    "suffix is of type float, expects str",
-]
-
-
-@pytest.mark.parametrize(
-    "name, suffixes, expectation",
-    testdata_strip_suffix_natural,
-    ids=ids_strip_suffix_natural,
 )
-def test_strip_suffix_natural(name, suffixes, expectation):
-    """do_not_cross_streams"""
+def test_strip_expectation_fail(
+    fcn: "Callable[[str, str], str] | Callable[[str, list[str]], str]",
+    name: str,
+    suffixes: "Sequence[str] | float",
+    expectation: "DOES_NOT_OR_DOES",
+) -> None:
+    """streams crossed"""
+    # pytest --showlocals --log-level INFO -k "test_strip_expectation_fail" tests
     with expectation:
-        _strip_suffix_natural(name, suffixes)
-
-
-testdata_strip_suffix_or = [
-    (
-        "file.tar.gz",
-        ".tar.gz",
-        pytest.raises(AssertionError),
-    ),
-    ("file.tar.gz", (".tar.gz",), pytest.raises(AssertionError)),
-    ("file.tar.gz", 1.1234, pytest.raises(AssertionError)),
-]
-ids_strip_suffix_or = [
-    "suffix is of type str, expects list",
-    "suffix is of type tuple, expects list",
-    "suffix is of type float, expects list",
-]
+        fcn(
+            name,
+            suffixes,  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.parametrize(
-    "name, suffixes, expectation",
-    testdata_strip_suffix_or,
-    ids=ids_strip_suffix_or,
-)
-def test_strip_suffix_or(name, suffixes, expectation):
-    """Test strip_suffix_or. Exceptions."""
-    # pytest --showlocals --log-level INFO -k "test_strip_suffix_or" tests
-    with expectation:
-        _strip_suffix_or(name, suffixes)
-
-
-testdata_strip_suffix_errors = (
+    "fcn, name, suffixes, expectation, expected",
     (
-        "bob",
-        1.1234,
-        pytest.raises(ValueError),
-        None,
+        pytest.param(
+            strip_suffix,
+            "bob",
+            (".tar.gz",),
+            does_not_raise(),
+            "bob",
+            id="Does-no-harm-if-file-name-doesnt-have-any-suffixes",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            (),
+            does_not_raise(),
+            "file.tar.gz",
+            id="no-suffixes-provided.-Nothing-to-strip-from-file-name",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            (".tar.gz"),  # is this supposed to be a tuple. It's a str!
+            does_not_raise(),
+            "file",
+            id="strip-tar.gz",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            ("tar",),
+            does_not_raise(),
+            "file.tar.gz",
+            id="cannot-strip-tar-from-tar.gz",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            ("gz",),
+            does_not_raise(),
+            "file.tar",
+            id="can-strip-gz-from=tar.gz",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            ("zip", "xz", "rar", "txt", "ai"),
+            does_not_raise(),
+            "file.tar.gz",
+            id="lots-of-non-match-suffixes",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file",
+            ("file",),
+            does_not_raise(),
+            "file",
+            id="file-stem-is-not-a-suffix",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            (".md.gz"),  # is this supposed to be a tuple. It's a str!
+            does_not_raise(),
+            "file.tar",
+            id="weak-knees,-quit-while-ahead",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.tar.gz",
+            "asdf.md.gz",
+            does_not_raise(),
+            "file.tar",
+            id="str-suffixes-provided-with-a-stem",
+        ),
+        pytest.param(
+            strip_suffix,
+            "file.gz",
+            ".md.gz",
+            does_not_raise(),
+            "file",
+            id="ran-out-of-chips",
+        ),
     ),
-    (
-        "bob",
-        (".tar.gz",),
-        does_not_raise(),
-        "bob",
-    ),
-    ("file.tar.gz", (), does_not_raise(), "file.tar.gz"),
-    ("file.tar.gz", (".tar.gz"), does_not_raise(), "file"),
-    ("file.tar.gz", ("tar",), does_not_raise(), "file.tar.gz"),
-    ("file.tar.gz", ("gz",), does_not_raise(), "file.tar"),
-    ("file.tar.gz", ("zip", "xz", "rar", "txt", "ai"), does_not_raise(), "file.tar.gz"),
-    ("file", ("file",), does_not_raise(), "file"),
-    ("file.tar.gz", (".md.gz"), does_not_raise(), "file.tar"),
-    ("file.tar.gz", "asdf.md.gz", does_not_raise(), "file.tar"),
-    ("file.gz", ".md.gz", does_not_raise(), "file"),
 )
-ids_strip_suffix_errors = (
-    "Cause a ValueError",
-    "Does no harm if file name doesn't have any suffixes",
-    "no suffixes provided. Nothing to strip from file name",
-    "strip tar.gz",
-    "cannot strip tar from tar.gz",
-    "can strip gz from tar.gz",
-    "lots of non-match suffixes",
-    "file stem is not a suffix",
-    "weak knees, quit while ahead",
-    "str suffixes provided with a stem",
-    "ran out of chips",
-)
-
-
-@pytest.mark.parametrize(
-    "name, suffixes, expectation, expected",
-    testdata_strip_suffix_errors,
-    ids=ids_strip_suffix_errors,
-)
-def test_strip_suffix_errors(name, suffixes, expectation, expected):
+def test_strip_expectation_success(
+    fcn: "Callable[[str, Sequence[str]], str]",
+    name: str,
+    suffixes: "Sequence[str] | str | float",
+    expectation: "DOES_NOT_OR_DOES",
+    expected: "str | None",
+) -> None:
     """Test strip_suffix."""
-    # pytest --showlocals --log-level INFO -k "test_strip_suffix_errors" tests
+    # pytest --showlocals --log-level INFO -k "test_strip_expectation_success" tests
     with expectation:
-        actual = strip_suffix(name, suffixes)
+        actual = fcn(
+            name,
+            suffixes,  # type: ignore[arg-type]
+        )
     if isinstance(expectation, does_not_raise):
         assert expected == actual

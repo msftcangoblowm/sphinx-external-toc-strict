@@ -175,15 +175,12 @@ def _update_file(fname: str, pattern: str, replacement: str) -> None:
     """Update the contents of a file, replacing pattern with replacement."""
     path_file = Path(fname)
     if path_file.exists():
-        with open(fname) as fobj:
-            old_text = fobj.read()
-
+        old_text = path_file.read_text()
         new_text = re.sub(pattern, replacement, old_text, count=1)
 
         if new_text != old_text:
             print(f"Updating {fname}", file=sys.stderr)
-            with open(fname, "w") as fobj:
-                fobj.write(new_text)
+            path_file.write_text(new_text)
     else:
         print(f"Cannot update nonexistent file, {fname}", file=sys.stderr)
 
@@ -263,8 +260,7 @@ def do_edit_for_release(kind: str) -> None:
     _update_file("CHANGES.rst", re.escape(UNRELEASED), SCRIV_START + new_head)
 
     # docs/conf.py
-    new_conf = textwrap.dedent(
-        f"""\
+    new_conf = textwrap.dedent(f"""\
         # @@@ editable
         copyright = "2023\N{EN DASH}{facts.now:%Y}, Dave Faulkmore"
         # The short X.Y.Z version.
@@ -274,8 +270,7 @@ def do_edit_for_release(kind: str) -> None:
         # The date of release, in "monthname day, year" format.
         release_date = "{facts.now:%B %-d, %Y}"
         # @@@ end
-        """
-    )
+        """)
     _update_file("docs/conf.py", r"(?s)# @@@ editable\n.*# @@@ end\n", new_conf)
 
 
@@ -402,9 +397,7 @@ def _arbitrary_version(next_version: str) -> str | None:
     scm_override_key = scm_key(g_app_name)
 
     if next_version is None or (
-        next_version is not None
-        and isinstance(next_version, str)
-        and len(next_version) == 0
+        next_version is not None and isinstance(next_version, str) and not next_version
     ):
         scm_override_val = current_tag()
     else:
@@ -514,9 +507,7 @@ def do_build_next(next_version: str) -> None:
     env = os.environ.copy()
 
     if next_version is None or (
-        next_version is not None
-        and isinstance(next_version, str)
-        and len(next_version) == 0
+        next_version is not None and isinstance(next_version, str) and not next_version
     ):
         msg = "Use current version, not tagged or provided version"
         print(msg)

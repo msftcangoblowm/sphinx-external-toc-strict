@@ -3,78 +3,6 @@
 
 Separate constants out so independent of any dependencies
 
-.. py:data:: URL_PATTERN
-   :type: str
-
-   regex used to parse URLs
-
-.. py:data:: DEFAULT_SUBTREES_KEY
-   :type: str
-   :value: "subtrees"
-
-   Default subtrees key. Overridden for jb-book and jb-article
-
-.. py:data:: DEFAULT_ITEMS_KEY
-   :type: str
-   :value: "entries"
-
-   Items can contain: ``- file:``, ``- url:``, or ``- glob:`` item
-
-.. py:data:: FILE_FORMAT_KEY
-   :type: str
-   :value: "format"
-
-   file format / use case key
-
-.. py:data:: ROOT_KEY
-   :type: str
-   :value: "root"
-
-   key for root document
-
-.. py:data:: FILE_KEY
-   :type: str
-   :value: "file"
-
-   Default file key
-
-.. py:data:: GLOB_KEY
-   :type: str
-   :value: "glob"
-
-   Default url key
-
-.. py:data:: REF_KEY
-   :type: str
-   :value: "ref"
-
-   Default intersphinx reference id lookup key
-
-.. py:data:: URL_KEY
-   :type: str
-   :value: "url"
-
-   Default url key
-
-.. py:data:: TOCTREE_OPTIONS
-   :type: tuple[str, ...]
-   :value: ("caption", "hidden", "maxdepth", "numbered", "reversed", "titlesonly")
-
-   Possible options' key
-
-.. py:data:: use_cases
-   :type: tuple[str, ...]
-
-   All supported file formats / uses cases
-
-.. py:data:: __all__
-   :type: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str]
-   :value: ("g_app_name", "__version_app", "__url__", "URL_PATTERN", \
-   "DEFAULT_SUBTREES_KEY", "DEFAULT_ITEMS_KEY", "FILE_FORMAT_KEY", \
-   "ROOT_KEY", "FILE_KEY", "GLOB_KEY", "REF_KEY", "URL_KEY", "TOCTREE_OPTIONS", \
-   "use_cases")
-
-
 """
 
 from ._version import __version__
@@ -100,21 +28,32 @@ __all__ = (
     "use_cases",
 )
 
+#: str: package name underscores not hyphens
 g_app_name = "sphinx_external_toc_strict"
 
 # Pattern used to match URL items.
 # regex should match sphinx.util.url_re
+#: str: regex used to parse URLs
 URL_PATTERN = r".+://.*"
 
+#: str: Default subtrees key. Overridden for jb-book and jb-article
 DEFAULT_SUBTREES_KEY = "subtrees"
+#: str: Items can contain: ``- file:``, ``- url:``, or ``- glob:`` item
 DEFAULT_ITEMS_KEY = "entries"
+#: str: file format / use case key
 FILE_FORMAT_KEY = "format"
+#: str: key for root document
 ROOT_KEY = "root"
+#: str: Default file key
 FILE_KEY = "file"
+#: str: Default url key
 GLOB_KEY = "glob"
+#: str: Default intersphinx reference id lookup key
 REF_KEY = "ref"
+#: str: Default url key
 URL_KEY = "url"
 
+#: tuple[str, ...]: Possible options' key
 TOCTREE_OPTIONS = (
     "caption",
     "hidden",
@@ -124,6 +63,7 @@ TOCTREE_OPTIONS = (
     "titlesonly",
 )
 
+#: tuple[str, ...]: All supported file formats / uses cases
 use_cases = ("default", "jb-book", "jb-article")
 
 # Removes epoch and local. Fixes version

@@ -1,7 +1,13 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-Unit test -- Module
+Without coverage
+
+.. code-block:: shell
+
+   pytest -s --showlocals -vv "tests/test_parsing.py"
+
+With coverage
 
 .. code-block:: shell
 
@@ -11,8 +17,8 @@ Unit test -- Module
 
 """
 
-import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -31,13 +37,22 @@ from sphinx_external_toc_strict.parsing_strictyaml import (
     parse_toc_yaml,
 )
 
+if TYPE_CHECKING:
+    import types
+    from typing import Any
+
+    import strictyaml as s
+
+    from .fr import FileRegression
+    from .typing_only import DOES_NOT_OR_DOES
+
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
 
 
 @pytest.mark.parametrize(
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
-def test_file_to_sitemap(path: Path, data_regression):
+def test_file_to_sitemap(path: "Path", data_regression: "FileRegression") -> None:
     """Test parse_toc_yaml with good files."""
     site_map = parse_toc_yaml(path)
     data_regression.check(site_map.as_json())
@@ -46,7 +61,7 @@ def test_file_to_sitemap(path: Path, data_regression):
 @pytest.mark.parametrize(
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
-def test_create_toc_dict(path: Path, data_regression):
+def test_create_toc_dict(path: "Path", data_regression: "FileRegression") -> None:
     """Test create_toc_dict with good files."""
     site_map = parse_toc_yaml(path)
     data = create_toc_dict(site_map)
@@ -58,7 +73,7 @@ ERROR_MESSAGES = {
     # "bad_option_value.yml": "toctree validation @ '/': 'titlesonly'",
     "bad_option_value.yml": "Field value unexpected: .+",
     "bad_url.yml": "entry validation @ '/entries/0': 'url' must match regex",
-    "doc_multiple_times.yml": "document file used multiple times: '.+'",  # .+ --> *
+    "doc_multiple_times.yml": "Document file used multiple times: '.+'",  # .+ --> *
     # "doc_validation_fail.yml": "doc validation @ .+",  # .+ --> *
     "doc_validation_fail.yml": "Field value unexpected: .+",  # .+ --> *
     "empty.yml": "toc is not a mapping:",
@@ -84,50 +99,68 @@ ERROR_MESSAGES = {
 @pytest.mark.parametrize(
     "path", TOC_FILES_BAD, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES_BAD]
 )
-def test_malformed_file_parse(path: Path):
+def test_malformed_file_parse(path: "Path") -> None:
     """Test parse_toc_yaml with bad files."""
     message = ERROR_MESSAGES[path.name]
     with pytest.raises(MalformedError, match=message):
         parse_toc_yaml(path)
 
 
-testdata_parse_toc_yaml_bad_input = [
+@pytest.mark.parametrize(
+    "path, expectation",
     (
-        None,
-        pytest.raises(ValueError),
+        pytest.param(
+            None,
+            pytest.raises(ValueError),
+            id="data-source-None",
+        ),
+        pytest.param(
+            1.12345,
+            pytest.raises(ValueError),
+            id="data-source-unsupported-type",
+        ),
     ),
-    (
-        1.12345,
-        pytest.raises(ValueError),
-    ),
-]
-ids_parse_toc_yaml_bad_input = [
-    "data source None",
-    "data source unsupported type",
-]
+)
+def test_parse_toc_yaml_bad_input(
+    path: "float | None",
+    expectation: "DOES_NOT_OR_DOES",
+) -> None:
+    """Test parse_toc_yaml."""
+    with expectation:
+        parse_toc_yaml(
+            path,  # type: ignore[arg-type]
+        )
 
 
 @pytest.mark.parametrize(
-    "path, expectation",
-    testdata_parse_toc_yaml_bad_input,
-    ids=ids_parse_toc_yaml_bad_input,
+    "relpath_toc_yaml, depth, skip_defaults, expectation",
+    (
+        pytest.param(
+            Path("_toc_files").joinpath("basic.yml"),
+            0,
+            True,
+            pytest.raises(TypeError),
+            id="basic-toc-yaml",
+        ),
+    ),
 )
-def test_parse_toc_yaml_bad_input(path, expectation):
-    """Test parse_toc_yaml."""
-    with expectation:
-        parse_toc_yaml(path)
-
-
-def test_parse_item_testable():
+def test_parse_item_testable(
+    relpath_toc_yaml: "Path",
+    depth: int,
+    skip_defaults: bool,
+    expectation: "DOES_NOT_OR_DOES",
+    request: pytest.FixtureRequest,
+) -> None:
     """Cause a TypeError"""
-    path = os.path.abspath(Path(__file__).parent.joinpath("_toc_files", "basic.yml"))
-    site_map = parse_toc_yaml(path)
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml)
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
+
+    site_map = parse_toc_yaml(toc_yaml_abspath)
     # doc_item = site_map.root
-    depth = 0
     file_format = FILE_FORMATS[site_map.file_format or "default"]
-    skip_defaults = True
     parsed_docnames = set()
-    with pytest.raises(TypeError):
+    with expectation:
         _parse_item_testable(
             site_map,
             0.12345,
@@ -138,29 +171,33 @@ def test_parse_item_testable():
         )
 
 
-testdata_create_toc_dict_bad_file_format = (
+@pytest.mark.parametrize(
+    "relpath_toc_yaml, file_format",
     (
-        Path(__file__).parent.joinpath("_toc_files", "basic.yml"),
-        "Trevor",
+        pytest.param(
+            Path("_toc_files").joinpath("basic.yml"),
+            "Trevor",
+            id="invalid-file-format",
+        ),
     ),
 )
-ids_create_toc_dict_bad_file_format = ("invalid file format",)
-
-
-@pytest.mark.parametrize(
-    "path_toc, file_format",
-    testdata_create_toc_dict_bad_file_format,
-    ids=ids_create_toc_dict_bad_file_format,
-)
-def test_create_toc_dict_bad_file_format(path_toc, file_format):
+def test_create_toc_dict_bad_file_format(
+    relpath_toc_yaml: "Path",
+    file_format: str,
+    request: pytest.FixtureRequest,
+) -> None:
     """site map with invalid file format (aka use case)"""
     # pytest --showlocals --log-level INFO -k "test_create_toc_dict_bad_file_format" tests
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml)
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
+
     # create site map with invalid file format (aka use case)
     assert file_format not in use_cases
 
     # prepare
     #    create a site_map with an unknown file format
-    site_map = parse_toc_yaml(str(path_toc))
+    site_map = parse_toc_yaml(toc_yaml_abspath)
     site_map._file_format = file_format
 
     with pytest.raises(KeyError):
@@ -173,79 +210,100 @@ def test_create_toc_dict_bad_file_format(path_toc, file_format):
     assert ff_before == ff_after
 
 
-testdata = [
-    ("entries", {"file": "bob"}, None, {"file": "bob"}),
-    ("entries", {"file": "bob"}, 1.12345, {"file": "bob"}),
-    ("entries", {"file": "bob"}, _scalar_affinity_map, {"file": "bob"}),
-]
-ids = [
-    "not scalar, mapping None",
-    "not scalar, mapping unsupported type",
-    "not scalar, mapping default mapping",
-]
-
-
 @pytest.mark.parametrize(
     "key, val, mapping, expected",
-    testdata,
-    ids=ids,
+    (
+        pytest.param(
+            "entries",
+            {"file": "bob"},
+            None,
+            {"file": "bob"},
+            id="not-scalar-mapping-None",
+        ),
+        pytest.param(
+            "entries",
+            {"file": "bob"},
+            1.12345,
+            {"file": "bob"},
+            id="not-scalar-mapping-unsupported-type",
+        ),
+        pytest.param(
+            "entries",
+            {"file": "bob"},
+            _scalar_affinity_map,
+            {"file": "bob"},
+            id="not-scalar-mapping-default-mapping",
+        ),
+    ),
 )
-def test_affinity_val(key, val, mapping, expected):
+def test_affinity_val(
+    key: str,
+    val: dict[str, str],
+    mapping: "types.MappingProxyType[str, s.validators.Validator] | float | None",
+    expected: dict[str, str],
+) -> None:
     """Use type affinity and a mapping to coerce value data type"""
     # pytest --showlocals --log-level INFO -k "test_affinity_val" tests
-    val_out = affinity_val(key, val, mapping=mapping)
+    val_out = affinity_val(
+        key,
+        val,
+        mapping=mapping,  # type: ignore[arg-type]
+    )
     assert val_out == expected
-
-
-testdata_parse_toc_data = [
-    (
-        {"defaults": {"caption": 1.12345}},
-        pytest.raises(MalformedError),
-    ),
-    (
-        {"defaults": {"maxdepth": 1.12345}},
-        pytest.raises(MalformedError),
-    ),
-    (
-        {"defaults": {"maxdepth": 1}, "root": "intro", "meta": {"unknown": 1.12345}},
-        pytest.raises(MalformedError),
-    ),
-]
-ids_parse_toc_data = [
-    "Field value unexpected",
-    "maxdepth normally an int, received float",
-    "meta unknown normally an int, received float",
-]
 
 
 @pytest.mark.parametrize(
     "data, expectation",
-    testdata_parse_toc_data,
-    ids=ids_parse_toc_data,
+    (
+        pytest.param(
+            {"defaults": {"caption": 1.12345}},
+            pytest.raises(MalformedError),
+            id="Field-value-unexpected",
+        ),
+        pytest.param(
+            {"defaults": {"maxdepth": 1.12345}},
+            pytest.raises(MalformedError),
+            id="maxdepth=normally-an-int-received-float",
+        ),
+        pytest.param(
+            {
+                "defaults": {"maxdepth": 1},
+                "root": "intro",
+                "meta": {"unknown": 1.12345},
+            },
+            pytest.raises(MalformedError),
+            id="meta-unknown-normally-an-int-received-float",
+        ),
+    ),
 )
-def test_parse_toc_data(data, expectation):
+def test_parse_toc_data(
+    data: "dict[str, Any]", expectation: "DOES_NOT_OR_DOES"
+) -> None:
     """Test parse_toc_data."""
     # pytest --showlocals --log-level INFO -k "test_parse_toc_data" tests
     with expectation:
         parse_toc_data(data)
 
 
-testdata_unsupported_type = (
-    (None,),
-    (1.1234,),
-)
-ids_unsupported_type = (
-    "Forgot to check for None, huh?",
-    "float unsupported type",
-)
-
-
 @pytest.mark.parametrize(
-    "invalid",
-    testdata_unsupported_type,
-    ids=ids_unsupported_type,
+    "invalid, expectation",
+    (
+        pytest.param(
+            None,
+            pytest.raises(ValueError),
+            id="Forgot-to-check-for-None-huh",
+        ),
+        pytest.param(
+            1.1234,
+            pytest.raises(ValueError),
+            id="float-unsupported-type",
+        ),
+    ),
 )
-def test_dump_yaml(invalid):
-    """unsupported type --> ValueError"""
-    with pytest.raises(ValueError):
+def test_dump_yaml(
+    invalid: "float | None",
+    expectation: "DOES_NOT_OR_DOES",
+) -> None:
+    """Unsupported type --> ValueError"""
+    with expectation:
         dump_yaml(invalid)

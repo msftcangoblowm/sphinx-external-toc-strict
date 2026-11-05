@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Any
 
 from docutils import nodes
@@ -22,7 +20,6 @@ def create_warning(
     append_to: nodes.Element | None = None,
     wtype: str = "etoc",
 ) -> nodes.system_message | None: ...
-def remove_suffix(docname: str, suffixes: list[str]) -> str: ...
 def parse_toc_to_env(app: Sphinx, config: Config) -> None: ...
 def add_changed_toctrees(
     app: Sphinx,

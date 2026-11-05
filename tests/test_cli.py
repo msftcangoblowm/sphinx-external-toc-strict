@@ -3,7 +3,13 @@
 
 Unittest for entrypoint, cli
 
-Unit test -- Module
+Without coverage
+
+.. code-block:: shell
+
+   python -m pytest -vv --showlocals tests/test_cli.py
+
+With coverage
 
 .. code-block:: shell
 
@@ -12,8 +18,6 @@ Unit test -- Module
    --data-file=.coverage --include="**/cli.py"
 
 """
-
-from __future__ import annotations
 
 import os
 import traceback
@@ -36,11 +40,15 @@ from sphinx_external_toc_strict.cli import (
 from sphinx_external_toc_strict.constants import __version_app
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from click.testing import Result
+
+    from tests.fr import FileRegression
 
 
 @pytest.fixture()
-def invoke_cli():
+def invoke_cli() -> "Callable[[Callable[..., Any], list[str], bool | None], Result]":
     """Run CLI and do standard checks
 
     :param command: cli function being tested
@@ -56,7 +64,11 @@ def invoke_cli():
 
     """
 
-    def _func(command, args: list[str], assert_exit: bool | None = True) -> Result:
+    def _func(
+        command: "Callable[..., Any]",
+        args: list[str],
+        assert_exit: "bool | None" = True,
+    ) -> "Result":
         """Using Click runner, invoke cli function."""
         runner = CliRunner()
         result = runner.invoke(command, args)
@@ -77,7 +89,7 @@ def invoke_cli():
 
 
 @pytest.fixture()
-def is_ok():
+def is_ok() -> "Callable[..., bool]":
     """Check non-empty str
 
     :param val: object to check
@@ -86,14 +98,17 @@ def is_ok():
     :rtype: bool
     """
 
-    def _func(val: Any) -> bool:
+    def _func(val: "Any") -> bool:
         """Fixture which tests is non-empty str and strips any whitespace."""
         return val is not None and isinstance(val, str) and len(val.strip()) != 0
 
     yield _func
 
 
-def test_main(invoke_cli, is_ok):
+def test_main(
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+    is_ok: "Callable[[Any], bool]",
+) -> None:
     """Invoke sphinx-toc-strict --version and --help"""
     # pytest --showlocals --log-level INFO -k "test_main" tests
     result = invoke_cli(main, ["--version"])
@@ -101,34 +116,44 @@ def test_main(invoke_cli, is_ok):
 
     result = invoke_cli(main, ["--help"])
 
-    assert is_ok(result.output) is True
-
-
-testdata_parse_toc = (
-    (
-        Path(__file__).parent.joinpath("_toc_files", "basic.yml"),
-        "intro",
-    ),
-)
-ids_parse_toc = ("parse basic toc with root intro rather than index",)
+    assert is_ok(result.output)
 
 
 @pytest.mark.parametrize(
-    "path_toc, toc_root_file_stem",
-    testdata_parse_toc,
-    ids=ids_parse_toc,
+    "relpath_toc_yaml, toc_root_file_stem",
+    (
+        pytest.param(
+            Path("_toc_files").joinpath("basic.yml"),
+            "intro",
+            id="parse-basic-toc-with-root-intro-rather-than-index",
+        ),
+    ),
 )
-def test_parse_toc(path_toc, toc_root_file_stem, invoke_cli, is_ok):
+def test_parse_toc(
+    relpath_toc_yaml: "Path",
+    toc_root_file_stem: str,
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+    is_ok: "Callable[[Any], bool]",
+    request: pytest.FixtureRequest,
+) -> None:
     """parses yaml, creates a sitemap, dumps the site map to a str"""
     # pytest --showlocals --log-level INFO -k "test_parse_toc" tests
-    toc_path = str(path_toc)
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml)
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
+
+    toc_path = str(toc_yaml_abspath)
     result = invoke_cli(parse_toc, [toc_path])
 
-    assert is_ok(result.output) is True
+    assert is_ok(result.output)
     assert toc_root_file_stem in result.output
 
 
-def test_create_toc(tmp_path, invoke_cli, file_regression):
+def test_create_toc(
+    tmp_path,
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+    file_regression: "FileRegression",
+) -> None:
     """create project files
 
     Support for hidden files was dropped. ``.hidden_file.rst``, for
@@ -179,7 +204,7 @@ def test_create_toc(tmp_path, invoke_cli, file_regression):
 
 testdata_create_site_cli = (
     (
-        Path(__file__).parent.joinpath("_toc_files", "exclude_missing.yml"),
+        Path("_toc_files").joinpath("exclude_missing.yml"),
         "intro",
         "rst",
     ),
@@ -188,23 +213,30 @@ ids_create_site_cli = ("intro instead of index",)
 
 
 @pytest.mark.parametrize(
-    "path_toc_yml, root, extension",
+    "relpath_toc_yaml, root, extension",
     testdata_create_site_cli,
     ids=ids_create_site_cli,
 )
 def test_create_site_cli_existing_files(
-    path_toc_yml, root, extension, tmp_path, invoke_cli
-):
+    relpath_toc_yaml: "Path",
+    root: str,
+    extension: str,
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+) -> None:
     """From toc yml, creates site in tmp folder. In tmp folder, confirm files created"""
     # pytest --showlocals --log-level INFO -k "test_create_site_cli_existing_files" tests
-    toc_file_path = os.path.abspath(path_toc_yml)
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml).resolve()
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
 
     #    already existing file
     path_f = tmp_path.joinpath(f"doc1.{extension}")
     path_f.touch()
 
     cmd = [
-        toc_file_path,
+        toc_yaml_abspath,
         "--path",
         os.path.abspath(tmp_path),
         "--extension",
@@ -220,13 +252,24 @@ def test_create_site_cli_existing_files(
 
 
 @pytest.mark.parametrize(
-    "path_toc_yml, root, extension",
+    "relpath_toc_yaml, root, extension",
     testdata_create_site_cli,
     ids=ids_create_site_cli,
 )
-def test_create_site_cli_normal(path_toc_yml, root, extension, tmp_path, invoke_cli):
+def test_create_site_cli_normal(
+    relpath_toc_yaml: "Path",
+    root: str,
+    extension: str,
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+) -> None:
     """Test create sitemap from a toc."""
     # pytest --showlocals --log-level INFO -k "test_create_site_cli_normal" tests
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml).resolve()
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
+
     # prepare
     #    doc1.rst file is created. When shown the toc would exclude doc1.rst
     expected_files = (
@@ -236,10 +279,9 @@ def test_create_site_cli_normal(path_toc_yml, root, extension, tmp_path, invoke_
         f"doc2.{extension}",
         f"subfolder/other1.{extension}",
     )
-    toc_file_path = os.path.abspath(path_toc_yml)
 
     cmd = [
-        toc_file_path,
+        toc_yaml_abspath,
         "--path",
         os.path.abspath(tmp_path),
         "--extension",
@@ -267,27 +309,31 @@ def test_create_site_cli_normal(path_toc_yml, root, extension, tmp_path, invoke_
         assert str_path_expected in actual_paths
 
 
-testdata_migrate_toc = (
+@pytest.mark.parametrize(
+    "relpath_toc_yaml, root",
     (
-        Path(__file__).parent.joinpath("_jb_migrate_toc_files", "simple_list.yml"),
-        "index",
+        pytest.param(
+            Path("_jb_migrate_toc_files").joinpath("simple_list.yml"),
+            "index",
+            id="migrate-jupyter-book",
+        ),
     ),
 )
-ids_migrate_toc = ("",)
-
-
-@pytest.mark.parametrize(
-    "path_toc_yml, root",
-    testdata_migrate_toc,
-    ids=ids_migrate_toc,
-)
-def test_migrate_toc(path_toc_yml, root, tmp_path, invoke_cli):
+def test_migrate_toc(
+    relpath_toc_yaml: "Path",
+    root: str,
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+    invoke_cli: "Callable[[Callable[..., Any], list[str], bool | None], Result]",
+) -> None:
     """Migrate toc. Output to stdout or saves to file. Compare both"""
     # pytest --showlocals --log-level INFO -k "test_migrate_toc" tests
-    toc_yml_path = str(path_toc_yml)
+    abspath_tests_dir = request.path.parent
+    abspath_toc_yaml = abspath_tests_dir.joinpath(relpath_toc_yaml).resolve()
+    toc_yaml_abspath = abspath_toc_yaml.as_posix()
 
     # act
-    result = invoke_cli(migrate_toc, [toc_yml_path])
+    result = invoke_cli(migrate_toc, [toc_yaml_abspath])
     toc_yml_0 = result.output  # two newlines
     # verify
     assert f"root: {root}" in toc_yml_0
@@ -298,12 +344,12 @@ def test_migrate_toc(path_toc_yml, root, tmp_path, invoke_cli):
     path_out = path_site.joinpath("_toc.yml")
 
     #    Saves to output file, site/_toc.yml
-    result = invoke_cli(migrate_toc, [toc_yml_path, "--output", str(path_out)])
+    result = invoke_cli(migrate_toc, [toc_yaml_abspath, "--output", str(path_out)])
     out = result.output.rstrip()
 
     # verify
-    assert out == f"Written to: {str(path_out)}"
-    assert path_out.exists() is True
+    assert out == f"Written to: {path_out!s}"
+    assert path_out.exists()
     toc_yml_1 = path_out.read_text()  # one newline
     # rstrip both cuz left side has two newlines. Right has one newline
     assert toc_yml_0.rstrip() == toc_yml_1.rstrip()

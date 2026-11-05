@@ -35,13 +35,13 @@ proj_master_doc = config.get("master_doc")
 # copyright = "2021, Executable Book Project"
 
 # @@@ editable
-copyright = "2023–2025, Dave Faulkmore"
+copyright = "2023–2026, Dave Faulkmore"
 # The short X.Y.Z version.
-version = "2.0.2"
+version = "2.0.4"
 # The full version, including alpha/beta/rc tags.
-release = "2.0.2"
+release = "2.0.4"
 # The date of release, in "monthname day, year" format.
-release_date = "January 05, 2025"
+release_date = "November 05, 2026"
 # @@@ end
 
 v = parse(release)
@@ -56,9 +56,7 @@ project = f"{proj_project} {version}"
 rst_epilog = """
 .. |project_name| replace:: {slug}
 .. |package-equals-release| replace:: sphinx_external_toc_strict=={release}
-""".format(
-    release=release, slug=slug
-)
+""".format(release=release, slug=slug)
 
 html_theme_options = {
     "description": proj_description,
@@ -180,4 +178,37 @@ linkcheck_request_headers = {
 # in conf.py --> nitpicky = True
 nitpick_ignore = [
     ("py:class", "ValidatorType"),
+    ("py:class", "UnionAB"),
+    ("py:class", "dict[str"),  # https://github.com/sphinx-doc/sphinx/issues/14159
 ]
+
+"""
+# sphinx-doc/sphinx#14159
+# For track down "unknown" source. Hint was py:class: dict[str
+#
+# in pyproject.toml had to change from 'signature' to 'description'
+# autodoc_typehints = 'description'
+from sphinx import addnodes
+
+def report_dict_refs(app, doctree):
+    for node in doctree.findall(addnodes.pending_xref):
+        target = node.get("reftarget", "")
+        if target.startswith("dict[str"):
+            parent = node.parent
+            while parent is not None and not isinstance(
+                parent, addnodes.desc_signature
+            ):
+                parent = parent.parent
+
+            signature = parent.astext() if parent is not None else "<no signature>"
+            print(
+                f"\nDICT REF: doc={app.env.docname!r}, "
+                f"target={target!r}, "
+                f"source={node.get('source')!r}, "
+                f"line={node.get('line')!r}\n"
+                f"  signature: {signature}"
+            )
+
+def setup(app):
+    app.connect("doctree-read", report_dict_refs)
+"""

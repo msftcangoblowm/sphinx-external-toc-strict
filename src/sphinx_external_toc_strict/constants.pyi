@@ -1,16 +1,22 @@
-import sys
+from collections.abc import Sequence
+from typing import Final
 
-if sys.version_info >= (3, 8):  # pragma: no cover
-    from typing import Final
-else:  # pragma: no cover
-    from typing_extensions import Final
-
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence
-else:  # pragma: no cover
-    from typing import Sequence
-
-__all__: Final[tuple[str, str, str, str, str, str, str, str, str, str, str, str, str]]
+__all__ = (
+    "g_app_name",
+    "__version_app",
+    "__url__",
+    "URL_PATTERN",
+    "DEFAULT_SUBTREES_KEY",
+    "DEFAULT_ITEMS_KEY",
+    "FILE_FORMAT_KEY",
+    "ROOT_KEY",
+    "FILE_KEY",
+    "GLOB_KEY",
+    "REF_KEY",
+    "URL_KEY",
+    "TOCTREE_OPTIONS",
+    "use_cases",
+)
 
 g_app_name: Final[str]
 
@@ -22,6 +28,7 @@ FILE_FORMAT_KEY: Final[str]
 ROOT_KEY: Final[str]
 FILE_KEY: Final[str]
 GLOB_KEY: Final[str]
+REF_KEY: Final[str]
 URL_KEY: Final[str]
 TOCTREE_OPTIONS: Final[Sequence[str]]
 

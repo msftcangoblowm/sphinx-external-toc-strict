@@ -1,23 +1,17 @@
-from __future__ import annotations
-
-import sys
+from collections.abc import Sequence
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import (
+    Any,
+    TypeGuard,
+)
 
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
+__all__ = (
+    "find_project_root",
+    "find_pyproject_toml",
+)
 
-if sys.version_info >= (3, 9):
-    from collections.abc import Sequence
-else:
-    from typing import Sequence
-
-__all__: Final[tuple[str, str]]
-
-def _is_ok(test: Any | None) -> bool: ...
+def _is_ok(test: Any | None) -> TypeGuard[str]: ...
 @lru_cache
 def find_project_root(
     srcs: Sequence[Any] | None,
@@ -25,5 +19,5 @@ def find_project_root(
 ) -> tuple[Path, str]: ...
 def find_pyproject_toml(
     path_search_start: tuple[str, ...],
-    stdin_filename: str | None = None,
+    stdin_filename: str | None,
 ) -> str | None: ...

@@ -1,0 +1,4 @@
+# setuptools-scm-10.0.0 requires vcs-versioning
+#    contains module vcs_versioning._overrides.read_toml_overrides
+# vcs-versioning requires packaging>=26.2 which drain-swamp is not using
+setuptools-scm>=8.3.1,<10

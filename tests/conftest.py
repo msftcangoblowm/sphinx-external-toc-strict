@@ -4,67 +4,22 @@
 sphinx-external-toc-strict pytest conftest.py
 """
 
-import re
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING
 
 import pytest
 
+from tests.fr import FileRegression
 from tests.test_util.intersphinx_data import INVENTORY_V2
-from tests.test_util.sphinx_conftest import pytest_plugins  # noqa: F401
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from typing import Any
 
-class FileRegression:
-    """Compare previous runs files.
+    from tests.typing_sphinx import MakeApp
 
-    :ivar file_regression: file to compare against?
-    :vartype file_regression: typing.Self
-
-    .. todo:: when Sphinx<=6 is dropped
-
-       Remove line starting with re.escape(" translation_progress=
-
-    .. todo:: when Sphinx<7.2 is dropped
-
-       Remove line starting with original_url=
-
-    """
-
-    ignores = (
-        # Remove when support for Sphinx<=6 is dropped,
-        re.escape(" translation_progress=\"{'total': 0, 'translated': 0}\""),
-        # Remove when support for Sphinx<7.2 is dropped,
-        r"original_uri=\"[^\"]*\"\s",
-    )
-
-    def __init__(self, file_regression: "FileRegression") -> None:
-        """FileRegression constructor."""
-        self.file_regression = file_regression
-
-    def check(self, data: str, **kwargs: dict[str, Any]) -> str:
-        """Check previous run against current run file.
-
-        :param data: file contents
-        :type data: str
-        :param kwargs: keyword options are passed thru
-        :type kwargs: dict[str, typing.Any]
-        :returns: diff of file contents?
-        :rtype: str
-        """
-        return self.file_regression.check(self._strip_ignores(data), **kwargs)
-
-    def _strip_ignores(self, data: str) -> str:
-        """Helper to strip ignores from data.
-
-        :param data: file contents w/o ignore statements
-        :type data: str
-        :returns: sanitized file contents
-        :rtype: str
-        """
-        cls = type(self)
-        for ig in cls.ignores:
-            data = re.sub(ig, "", data)
-        return data
+# from tests.test_util.sphinx_conftest import pytest_plugins  # noqa: F401
+pytest_plugins = ("sphinx.testing.fixtures",)
 
 
 @pytest.fixture()
@@ -80,7 +35,7 @@ def file_regression(file_regression: "FileRegression") -> FileRegression:
 
 
 @pytest.fixture(scope="session")
-def rootdir() -> Path:
+def rootdir() -> "Path":
     """``tests/roots`` contains subfolders with naming
     pattern ``/test-[site folder tree]``. These contain a Sphinx ``docs/``
     folder tree.
@@ -92,7 +47,7 @@ def rootdir() -> Path:
 
 
 @pytest.fixture(scope="function", autouse=False)
-def docs_dir(tmp_path):
+def docs_dir(tmp_path: "Path") -> "Path":
     """Acts as a Sphinx ``docs/`` folder. Not within a package base
     folder
 
@@ -105,7 +60,7 @@ def docs_dir(tmp_path):
 
 
 @pytest.fixture()
-def inventory_v2():
+def inventory_v2() -> "Callable[[MakeApp, str], Path]":
     """Writes sphinx standard inventory_v2 file.
     Destination is Sphinx app instance srcdir.
 
@@ -116,7 +71,7 @@ def inventory_v2():
     :rtype: pathlib.Path
     """
 
-    def _func(app, inv_file_name):
+    def _func(app: "MakeApp", inv_file_name: str) -> "Path":
         """Write the inventory file to destination site."""
         inv_file = app.srcdir / inv_file_name
         inv_file.write_bytes(INVENTORY_V2)
@@ -127,7 +82,7 @@ def inventory_v2():
 
 
 @pytest.fixture()
-def augment_intersphinx_mapping():
+def augment_intersphinx_mapping() -> "Callable[[MakeApp, dict[str, Any]], None]":
     """Fixture to adjust the ``app.config`` rather than editing a
     Sphinx config (python) file.
 
@@ -135,7 +90,7 @@ def augment_intersphinx_mapping():
     :type mapping: dict[str, typing.Any]
     """
 
-    def _func(app, mapping):
+    def _func(app: "MakeApp", mapping: "dict[str, Any]") -> None:
         """Make small alterations to Sphinx ``app.config``.
         The ``conf.py``, shouldn't be edited. Instead adjusts
         ``app.config``. Changes are not persistent. ``conf.py``

@@ -2,7 +2,7 @@
 #    pinned restrictions on docutils and sphinx.
 #    sphinx major version change overrides myst-parser desires
 # python -m pip install -U --upgrade-strategy=eager Sphinx docutils
--c myst-parser.pins
+-c pins-myst-parser.in
 
 click
 strictyaml

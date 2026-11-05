@@ -12,7 +12,7 @@ from .constants import __version_app as __version__
 
 
 def setup(app):
-    """Initialize the Sphinx extension
+    """Initialize the Sphinx extension.
 
     :param app: Sphinx instance
     :type app: sphinx.application.Sphinx

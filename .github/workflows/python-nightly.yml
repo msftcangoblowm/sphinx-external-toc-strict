@@ -1,17 +1,17 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/nedbat/coveragepy/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
-name: "Python Nightly Tests"
+name: Python Nightly Tests
 
 on:
   push:
     branches:
-      - "**/*nightly*"
+    - '**/*nightly*'
   schedule:
     # Run at 2:22am early every morning Eastern time (6/7:22 UTC)
     # so that we get tips of CPython development tested.
     # https://crontab.guru/#22_7_%2a_%2a_%2a
-    - cron: "22 7 * * *"
+  - cron: 22 7 * * *
   workflow_dispatch:
 
 defaults:
@@ -20,25 +20,26 @@ defaults:
 
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  LOCK_SUFFIX: .lock
 
 permissions:
   contents: read
 
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref }}"
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   tests:
-    name: "${{ matrix.python-version }} on ${{ matrix.os }}"
-    runs-on: "${{ matrix.os }}"
+    name: ${{ matrix.python-version }} on ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
     # If it doesn't finish in an hour, it's not going to. Don't spin for six
     # hours needlessly.
     timeout-minutes: 60
 
     strategy:
       matrix:
-        os:
+        platform:
           # Choose a recent Ubuntu that deadsnakes still builds all the versions for.
           # For example, deadsnakes doesn't provide 3.10 nightly for 22.04 (jammy)
           # because jammy ships 3.10, and deadsnakes doesn't want to clobber it.
@@ -47,47 +48,78 @@ jobs:
           # See https://github.com/deadsnakes/nightly for the source of the nightly
           # builds.
           # bionic: 18, focal: 20, jammy: 22, noble: 24
-          - ubuntu-latest
+          # From Nov 2026, 24 --> 26
+        - ubuntu-latest
         python-version:
           # When changing this list, be sure to check the [gh] list in
           # tox.ini so that tox will run properly. PYVERSIONS
           # Available versions:
           # https://launchpad.net/~deadsnakes/+archive/ubuntu/nightly/+packages
-          - "3.12"
-          - "3.13"
+        - '3.13'
+        - '3.15'
           # https://github.com/actions/setup-python#available-versions-of-pypy
           # https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/__init__.py
           # ruamel-yaml does not support PyPy
-          # - "pypy-3.10-nightly"
+        - "pypy-3.11-nightly"  # support ubuntu-24.04 (noble)
       fail-fast: false
 
     steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v4.2.2
+    - name: Check out the repo
+      uses: actions/checkout@v7.0.1
 
-      - name: "Install ${{ matrix.python-version }} with deadsnakes"
-        uses: deadsnakes/action@v3.2.0
-        if: "!startsWith(matrix.python-version, 'pypy-')"
-        with:
-          python-version: "${{ matrix.python-version }}"
+    - name: Get latest tag
+      id: vars
+      run: |
+        echo "tag=$(git describe --tags)" >> $GITHUB_OUTPUT
 
-      - name: "Install ${{ matrix.python-version }} with setup-python"
-        uses: actions/setup-python@v5.6.0
-        if: "startsWith(matrix.python-version, 'pypy-')"
-        with:
-          python-version: "${{ matrix.python-version }}"
+    - name: Install ${{ matrix.python-version }} with deadsnakes
+      uses: deadsnakes/action@a27cdb46e22418cf2e20e2a82d93eb2f4a351655
+      if: "!startsWith(matrix.python-version, 'pypy-')"
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: "Show diagnostic info"
-        run: |
-          set -xe
-          python -VV
-          python -m site
-          env
+    - name: Install ${{ matrix.python-version }} with setup-python
+      uses: actions/setup-python@v7.1.0
+      if: startsWith(matrix.python-version, 'pypy-')
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: "Install dependencies"
-        run: |
-          python -m pip install -r requirements/tox.pip # 'pip<24.2'
+    - name: Show diagnostic info
+      run: |
+        set -xe
+        python -VV
+        python -m site
+        env
 
-      - name: "Run tox"
-        run: |
-          python -m tox -- -rfsEX
+    - name: Install dependencies
+      run: |
+        python -m pip install -r requirements/tox$LOCK_SUFFIX -r requirements/kit${{ env.LOCK_SUFFIX }}
+
+    - name: build
+      env:
+        RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+      run: |
+        python -m build
+
+    - name: Set OS and Python short vars
+      run: |
+        platform="${{ matrix.platform }}"
+        python_version="${{ matrix.python-version }}"
+        OS_SHORT="${platform%%-*}"
+        OS_SHORT="${OS_SHORT/ubuntu/linux}"
+        echo "OS_SHORT=$OS_SHORT" >> $GITHUB_ENV
+        # Remove '-nightly' suffix if present
+        python_version=${python_version%-nightly}
+        if [[ "$python_version" == pypy-* ]]; then
+          ver_short="${python_version//-/}"  # pypy3.11
+        else
+          ver_short="py${python_version//-/}"  # py3.14
+        fi
+        ver_short="${ver_short//./}"  # remove dots → pypy310 or py314
+        echo "VER_SHORT=$ver_short" >> $GITHUB_ENV
+
+    - name: Run tox
+      run: |
+        echo "env.OS_SHORT ${{ env.OS_SHORT }}"
+        echo "env.VER_SHORT ${{ env.VER_SHORT }}"
+        python -m tox -vv -c tox-test.ini -e ${{ env.VER_SHORT }}-${{ env.OS_SHORT }}

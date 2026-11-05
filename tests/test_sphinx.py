@@ -3,7 +3,13 @@
 
 Test module sphinx_external_toc_strict.tools_strictyaml
 
-Unit test -- Module
+Without coverage
+
+.. code-block:: shell
+
+   pytest -s --showlocals -vv "tests/test_sphinx.py"
+
+With coverage
 
 .. code-block:: shell
 
@@ -17,6 +23,7 @@ import logging
 import os
 import shutil
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from sphinx import version_info as sphinx_version_info
@@ -28,16 +35,29 @@ from sphinx.testing.util import SphinxTestApp
 from sphinx_external_toc_strict.constants import g_app_name
 from sphinx_external_toc_strict.tools_strictyaml import create_site_from_toc
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from typing import (
+        Any,
+        Self,
+    )
+
+    from sphinx.testing.fixtures import (
+        SharedResult,
+        _app_params,
+    )
+
+    from .typing_sphinx import MakeApp
+
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
 TOC_FILES_WARN = list(
     Path(__file__).parent.joinpath("_warning_toc_files").glob("*.yml")
 )
 
-CONF_CONTENT = """\
-extensions = ["sphinx_external_toc_strict", "myst_parser", "sphinx.ext.intersphinx"]
-external_toc_path = "_toc.yml"
-
-"""
+CONF_CONTENT = (
+    f"""extensions = ["sphinx_external_toc_strict", "myst_parser", "sphinx.ext.intersphinx"]{os.linesep}"""
+    """external_toc_path = "_toc.yml\""""
+)
 
 
 class SphinxBuild:
@@ -49,12 +69,12 @@ class SphinxBuild:
     :vartype src: pathlib.Path
     """
 
-    def __init__(self, app: SphinxTestApp, src: Path):
+    def __init__(self, app: "SphinxTestApp", src: "Path") -> None:
         """Class constructor."""
         self.app = app
         self.src = src
 
-    def build(self, assert_pass=True):
+    def build(self, assert_pass=True) -> "Self":
         """Build toctree.
 
         :param assert_pass: Default True. True to assert no warnings occurred
@@ -68,7 +88,7 @@ class SphinxBuild:
         return self
 
     @property
-    def status(self):
+    def status(self) -> str:
         """Status str from text stream.
 
         :returns: status message
@@ -77,7 +97,7 @@ class SphinxBuild:
         return self.app._status.getvalue()
 
     @property
-    def warnings(self):
+    def warnings(self) -> str:
         """Get Sphinx warning messages.
 
         :returns: warning messages as a str
@@ -86,7 +106,7 @@ class SphinxBuild:
         return self.app._warning.getvalue()
 
     @property
-    def outdir(self):
+    def outdir(self) -> "Path":
         """Output folder of Sphinx logs?
 
         :returns: Output folder absolute path
@@ -96,7 +116,7 @@ class SphinxBuild:
 
 
 @pytest.fixture()
-def sphinx_build_factory(make_app):
+def sphinx_build_factory(make_app: "MakeApp") -> "Callable[[Path, Any], SphinxBuild]":
     """``pytest.fixture`` which has Sphinx build a toctree.
 
     :param src_path: Path to ``_toc.yml`` test file
@@ -104,10 +124,10 @@ def sphinx_build_factory(make_app):
     :param kwargs: Pass on keyword args
     :type kwargs: typing.Any
     :returns: A SphinxBuild instance
-    :rtype: SphinxBuild instance
+    :rtype: tests.test_sphinx.SphinxBuild
     """
 
-    def _func(src_path: Path, **kwargs) -> SphinxBuild:
+    def _func(src_path: "Path", **kwargs: "Any") -> SphinxBuild:
         """Get path and build toctree from ``_toc.yml``."""
         # For compatibility with multiple versions of sphinx, convert pathlib.Path to
         # sphinx.testing.path.path here.
@@ -127,19 +147,19 @@ def sphinx_build_factory(make_app):
 @pytest.mark.parametrize(
     "path_toc", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
-@pytest.mark.sphinx("html", testroot="skeleton")
+@pytest.mark.sphinx("html", testroot="skeleton", freshenv=True)
 def test_success(
-    path_toc,
-    caplog,
-    sphinx_build_factory,
+    path_toc: "Path",
+    caplog: pytest.LogCaptureFixture,
+    sphinx_build_factory: "Callable[[Path, Any], SphinxBuild]",
     # file_regression,
-    app_params,
-    test_params,
-    shared_result,
-    make_app,
-    inventory_v2,
-    augment_intersphinx_mapping,
-):
+    app_params: "_app_params",
+    test_params: "dict[str, Any]",
+    shared_result: "SharedResult",
+    make_app: "MakeApp",
+    inventory_v2: "Callable[[MakeApp, str], Path]",
+    augment_intersphinx_mapping: "Callable[[MakeApp, dict[str, Any]], None]",
+) -> None:
     """Test successful builds."""
     # python -X dev -m pytest --showlocals --log-level INFO -k "test_success" tests
     # python -m pytest --showlocals tests/test_sphinx.py::test_success[basic_titles]
@@ -184,7 +204,7 @@ def test_success(
     augment_intersphinx_mapping(
         app_,
         {
-            "test": ("https://docs.python.org/3", str(inv_file_name)),
+            "test": ("https://docs.python.org/3", inv_file_name),
         },
     )
 
@@ -216,18 +236,34 @@ def test_success(
     pass
 
 
-def test_gettext(tmp_path: Path, sphinx_build_factory):
+@pytest.mark.parametrize(
+    "relpath_toc",
+    (
+        pytest.param(
+            Path("_toc_files").joinpath("basic.yml"),
+            id="localize-basic",
+        ),
+    ),
+)
+def test_gettext(
+    relpath_toc: "Path",
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+    sphinx_build_factory: "Callable[[Path, Any], SphinxBuild]",
+) -> None:
     """Test the gettext builder runs correctly."""
+    # python -m pytest -s -vv --showlocals -k test_gettext tests/
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc).resolve()
+
     src_dir = tmp_path / "srcdir"
     # write document files
-    toc_path = Path(__file__).parent.joinpath("_toc_files", "basic.yml")
-    create_site_from_toc(toc_path, root_path=src_dir, toc_name=None)
+    create_site_from_toc(abspath_toc, root_path=src_dir, toc_name=None)
     # write conf.py
-    content = f"""
-extensions = ["{g_app_name}"]
-external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
-
-"""
+    content = (
+        f"""extensions = ["{g_app_name}"]{os.linesep}"""
+        f"external_toc_path = {abspath_toc.as_posix()!r}"
+    )
     src_dir.joinpath("conf.py").write_text(content, encoding="utf8")
     # run sphinx
     builder = sphinx_build_factory(src_dir, buildername="gettext")
@@ -237,7 +273,11 @@ external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
 @pytest.mark.parametrize(
     "path", TOC_FILES_WARN, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES_WARN]
 )
-def test_warning(path: Path, docs_dir: Path, sphinx_build_factory):
+def test_warning(
+    path: "Path",
+    docs_dir: "Path",
+    sphinx_build_factory: "Callable[[Path, Any], SphinxBuild]",
+) -> None:
     """Test create_site_from_toc generating warnings."""
     # pytest --showlocals --log-level INFO -k "test_warning" tests
     # write document files
@@ -248,32 +288,48 @@ def test_warning(path: Path, docs_dir: Path, sphinx_build_factory):
     builder = sphinx_build_factory(docs_dir)
     builder.build(assert_pass=False)
     expected_warning = sitemap.meta["expected_warning"]
-    warnings = []
-    for warns in builder.warnings:
-        warnings.append(warns)
+    warnings = [warns for warns in builder.warnings]  # noqa: F841
 
     assert expected_warning in builder.warnings
 
 
-def test_absolute_path(tmp_path: Path, sphinx_build_factory):
+@pytest.mark.parametrize(
+    "relpath_toc",
+    (
+        pytest.param(
+            Path("_toc_files").joinpath("basic.yml"),
+            id="abspath-basic",
+        ),
+    ),
+)
+def test_absolute_path(
+    relpath_toc: "Path",
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+    sphinx_build_factory: "Callable[[Path, Any], SphinxBuild]",
+) -> None:
     """Test if `external_toc_path` is supplied as an absolute path."""
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc).resolve()
+
     src_dir = tmp_path / "srcdir"
     # write document files
-    toc_path = Path(__file__).parent.joinpath("_toc_files", "basic.yml")
-    create_site_from_toc(toc_path, root_path=src_dir, toc_name=None)
+    create_site_from_toc(abspath_toc, root_path=src_dir, toc_name=None)
     # write conf.py
-    content = f"""
-extensions = ["{g_app_name}"]
-external_toc_path = {Path(os.path.abspath(toc_path)).as_posix()!r}
-
-"""
+    content = (
+        f"""extensions = ["{g_app_name}"]{os.linesep}"""
+        f"external_toc_path = {abspath_toc.as_posix()!r}"
+    )
     src_dir.joinpath("conf.py").write_text(content, encoding="utf8")
     # run sphinx
     builder = sphinx_build_factory(src_dir)
     builder.build()
 
 
-def test_file_extensions(tmp_path: Path, sphinx_build_factory):
+def test_file_extensions(
+    tmp_path: "Path",
+    sphinx_build_factory: "Callable[[Path, Any], SphinxBuild]",
+) -> None:
     """Test for tocs containing docnames with file extensions."""
     src_dir = tmp_path / "srcdir"
     src_dir.mkdir(exist_ok=True)

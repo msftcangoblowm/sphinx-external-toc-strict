@@ -1,18 +1,21 @@
-from __future__ import annotations
-
-import sys
 from collections.abc import (
     Iterable,
+    Iterator,
+    MutableMapping,
     Sequence,
 )
 from dataclasses import dataclass
 from pathlib import Path
 from typing import (
     Any,
+    Self,
     Union,
 )
 
-from ._compat import (
+from sphinx.application import Sphinx
+
+from .constants import URL_PATTERN
+from .util_dc import (
     DC_SLOTS,
     deep_iterable,
     field,
@@ -20,39 +23,18 @@ from ._compat import (
     matches_re,
     optional,
 )
-from .constants import URL_PATTERN
-
-if sys.version_info >= (3, 9):
-    from collections.abc import (
-        Generator,
-        Iterable,
-        Iterator,
-        MutableMapping,
-    )
-else:
-    from typing import (
-        Generator,
-        Iterable,
-        Iterator,
-        MutableMapping,
-    )
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
 
 class FileItem(str):
     def render(
         self,
         site_map: SiteMap,
-    ) -> Generator[tuple[str, str], None, None]: ...
+    ) -> Iterator[tuple[str, str]]: ...
 
 class GlobItem(str):
     def render(
         self,
         all_docnames: Iterable[str],
-    ) -> Generator[tuple[str, str], None, None]: ...
+    ) -> Iterator[tuple[str, str]]: ...
 
 @dataclass(**DC_SLOTS)
 class UrlItem:
@@ -60,7 +42,15 @@ class UrlItem:
     title: str | None = field(default=None, validator=optional(instance_of(str)))
 
     def __post_init__(self) -> None: ...
-    def render(self) -> Generator[tuple[str, str], None, None]: ...
+    def render(self) -> Iterator[tuple[str, str]]: ...
+
+@dataclass(**DC_SLOTS)
+class RefItem:
+    ref_id: str = field(validator=[instance_of(str)])
+    title: str | None = field(default=None, validator=optional(instance_of(str)))
+
+    def __post_init__(self) -> None: ...
+    def render(self, app: Sphinx) -> Iterator[tuple[str, str]]: ...
 
 @dataclass(**DC_SLOTS)
 class TocTree:
@@ -84,6 +74,8 @@ class TocTree:
     def files(self) -> list[str]: ...
     def globs(self) -> list[str]: ...
 
+    __match_args__: tuple[str, ...] = ("items",)
+
 @dataclass(**DC_SLOTS)
 class Document:
     docname: str = field(validator=instance_of(str))
@@ -98,6 +90,12 @@ class Document:
     def child_globs(self) -> list[str]: ...
 
 class SiteMap(MutableMapping[str, Union[Document, Any]]):
+    __slots__ = ("_root", "_docs", "_meta", "_file_format")
+    _root: Document
+    _docs: dict[str, Document]
+    _meta: dict[str, Any]
+    _file_format: str | None
+
     def __init__(
         self,
         root: Document,

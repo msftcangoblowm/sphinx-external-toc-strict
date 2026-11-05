@@ -3,12 +3,6 @@
 
 Separate out exceptions
 
-.. py:data:: __all__
-   :type: tuple[str]
-   :value: ("MalformedError",)
-
-   Module exports
-
 """
 
 __all__ = ("MalformedError",)

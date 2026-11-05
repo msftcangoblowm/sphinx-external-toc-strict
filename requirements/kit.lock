@@ -1,0 +1,24 @@
+auditwheel==6.0.0
+    # via -r requirements/kit.in
+bashlex==0.18
+    # via cibuildwheel
+bracex==2.4
+    # via cibuildwheel
+certifi==2026.10.23
+    # via cibuildwheel
+cibuildwheel==2.17.0
+    # via -r requirements/kit.in
+filelock==4.2.7
+    # via cibuildwheel
+packaging==26.3
+    # via
+    #   auditwheel
+    #   build
+    #   cibuildwheel
+    #   setuptools-scm
+platformdirs==4.9.6
+    # via cibuildwheel
+pyelftools==0.31
+    # via auditwheel
+pyproject-hooks==1.2.0
+    # via build

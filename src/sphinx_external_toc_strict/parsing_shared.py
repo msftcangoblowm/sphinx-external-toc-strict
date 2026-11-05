@@ -3,14 +3,8 @@
 
 Shared objects, such as: data, functions, and classes
 
-.. py:data:: __all__
-   :type: tuple[str, str, str]
-   :value: ("FileFormat", "create_toc_dict", "FILE_FORMATS")
-
-   Module exports
-
 .. py:data:: FILE_FORMATS
-   :type: dict[str, FileFormat]
+   :type: dict[str, sphinx_external_toc_strict.parsing_shared.FileFormat]
 
    Differences between file formats (use cases). subtree, entries,
    default item. And settings: ``titleonly``
@@ -18,17 +12,16 @@ Shared objects, such as: data, functions, and classes
 """
 
 import copy
-import sys
+from collections.abc import Sequence
 from dataclasses import (
     dataclass,
     fields,
 )
-from typing import Any
-
-from ._compat import (
-    DC_SLOTS,
-    field,
+from typing import (
+    TYPE_CHECKING,
+    Any,
 )
+
 from .api import (
     FileItem,
     GlobItem,
@@ -47,11 +40,10 @@ from .constants import (
     TOCTREE_OPTIONS,
     URL_KEY,
 )
-
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence
-else:  # pragma: no cover
-    from typing import Sequence
+from .util_dc import (
+    DC_SLOTS,
+    field,
+)
 
 __all__ = (
     "FileFormat",
@@ -74,26 +66,29 @@ class FileFormat:
        Each FileFormat may have specific defaults. e.g. "jb-book" and
        "jb-article" have default, ``{"titleonly": True}``
 
-    :vartype: dict[str, typing.Any]
+    :vartype toc_defaults: dict[str, typing.Any]
     :ivar subtrees_keys:
 
        tuple of subtrees' index key
 
-    :vartype: Sequence[str]
+    :vartype subtrees_keys: collections.abc.Sequence[str]
     :ivar items_keys: tuple of items' index key
-    :vartype: Sequence[str]
+    :vartype items_keys: collections.abc.Sequence[str]
     :ivar default_subtrees_key:
 
        Default "subtrees". Defaults key for subtrees. Other usecases would override
 
-    :vartype: str
+    :vartype default_subtrees_key: str
     :ivar default_items_key:
 
        Default "entries". Default key for entries. Other usecases would override
 
-    :vartype: str
+    :vartype default_items_key: str
     """
 
+    # https://github.com/sphinx-doc/sphinx/issues/14159
+    # truncated as a py:class reference target -- on Sphinx 9.0.4, and notes it
+    # is triggered by the <factory> default
     toc_defaults: dict[str, Any] = field(default_factory=dict)
     subtrees_keys: Sequence[str] = ()
     items_keys: Sequence[str] = ()
@@ -172,9 +167,9 @@ def create_toc_dict(site_map, *, skip_defaults=True):
         is_root=True,
         file_format=file_format,
     )
-    if site_map.meta:
+    if site_map.meta:  # pragma: no branch
         data["meta"] = site_map.meta.copy()
-    if site_map.file_format and site_map.file_format != "default":
+    if site_map.file_format and site_map.file_format != "default":  # pragma: no branch
         # ensure it is the first key
         data = {FILE_FORMAT_KEY: site_map.file_format, **data}
     return data
@@ -193,7 +188,7 @@ def _parse_item_testable(
     Was inline fcn, _parse_item, within _docitem_to_dict
 
     :param site_map: site map
-    :type site_map: SiteMap
+    :type site_map: sphinx_external_toc_strict.api.SiteMap
     :param item:
 
        Should be a FileItem, GlobItem, UrlItem or RefItem, but assuming nothing
@@ -202,7 +197,7 @@ def _parse_item_testable(
     :param depth: Within document, nesting depth
     :type depth: int
     :param file_format: doc item file format
-    :type file_format: FileFormat
+    :type file_format: sphinx_external_toc_strict.parsing_shared.FileFormat
     :param skip_defaults: do not add key/values for values that are already the default
     :type skip_defaults: bool
     :param parsed_docnames:
@@ -270,7 +265,7 @@ def _docitem_to_dict(
     :param depth: recursive depth (starts at 0)
     :type depth: int
     :param file_format: doc item file format
-    :type file_format: FileFormat
+    :type file_format: sphinx_external_toc_strict.parsing_shared.FileFormat
     :param skip_defaults:
 
        Default True. Do not add key/values for values that are already the default
@@ -292,23 +287,26 @@ def _docitem_to_dict(
 
     :meta private:
     """
+    if TYPE_CHECKING:
+        data: dict[str, Any]
+
     file_key = ROOT_KEY if is_root else FILE_KEY
     subtrees_key = file_format.get_subtrees_key(depth)
     items_key = file_format.get_items_key(depth)
 
     # protect against infinite recursion
     parsed_docnames = parsed_docnames or set()
-    if doc_item.docname in parsed_docnames:
-        raise RecursionError(f"{doc_item.docname!r} in site-map multiple times")
+    if doc_item.docname in parsed_docnames:  # pragma: no branch
+        msg_warn = f"{doc_item.docname!r} in site-map multiple times"
+        raise RecursionError(msg_warn)
     parsed_docnames.add(doc_item.docname)
 
-    data: dict[str, Any] = {}
-
+    data = {}
     data[file_key] = doc_item.docname
-    if doc_item.title is not None:
+    if doc_item.title is not None:  # pragma: no branch
         data["title"] = doc_item.title
 
-    if not doc_item.subtrees:
+    if not doc_item.subtrees:  # pragma: no branch
         return data
 
     data[subtrees_key] = []
@@ -322,26 +320,27 @@ def _docitem_to_dict(
             if (not skip_defaults) or getattr(toctree, key) != _defaults[key]
         }
         # toctree_data[items_key] = [_parse_item(s) for s in toctree.items]
-        lst_tmp = []
-        for s in toctree.items:
-            lst_tmp.append(
-                _parse_item_testable(
-                    site_map,
-                    s,
-                    depth,
-                    file_format,
-                    skip_defaults,
-                    parsed_docnames,
-                ),
+        lst_tmp = [
+            _parse_item_testable(
+                site_map,
+                s,
+                depth,
+                file_format,
+                skip_defaults,
+                parsed_docnames,
             )
+            for s in toctree.items
+        ]
         toctree_data[items_key] = copy.deepcopy(lst_tmp)
         data[subtrees_key].append(toctree_data)
 
     # apply shorthand if possible (one toctree in subtrees)
-    if len(data[subtrees_key]) == 1 and items_key in data[subtrees_key][0]:
+    if (
+        len(data[subtrees_key]) == 1 and items_key in data[subtrees_key][0]
+    ):  # pragma: no branch
         old_toctree_data = data.pop(subtrees_key)[0]
         # move options to options key
-        if len(old_toctree_data) > 1:
+        if len(old_toctree_data) > 1:  # pragma: no branch
             data["options"] = {
                 k: v for k, v in old_toctree_data.items() if k != items_key
             }

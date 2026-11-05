@@ -1,0 +1,3 @@
+# without mypy or pyright, minimum dev requirements
+pytest>=7.1
+pytest-regressions

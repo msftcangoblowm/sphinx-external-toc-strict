@@ -1,14 +1,14 @@
 import sys
+from collections.abc import Sequence
 from dataclasses import (
     dataclass,
     fields,
 )
-from typing import Any
-
-from ._compat import (
-    DC_SLOTS,
-    field,
+from typing import (
+    Any,
+    Final,
 )
+
 from .api import (
     Document,
     SiteMap,
@@ -17,18 +17,16 @@ from .constants import (
     DEFAULT_ITEMS_KEY,
     DEFAULT_SUBTREES_KEY,
 )
+from .util_dc import (
+    DC_SLOTS,
+    field,
+)
 
-if sys.version_info >= (3, 8):  # pragma: no cover
-    from typing import Final
-else:  # pragma: no cover
-    from typing_extensions import Final
-
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence
-else:  # pragma: no cover
-    from typing import Sequence
-
-__all__: Final[tuple[str, str, str]]
+__all__ = (
+    "FileFormat",
+    "create_toc_dict",
+    "FILE_FORMATS",
+)
 
 @dataclass(**DC_SLOTS)
 class FileFormat:

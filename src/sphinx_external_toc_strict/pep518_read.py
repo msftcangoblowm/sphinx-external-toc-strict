@@ -1,8 +1,6 @@
 """
 .. moduleauthor:: Dave Faulkmore <faulkmore telegram>
 
-..
-
 These :pep:`518` (aka pyproject.toml) functions are **not** app specific
 
 These functions are lifted from the black project. With minor changes:
@@ -30,31 +28,12 @@ These functions are lifted from the black project. With minor changes:
    Apply monkeypatch
    `FixFilenames.apply <https://github.com/csachs/pyproject-flake8/blob/16b9dd4d2f19dcf0bfb3a3110f98227627cd67fe/pflake8/__init__.py#L86>`_
 
-Module private variables
--------------------------
-
-.. py:attribute:: __all__
-   :type: tuple[str]
-   :value: ("find_project_root", "find_pyproject_toml")
-
-   Exported objects from this module
-
-Module objects
----------------
-
 """
 
-from __future__ import annotations
-
-import sys
+from collections.abc import Sequence
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
-
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence  # noqa: F401 Used by sphinx
-else:  # pragma: no cover
-    from typing import Sequence  # noqa: F401 Used by sphinx
 
 __all__ = (
     "find_project_root",
@@ -63,7 +42,7 @@ __all__ = (
 
 
 def _is_ok(test):
-    """Check if non-empty str
+    """Check if non-empty str.
 
     Edge case: contains only whitespace --> ``False``
 
@@ -74,7 +53,7 @@ def _is_ok(test):
 
     .. note::
 
-       Vendored logging-strict.util.check_type.is_ok, so current module
+       Vendored ``logging_strict.util.check_type.is_ok``, so this module
        can be stand alone
 
     """
@@ -110,7 +89,7 @@ def find_project_root(srcs, stdin_filename=None):
 
     :param stdin_filename:
 
-       Default ``None``. stdin file name, considers files parent as the
+       Default None. stdin file name, considers files parent as the
        project top folder
 
     :type stdin_filename: str | None
@@ -135,7 +114,7 @@ def find_project_root(srcs, stdin_filename=None):
 
     """
 
-    def is_sequence_empty(some_sequence: Sequence[Any] | None) -> bool:
+    def is_sequence_empty(some_sequence: "Sequence[Any] | None") -> bool:
         """Check if Sequence is empty.
 
         :param some_sequence: Can be None or a Sequence
@@ -150,7 +129,7 @@ def find_project_root(srcs, stdin_filename=None):
         )
         return ret
 
-    def is_none(arg: Any) -> bool:
+    def is_none(arg: "Any") -> bool:
         """Check if None.
 
         :param arg: Can be anything
@@ -161,7 +140,7 @@ def find_project_root(srcs, stdin_filename=None):
         ret = arg is None
         return ret
 
-    def is_sequence_none(some_sequence: Sequence[Any] | None) -> bool:
+    def is_sequence_none(some_sequence: "Sequence[Any] | None") -> bool:
         """Check a Sequence that contains one item, None.
 
         :param some_sequence: Can be None or a Sequence
@@ -198,10 +177,10 @@ def find_project_root(srcs, stdin_filename=None):
         else:  # pragma: no cover
             pass
 
-    if is_none(srcs) or is_sequence_empty(srcs):  # pragma: no cover fallback
+    if is_none(srcs) or is_sequence_empty(
+        srcs
+    ):  # pragma: no cover  # pragma: no branch
         srcs = [str(Path.cwd().resolve())]
-    else:  # pragma: no cover
-        pass
 
     path_srcs = [Path(Path.cwd(), src).resolve() for src in srcs]
 
@@ -217,20 +196,14 @@ def find_project_root(srcs, stdin_filename=None):
     )
 
     for directory in (common_base, *common_base.parents):
-        if (directory / ".git").exists():
+        if (directory / ".git").exists():  # pragma: no branch
             return directory, ".git directory"
-        else:  # pragma: no cover
-            pass
 
-        if (directory / ".hg").is_dir():
+        if (directory / ".hg").is_dir():  # pragma: no branch
             return directory, ".hg directory"
-        else:  # pragma: no cover
-            pass
 
-        if (directory / "pyproject.toml").is_file():
+        if (directory / "pyproject.toml").is_file():  # pragma: no branch
             return directory, "pyproject.toml"
-        else:  # pragma: no cover
-            pass
 
     return directory, "file system root"
 
@@ -244,19 +217,21 @@ def find_pyproject_toml(path_search_start, stdin_filename):
 
     :type path_search_start: tuple[str, ...]
     :param stdin_filename: ``pyproject.toml`` passed into stdin. May be a file
-    :type stdin_filename: str | ``None``
+    :type stdin_filename: str | None
     :returns: Absolute path to project ``pyproject.toml`` otherwise ``None``
-    :rtype: str | ``None``
+    :rtype: str | None
     """
-    """2nd item, reason, is string describing the method by which the project
-    root was discovered"""
     try:
+        """2nd item, reason, is string describing the method by which the project
+        root was discovered"""
         path_project_root, _ = find_project_root(path_search_start, stdin_filename)
     except PermissionError:
-        return None
+        ret = None
     else:
         path_pyproject_toml = path_project_root / "pyproject.toml"
         if path_pyproject_toml.is_file():
-            return str(path_pyproject_toml)
+            ret = str(path_pyproject_toml)
         else:
-            return None
+            ret = None
+
+    return ret

@@ -3,4 +3,4 @@ options:
   maxdepth: 1.12345
 entries:
 - file: doc1
-  title: "Hey George!"
+  title: Hey George!

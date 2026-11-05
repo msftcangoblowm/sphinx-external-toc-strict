@@ -13,9 +13,8 @@ Unit test -- Module
 
 """
 
-from __future__ import annotations
-
 from contextlib import nullcontext as does_not_raise
+from typing import TYPE_CHECKING
 
 import pytest
 from sphinx.ext.intersphinx import load_mappings
@@ -26,8 +25,18 @@ from sphinx_external_toc_strict.api import RefItem
 from sphinx_external_toc_strict.sphinx_node import query_intersphinx
 from tests.test_util.intersphinx_data import INVENTORY_V2
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+    from typing import Any
 
-def set_config(app, mapping):
+    from sphinx.application import Sphinx
+
+    from tests.typing_only import DOES_NOT_OR_DOES
+    from tests.typing_sphinx import MakeApp
+
+
+def set_config(app: "Sphinx", mapping: "dict[str, Any]") -> None:
     """Setup intersphinx_mapping and intersphinx_disabled_reftypes.
     Initialize intersphinx first.
 
@@ -48,7 +57,11 @@ def set_config(app, mapping):
 
 
 @pytest.fixture
-def load_inv(app, inventory_v2, augment_intersphinx_mapping):
+def load_inv(
+    app: "Sphinx",
+    inventory_v2: "Callable[[MakeApp, str], Path]",
+    augment_intersphinx_mapping: "Callable[[MakeApp, dict[str, Any]], None]",
+) -> "Callable[[str | None, str | None, str | None], None]":
     """Must be called by a test marked with ``pytest.mark.sphinx``.
 
     For querying only, not running sphinx build.
@@ -69,10 +82,10 @@ def load_inv(app, inventory_v2, augment_intersphinx_mapping):
     """
 
     def _func(
-        inv_file_name="objects-test.inv",
-        intersphinx_inv_id="python",
-        uri="https://docs.python.org/3",
-    ):
+        inv_file_name: "str | None" = "objects-test.inv",
+        intersphinx_inv_id: "str | None" = "python",
+        uri: "str | None" = "https://docs.python.org/3",
+    ) -> None:
         """After initializing Sphinx app. Initialize:
         intersphinx, intersphinx_mapping and load an inventory"""
         intersphinx_setup(app)
@@ -98,46 +111,40 @@ def load_inv(app, inventory_v2, augment_intersphinx_mapping):
     return _func
 
 
-testdata_querying_inv = (
+@pytest.mark.sphinx("html", testroot="root", freshenv=True)
+@pytest.mark.parametrize(
+    "inventory_contents, domain, ref_type, ref_id, t_out",
     (
-        INVENTORY_V2,
-        "std",
-        "ref",
-        "The-Julia-Domain",
-        (
-            "The Julia Domain",
-            "https://docs.python.org/3/write_inventory/#The-Julia-Domain",
+        pytest.param(
+            INVENTORY_V2,
+            "std",
+            "ref",
+            "The-Julia-Domain",
+            (
+                "The Julia Domain",
+                "https://docs.python.org/3/write_inventory/#The-Julia-Domain",
+            ),
+            id="Query-sphinx.ext.intersphinx-INVENTORY_V2",
+        ),
+        pytest.param(
+            INVENTORY_V2,
+            "std",
+            "ref",
+            "nonexistent",
+            ("", ""),
+            id="nonexistent-ref",
         ),
     ),
-    (
-        INVENTORY_V2,
-        "std",
-        "ref",
-        "nonexistent",
-        ("", ""),
-    ),
 )
-ids_querying_inv = (
-    "Query sphinx.ext.intersphinx INVENTORY_V2",
-    "nonexistent ref",
-)
-
-
-@pytest.mark.parametrize(
-    ("inventory_contents, domain, ref_type, ref_id, t_out"),
-    testdata_querying_inv,
-    ids=ids_querying_inv,
-)
-@pytest.mark.sphinx("html", testroot="root")
 def test_querying_inv(
-    inventory_contents,
-    domain,
-    ref_type,
-    ref_id,
-    t_out,
-    app,
-    load_inv,
-):
+    inventory_contents: bytes,
+    domain: str,
+    ref_type: str,
+    ref_id: str,
+    t_out: tuple[str, str],
+    app: "Sphinx",
+    load_inv: "Callable[[str | None, str | None, str | None], None]",
+) -> None:
     """Test querying an inventory. No _toc.yml file yet."""
     # python -X dev -m pytest --showlocals --log-level INFO -k "test_querying_inv" tests
 
@@ -169,61 +176,58 @@ def test_querying_inv(
     assert t_query_result == t_out
 
 
-testdata_refitem_validation = (
-    (
-        "The-Julia-Domain",
-        "this is my title",
-        does_not_raise(),
-        "this is my title",
-    ),
-    (
-        "The-Julia-Domain",
-        None,
-        does_not_raise(),
-        "The Julia Domain",
-    ),
-    (
-        "not-a-ref",
-        None,
-        does_not_raise(),
-        "",
-    ),
-    (
-        0.2345,
-        None,
-        pytest.raises(TypeError),
-        "",
-    ),
-)
-ids_refitem_validation = (
-    "with title",
-    "without title",
-    "not a ref. Only intersphinx knows",
-    "ref not a str",
-)
-
-
+@pytest.mark.sphinx("html", testroot="root", freshenv=True)
 @pytest.mark.parametrize(
     "ref_id, title, expectation, expected_title",
-    testdata_refitem_validation,
-    ids=ids_refitem_validation,
+    (
+        pytest.param(
+            "The-Julia-Domain",
+            "this is my title",
+            does_not_raise(),
+            "this is my title",
+            id="with-title",
+        ),
+        pytest.param(
+            "The-Julia-Domain",
+            None,
+            does_not_raise(),
+            "The Julia Domain",
+            id="without-title",
+        ),
+        pytest.param(
+            "not-a-ref",
+            None,
+            does_not_raise(),
+            "",
+            id="not-a-ref.-Only-intersphinx-knows",
+        ),
+        pytest.param(
+            0.2345,
+            None,
+            pytest.raises(TypeError),
+            "",
+            id="ref-not-a-str",
+        ),
+    ),
 )
-@pytest.mark.sphinx("html", testroot="root")
 def test_refitem_validation(
-    ref_id,
-    title,
-    expectation,
-    expected_title,
-    app,
-    load_inv,
-):
+    ref_id: "str | float",
+    title: "str | None",
+    expectation: "DOES_NOT_OR_DOES",
+    expected_title: str,
+    app: "Sphinx",
+    load_inv: "Callable[[str | None, str | None, str | None], None]",
+) -> None:
     """Test RefItem validation."""
     # pytest --showlocals --log-level INFO -k "test_refitem_validation" tests
     url_expected = f"https://docs.python.org/3/write_inventory/#{ref_id}"
 
     load_inv()
     with expectation:
-        item = RefItem(ref_id, title)
+        item = RefItem(
+            ref_id,  # type: ignore[arg-type]
+            title,
+        )
     if isinstance(expectation, does_not_raise):
         assert isinstance(item, RefItem)
 

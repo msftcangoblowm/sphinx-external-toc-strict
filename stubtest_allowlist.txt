@@ -1,0 +1,4 @@
+sphinx_external_toc_strict.api.Document.__init__
+sphinx_external_toc_strict.api.RefItem.__init__
+sphinx_external_toc_strict.api.TocTree.__init__
+sphinx_external_toc_strict.api.UrlItem.__init__

@@ -10,18 +10,6 @@ Changelog
 
    - Like python -m build add -o option to `python igor.py build_next "current"`
 
-   - tests/test_util/sphinx_conftest.py:88, during tests, patches
-     sphinx.util.requests._Session.request
-     This causes Sphinx API deprecation warnings:
-
-     sphinx.util.FilenameUniqDict and sphinx.util.DownloadFiles
-
-     In sphinx, search for tls_cacerts, tls_verify, and user_agent.
-     Find where package requests is used and short-circuit
-
-     Is this related?
-     https://www.sphinx-doc.org/en/master/_modules/sphinx/addnodes.html#download_reference
-
    - migrate docs from rtd --> gh pages
 
    - https://allcontributors.org/
@@ -39,6 +27,13 @@ Changelog
 
    Commit items for NEXT VERSION
    ..............................
+
+   - fix: in roots/test-root/_build/ remove stale pickled environment
+   - refactor: _compat remnants --> util_dc
+   - chore: license change apache-2.0 --> MPL-2.0
+   - chore: update dependencies
+   - ci: bump version
+   - tests: pytest.mark.parametrize with pytest.param and id
 
 .. scriv-start-here
 

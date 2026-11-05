@@ -1,11 +1,10 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
--c pins.pip
--r pip.pip  # avoid setuptools conflict
+-r pip.lock  # avoid setuptools conflict
 
 # "make upgrade-one package=pip-tools"
-# "make upgrade" turns this into requirements/pip-tools.pip
+# "make upgrade" turns this into requirements/pip-tools.lock
 
 pip-tools
 get-pypi-latest-version

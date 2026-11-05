@@ -1,13 +1,17 @@
-from __future__ import annotations
+from typing import Final
 
-import sys
-
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
+__all__ = [
+    "__version__",
+    "__version_tuple__",
+    "version",
+    "version_tuple",
+    "__commit_id__",
+    "commit_id",
+]
 
 version: Final[str]
 __version__: Final[str]
 __version_tuple__: Final[tuple[int | str, ...]]
 version_tuple: Final[tuple[int | str, ...]]
+__commit_id__: Final[str | None]
+commit_id: Final[str | None]

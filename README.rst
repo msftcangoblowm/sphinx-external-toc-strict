@@ -1,5 +1,5 @@
-.. Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-.. For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+.. Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+.. For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
 sphinx-external-toc-strict
 ===========================
@@ -7,9 +7,9 @@ sphinx-external-toc-strict
 A sphinx extension that allows the documentation site-map (a.k.a Table of Contents) to be defined external to the documentation files.
 
 |  |kit| |codecov| |license|
-|  |last-commit| |test-status| |quality-status| |docs|
-|  |versions| |implementations|
-|  |platforms| |black|
+|  |last-commit| |quality-status| |docs|
+|  |platforms| |test-status| |versions|
+|  |implementations| |black|
 |  |downloads| |stars|
 |  |mastodon-msftcangoblowm|
 
@@ -30,7 +30,7 @@ It also allows for documents not specified in the ToC to be auto-excluded.
 
 .. PYVERSIONS
 
-* Python 3.10 through 3.12, and 3.13.0a3 and up.
+* Python 3.11 through 3.15, pypy-3.11
 
 **New in 2.0.x:**
 
@@ -48,7 +48,7 @@ This is a fork
 sphinx-external-toc-strict is a fork of sphinx-external-toc
 
 .. csv-table:: Comparison
-   :header: "Matric", "TOC", "TOC-Strict"
+   :header: "Feature", "TOC", "TOC-Strict"
    :widths: auto
 
    "intersphinx support", "No", "Yes!"
@@ -683,11 +683,14 @@ Questions / TODOs:
 .. |kit| image:: https://img.shields.io/pypi/v/sphinx-external-toc-strict
     :target: https://pypi.org/project/sphinx-external-toc-strict/
     :alt: PyPI status
-.. |versions| image:: https://img.shields.io/pypi/pyversions/sphinx-external-toc-strict.svg?logo=python&logoColor=FBE072
+.. |versions| image:: https://img.shields.io/badge/CI%20tested-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14%20%7C%203.15%20%7C%20pypy3.11-blue?logo=python&logoColor=FBE072
     :target: https://pypi.org/project/sphinx-external-toc-strict/
     :alt: Python versions supported
+
+.. https://img.shields.io/pypi/pyversions/drain-swamp-snippet.svg?logo=python&logoColor=FBE072
+
 .. |license| image:: https://img.shields.io/github/license/msftcangoblowm/sphinx-external-toc-strict
-    :target: https://pypi.org/project/sphinx-external-toc-strict/blob/master/LICENSE.txt
+    :target: https://pypi.org/project/sphinx-external-toc-strict/blob/main/LICENSE.txt
     :alt: License
 .. |stars| image:: https://img.shields.io/github/stars/msftcangoblowm/sphinx-external-toc-strict.svg?logo=github
     :target: https://github.com/msftcangoblowm/sphinx-external-toc-strict/stargazers
@@ -702,4 +705,4 @@ Questions / TODOs:
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
 .. |implementations| image:: https://img.shields.io/pypi/implementation/sphinx-external-toc-strict
-.. |platforms| image:: https://img.shields.io/badge/platform-linux-lightgrey
+.. |platforms| image:: https://img.shields.io/badge/platform-windows%20%7C%20macos%20%7C%20linux-lightgrey

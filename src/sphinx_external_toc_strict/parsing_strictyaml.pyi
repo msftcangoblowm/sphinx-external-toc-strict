@@ -1,6 +1,5 @@
-from __future__ import annotations
-
-import sys
+import types
+from collections.abc import Sequence
 from dataclasses import (
     dataclass,
     fields,
@@ -10,10 +9,6 @@ from typing import Any
 
 import strictyaml as s
 
-from ._compat import (
-    DC_SLOTS,
-    field,
-)
 from .api import (
     Document,
     SiteMap,
@@ -23,25 +18,18 @@ from .constants import (
     DEFAULT_SUBTREES_KEY,
 )
 from .parsing_shared import FileFormat
+from .util_dc import (
+    DC_SLOTS,
+    field,
+)
 
-if sys.version_info >= (3, 8):  # pragma: no cover
-    from typing import Final
-else:  # pragma: no cover
-    from typing_extensions import Final
+__all__ = ("parse_toc_yaml", "parse_toc_data", "affinity_val", "load_yaml", "dump_yaml")
 
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import (
-        Iterable,
-        Sequence,
-    )
-else:  # pragma: no cover
-    from typing import (
-        Iterable,
-        Sequence,
-    )
-
-__all__: Final[tuple[str, str, str, str, str]]
-
+def affinity_val(
+    key: str,
+    val: str,
+    mapping: types.MappingProxyType[str, s.Validator] = ...,
+) -> str | int | bool: ...
 def dump_yaml(site_map: SiteMap | dict[str, Any]) -> str: ...
 def load_yaml(path: str | Path, encoding: str = "utf8") -> s.YAML: ...
 def parse_toc_yaml(path: str | Path | s.YAML, encoding: str = "utf8") -> SiteMap: ...

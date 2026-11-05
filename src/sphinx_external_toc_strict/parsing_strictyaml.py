@@ -17,13 +17,6 @@ The undocumented top-level key, ``meta``, contains mysterious key/value pairs.
 Discover which ``meta`` keys are used, see this ``tests/_bad_toc_files``
 and ``tests/_toc_files`` folders
 
-.. py:data:: __all__
-   :type: tuple[str, str, str, str, str]
-   :value: ("parse_toc_yaml", "parse_toc_data", "affinity_val", \
-   "load_yaml", "dump_yaml")
-
-   Modules exports
-
 .. py:data:: _scalar_affinity_map
    :type: types.MappingProxyType[str, strictyaml.validators.Validator]
 
@@ -39,14 +32,19 @@ and ``tests/_toc_files`` folders
 from __future__ import annotations
 
 import io
-import sys
-from collections.abc import Mapping
+from collections.abc import (
+    Mapping,
+    Sequence,
+)
 from pathlib import (
     Path,
     PurePath,
 )
 from types import MappingProxyType
-from typing import Any
+from typing import (
+    TYPE_CHECKING,
+    Any,
+)
 
 import strictyaml as s
 
@@ -73,11 +71,6 @@ from .parsing_shared import (
     FILE_FORMATS,
     create_toc_dict,
 )
-
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence
-else:  # pragma: no cover
-    from typing import Sequence
 
 __all__ = ("parse_toc_yaml", "parse_toc_data", "affinity_val", "load_yaml", "dump_yaml")
 
@@ -127,7 +120,7 @@ def affinity_val(
 
     :type val: str
     :param mapping: Key is field key. Value is a strictyaml scalar Validator
-    :type mapping: types.MappingProxyType
+    :type mapping: types.MappingProxyType[str, strictyaml.Validator]
     :returns: Value with strictyaml fixed type
     :rtype: str | int | bool
     :raises:
@@ -144,20 +137,18 @@ def affinity_val(
     mapping is used. Hint: functools.partial is your friend"""
     if mapping is None or (
         mapping is not None and not isinstance(mapping, MappingProxyType)
-    ):
+    ):  # pragma: no branch
         mapping = _scalar_affinity_map
-    else:  # pragma: no cover
-        pass
 
     is_uninteresting = key not in mapping.keys()
     if is_uninteresting:
         # a scalar str it began, a scalar str it shall remain!
         ret = val
     else:
-        str_yaml = f"{val}"
+        str_yaml = str(val)
         schema = mapping[key]
         try:
-            yml = s.dirty_load(str_yaml, schema, allow_flow_style=True)
+            yml = s.dirty_load(str_yaml, schema=schema, allow_flow_style=True)
         except s.YAMLValidationError:
             """strictyaml.exceptions.YAMLValidationError: when expecting an integer
             E       found an arbitrary number
@@ -190,7 +181,7 @@ def load_yaml(path, encoding="utf8"):
     :param path: absolute path to yaml file
     :type path: str | pathlib.Path
     :param encoding: Default "utf8". Provide encoding if other than "utf8"
-    :param emcoding: str | None
+    :param encoding: str | None
     :returns:
 
        YAML class instance. Which has useful attribute,
@@ -207,7 +198,7 @@ def dump_yaml(site_map):
     """Dump sitemap into yaml
 
     To prepare a site map call,
-    :py:meth:`sphinx_external_toc_strict.parsing_strictyaml.parse_toc_yaml`
+    :py:func:`sphinx_external_toc_strict.parsing_strictyaml.parse_toc_yaml`
 
     site map gets converted into a dict. :pypi_org:`ruamel.yaml`
     dumps the dict as yaml
@@ -219,7 +210,7 @@ def dump_yaml(site_map):
     :raises:
 
        - :py:exc:`ValueError` -- Unsupported type expecting
-         :py:func:`~sphinx_external_toc_strict.api.SiteMap` or
+         :py:class:`~sphinx_external_toc_strict.api.SiteMap` or
          :py:func:`~sphinx_external_toc_strict.parsing_shared.create_toc_dict`
 
     """
@@ -246,7 +237,7 @@ def dump_yaml(site_map):
 def parse_toc_yaml(path, encoding="utf8"):
     """Parse the ToC file
 
-    :param path: `_toc.yml` file path
+    :param path: ``_toc.yml`` file path
     :type path: str | pathlib.Path | strictyaml.YAML
     :param encoding: `_toc.yml` file character encoding
     :type encoding: str | None
@@ -285,18 +276,23 @@ def parse_toc_data(data):
     :return: parsed site map
     :rtype: sphinx_external_toc_strict.api.SiteMap
     """
-    if not isinstance(data, Mapping):
-        raise MalformedError(f"toc is not a mapping: {type(data)}")
+    if TYPE_CHECKING:
+        defaults: dict[str, Any]
+
+    if not isinstance(data, Mapping):  # pragma: no branch
+        msg_warn = f"toc is not a mapping: {data!r}"
+        raise MalformedError(msg_warn)
 
     try:
         file_format = FILE_FORMATS[data.get(FILE_FORMAT_KEY, "default")]
     except KeyError:
-        raise MalformedError(
+        msg_warn = (
             f"'{FILE_FORMAT_KEY}' key value not recognised: "
             f"'{data.get(FILE_FORMAT_KEY, 'default')}'"
         )
+        raise MalformedError(msg_warn)
 
-    defaults: dict[str, Any] = {**file_format.toc_defaults}
+    defaults = {**file_format.toc_defaults}
     d_faults = data.get("defaults", {})
     for key_inner, val_inner in d_faults.items():
         try:
@@ -313,7 +309,7 @@ def parse_toc_data(data):
     )
 
     d_meta = data.get("meta")
-    if d_meta is not None and isinstance(d_meta, Mapping):
+    if d_meta is not None and isinstance(d_meta, Mapping):  # pragma: no branch
         for k, v in d_meta.items():
             try:
                 v_2 = affinity_val(k, v)
@@ -357,20 +353,25 @@ def _parse_doc_item(
     :param depth: recursive depth (starts at 0)
     :type depth: int
     :param file_format: doc item file format
-    :type file_format: FileFormat
+    :type file_format: sphinx_external_toc_strict.parsing_shared.FileFormat
     :param is_root: Default False. Whether this is the root item
     :type is_root: bool
     :return: parsed doc item
     :rtype: tuple[sphinx_external_toc_strict.api.Document, collections.abc.Sequence[tuple[str, dict[str, typing.Any]]]]
     :raises:
 
-       - :py:exc:`MalformedError` -- invalid doc item
+       - :py:exc:`sphinx_external_toc_strict.exceptions.MalformedError` --
+         invalid doc item
 
     :meta private:
     """
+    if TYPE_CHECKING:
+        items: list[GlobItem | FileItem | UrlItem | RefItem]
+
     file_key = ROOT_KEY if is_root else FILE_KEY
-    if file_key not in data.keys():
-        raise MalformedError(f"'{file_key}' key not found @ '{path}'")
+    if file_key not in data.keys():  # pragma: no branch
+        msg_warn = f"'{file_key}' key not found @ '{path}'"
+        raise MalformedError(msg_warn)
 
     subtrees_key = file_format.get_subtrees_key(depth)
     items_key = file_format.get_items_key(depth)
@@ -387,25 +388,29 @@ def _parse_doc_item(
         "defaults",
         "meta",
     }
-    if not allowed_keys.issuperset(data.keys()):
+    if not allowed_keys.issuperset(data.keys()):  # pragma: no branch
         unknown_keys = set(data.keys()).difference(allowed_keys)
-        raise MalformedError(
-            f"Unknown keys found: {unknown_keys!r}, allowed: {allowed_keys!r} @ '{path}'"
+        msg_warn = (
+            f"Unknown keys found: {unknown_keys!r}, allowed: "
+            f"{allowed_keys!r} @ '{path}'"
         )
+        raise MalformedError(msg_warn)
 
     shorthand_used = False
     if items_key in data:
         # this is a shorthand for defining a single subtree
-        if subtrees_key in data:
-            raise MalformedError(
-                f"Both '{subtrees_key}' and '{items_key}' found @ '{path}'"
-            )
+        if subtrees_key in data:  # pragma: no branch
+            msg_warn = f"Both '{subtrees_key}' and '{items_key}' found @ '{path}'"
+            raise MalformedError(msg_warn)
         subtrees_data = [{items_key: data[items_key], **data.get("options", {})}]
         shorthand_used = True
     elif subtrees_key in data:
         subtrees_data = data[subtrees_key]
-        if not (isinstance(subtrees_data, Sequence) and subtrees_data):
-            raise MalformedError(f"'{subtrees_key}' not a non-empty list @ '{path}'")
+        if not (
+            isinstance(subtrees_data, Sequence) and subtrees_data
+        ):  # pragma: no branch
+            msg_warn = f"'{subtrees_key}' not a non-empty list @ '{path}'"
+            raise MalformedError(msg_warn)
         path = f"{path}{subtrees_key}/"
     else:
         subtrees_data = []
@@ -416,44 +421,55 @@ def _parse_doc_item(
     for toc_idx, toc_data in enumerate(subtrees_data):
         toc_path = path if shorthand_used else f"{path}{toc_idx}/"
 
-        if not (isinstance(toc_data, Mapping) and items_key in toc_data):
-            raise MalformedError(
+        if not (
+            isinstance(toc_data, Mapping) and items_key in toc_data
+        ):  # pragma: no branch
+            msg_warn = (
                 f"entry not a mapping containing '{items_key}' key @ '{toc_path}'"
             )
+            raise MalformedError(msg_warn)
 
         items_data = toc_data[items_key]
 
-        if not (isinstance(items_data, Sequence) and items_data):
-            raise MalformedError(f"'{items_key}' not a non-empty list @ '{toc_path}'")
+        if not (isinstance(items_data, Sequence) and items_data):  # pragma: no branch
+            msg_warn = f"'{items_key}' not a non-empty list @ '{toc_path}'"
+            raise MalformedError(msg_warn)
 
         # generate items list
-        items: list[GlobItem | FileItem | UrlItem | RefItem] = []
+        items = []
         for item_idx, item_data in enumerate(items_data):
-            if not isinstance(item_data, Mapping):
-                raise MalformedError(
+            if not isinstance(item_data, Mapping):  # pragma: no branch
+                msg_warn = (
                     f"entry not a mapping type @ '{toc_path}{items_key}/{item_idx}'"
                 )
+                raise MalformedError(msg_warn)
 
             link_keys = _known_link_keys.intersection(item_data)
 
             # validation checks
-            if not link_keys:
-                raise MalformedError(
+            if not link_keys:  # pragma: no branch
+                msg_warn = (
                     f"entry does not contain one of "
                     f"{_known_link_keys!r} @ '{toc_path}{items_key}/{item_idx}'"
                 )
-            if not len(link_keys) == 1:
-                raise MalformedError(
+                raise MalformedError(msg_warn)
+            if not len(link_keys) == 1:  # pragma: no branch
+                msg_warn = (
                     f"entry contains incompatible keys "
                     f"{link_keys!r} @ '{toc_path}{items_key}/{item_idx}'"
                 )
+                raise MalformedError(msg_warn)
             for item_key in (GLOB_KEY, URL_KEY, REF_KEY):
                 for other_key in (subtrees_key, items_key):
-                    if link_keys == {item_key} and other_key in item_data:
-                        raise MalformedError(
+                    if (
+                        link_keys == {item_key} and other_key in item_data
+                    ):  # pragma: no branch
+                        msg_warn = (
                             f"entry contains incompatible keys "
-                            f"'{item_key}' and '{other_key}' @ '{toc_path}{items_key}/{item_idx}'"
+                            f"'{item_key}' and '{other_key}' @ "
+                            f"'{toc_path}{items_key}/{item_idx}'"
                         )
+                        raise MalformedError(msg_warn)
 
             try:
                 if link_keys == {FILE_KEY}:
@@ -468,9 +484,10 @@ def _parse_doc_item(
                     pass
             except (ValueError, TypeError) as exc:
                 exc_arg = exc.args[0] if exc.args else ""
-                raise MalformedError(
+                msg_warn = (
                     f"entry validation @ '{toc_path}{items_key}/{item_idx}': {exc_arg}"
-                ) from exc
+                )
+                raise MalformedError(msg_warn) from exc
 
         # generate toc key-word arguments
         """
@@ -483,7 +500,7 @@ def _parse_doc_item(
         """
         d_keywords = {}
         for k in TOCTREE_OPTIONS:
-            if k in toc_data:
+            if k in toc_data:  # pragma: no branch
                 try:
                     v = toc_data[k]
                     v_2 = affinity_val(k, v)
@@ -495,19 +512,16 @@ def _parse_doc_item(
                     d_keywords[k] = v_2
 
         for key in defaults:
-            if key not in d_keywords.keys():
+            if key not in d_keywords:  # pragma: no branch
                 d_keywords[key] = defaults[key]
-            else:  # pragma: no cover key already in dict
-                pass
 
         try:
             # toc_item = TocTree(items=items, **keywords)
             toc_item = TocTree(items=items, **d_keywords)
         except (ValueError, TypeError) as exc:
             exc_arg = exc.args[0] if exc.args else ""
-            raise MalformedError(
-                f"toctree validation @ '{toc_path}': {exc_arg}"
-            ) from exc
+            msg_warn = f"toctree validation @ '{toc_path}': {exc_arg}"
+            raise MalformedError(msg_warn) from exc
         toctrees.append(toc_item)
 
     try:
@@ -516,7 +530,8 @@ def _parse_doc_item(
         )
     except (ValueError, TypeError) as exc:
         exc_arg = exc.args[0] if exc.args else ""
-        raise MalformedError(f"doc validation @ '{path}': {exc_arg}") from exc
+        msg_warn = f"doc validation @ '{path}': {exc_arg}"
+        raise MalformedError(msg_warn) from exc
 
     # list of docs that need to be parsed recursively (and path)
     """docs_to_be_parsed_list = [
@@ -534,7 +549,7 @@ def _parse_doc_item(
     docs_to_be_parsed_list = []
     for ti, toc_data in enumerate(subtrees_data):
         for ii, item_data in enumerate(toc_data[items_key]):
-            if FILE_KEY in item_data:
+            if FILE_KEY in item_data:  # pragma: no branch
                 str_path = (
                     f"{path}/{items_key}/{ii}/"
                     if shorthand_used
@@ -562,23 +577,25 @@ def _parse_docs_list(
     :param docs_list: sequence of doc items
     :type docs_list: collections.abc.Sequence[tuple[str, dict[str, typing.Any]]]
     :param site_map: site map
-    :type site_map: sphinx_external_toc_strict.SiteMap
+    :type site_map: sphinx_external_toc_strict.api.SiteMap
     :param defaults: default doc item values
     :type defaults: dict[str, typing.Any]
     :param depth: recursive depth (starts at 0)
     :type depth: int
     :param file_format: doc item file format
-    :type file_format: FileFormat
+    :type file_format: sphinx_external_toc_strict.parsing_shared.FileFormat
     :raises:
 
-       - :py:exc:`MalformedError` -- doc file used multiple times
+       - :py:exc:`sphinx_external_toc_strict.exceptions.MalformedError` --
+         doc file used multiple times
 
     :meta private:
     """
     for child_path, doc_data in docs_list:
         docname = doc_data[FILE_KEY]
-        if docname in site_map:
-            raise MalformedError(f"document file used multiple times: '{docname}'")
+        if docname in site_map:  # pragma: no branch
+            msg_warn = f"Document file used multiple times: '{docname}'"
+            raise MalformedError(msg_warn)
         child_item, child_docs_list = _parse_doc_item(
             doc_data,
             defaults,

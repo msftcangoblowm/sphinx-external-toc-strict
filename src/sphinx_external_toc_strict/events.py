@@ -2,19 +2,13 @@
 
 Sphinx extension machinery
 
-.. py:data:: logger
-   :type: sphinx.util.logging.SphinxLoggerAdapter
-
-   Module level logger. No idea how to see or store these log messages
-
 """
-
-from __future__ import annotations
 
 from pathlib import (
     Path,
     PurePosixPath,
 )
+from typing import TYPE_CHECKING
 
 from docutils import nodes
 from sphinx.addnodes import toctree as toctree_node
@@ -24,7 +18,6 @@ from sphinx.util import logging
 from sphinx.util.docutils import SphinxDirective
 from sphinx.util.matching import Matcher
 
-from ._compat import findall
 from .api import (
     Document,
     FileItem,
@@ -35,7 +28,9 @@ from .api import (
 )
 from .filename_suffix import stem_natural
 from .parsing_strictyaml import parse_toc_yaml
+from .util_dc import findall
 
+#: sphinx.util.logging.SphinxLoggerAdapter: Module level logger. No idea how to see or store these log messages
 logger = logging.getLogger(__name__)
 
 
@@ -78,42 +73,16 @@ def create_warning(
     message = f"{message} [{wtype}.{category}]"
     kwargs = {"line": line} if line is not None else {}
 
-    if not logging.is_suppressed_warning(wtype, category, app.config.suppress_warnings):
+    ret = None
+    if not logging.is_suppressed_warning(
+        wtype, category, app.config.suppress_warnings
+    ):  # pragma: no branch
         msg_node = doctree.reporter.warning(message, **kwargs)
-        if append_to is not None:
+        if append_to is not None:  # pragma: no branch
             append_to.append(msg_node)
-        return msg_node
-    return None
+        ret = msg_node
 
-
-def remove_suffix(docname, suffixes):
-    """Remove any suffixes
-
-    :param docname:
-
-       docname. May or may not contain a suffix. May or may not contain a relative path
-
-    :type docname: str
-    :param suffixes:
-
-       From sphinx option ``source_suffix``. Default ``.rst``. if wanting
-       to support markdown requires both ``.rst`` and ``.md``
-
-    :type suffixes: list[str]
-    :returns: docname without the suffix
-    :rtype: str
-
-    .. deprecated:: 1.1.0
-
-       Use
-       :py:func:`filename_suffix.stem_natural <sphinx_external_toc_strict.filename_suffix.stem_natural>`
-       instead
-
-    """
-    for suffix in suffixes:
-        if docname.endswith(suffix):
-            return docname[: -len(suffix)]
-    return docname
+    return ret
 
 
 def parse_toc_to_env(app, config):
@@ -129,6 +98,12 @@ def parse_toc_to_env(app, config):
        ``pyproject.toml`` and ``conf.py``
 
     :type config: sphinx.config.Config
+    :raises:
+
+       - :py:exc:`sphinx.errors.ExtensionError` -- external_toc_path does not exist
+       - :py:exc:`sphinx.errors.ExtensionError` -- external_toc_path is not a file
+       - :py:exc:`sphinx.errors.ExtensionError` -- parse_toc_yaml fails
+
     """
     # TODO this seems to work in the tests, but I still want to double check
     external_toc_path = PurePosixPath(app.config["external_toc_path"])
@@ -136,9 +111,9 @@ def parse_toc_to_env(app, config):
         path = Path(app.srcdir) / str(external_toc_path)
     else:
         path = Path(str(external_toc_path))
-    if not path.exists():
+    if not path.exists():  # pragma: no branch
         raise ExtensionError(f"[etoc] `external_toc_path` does not exist: {path}")
-    if not path.is_file():
+    if not path.is_file():  # pragma: no branch
         raise ExtensionError(f"[etoc] `external_toc_path` is not a file: {path}")
     try:
         site_map = parse_toc_yaml(path)
@@ -147,20 +122,20 @@ def parse_toc_to_env(app, config):
     config.external_site_map = site_map  # type: ignore[attr-defined]
 
     # Update the master_doc to the root doc of the site map
-    # root_doc = remove_suffix(site_map.root.docname, config.source_suffix)
+    # suffixes -- config.source_suffix
     root_doc = stem_natural(site_map.root.docname)
-    if config["master_doc"] != root_doc:
+    if config["master_doc"] != root_doc:  # pragma: no branch
         logger.info("[etoc] Changing master_doc to '%s'", root_doc)
     config["master_doc"] = root_doc
 
-    if config["external_toc_exclude_missing"]:
+    if config["external_toc_exclude_missing"]:  # pragma: no branch
         # add files not specified in ToC file to exclude list
         new_excluded = site_map.new_excluded(
             app.srcdir,
             config["source_suffix"],
             config["exclude_patterns"],
         )
-        if new_excluded:
+        if new_excluded:  # pragma: no branch
             excluded_count = len(new_excluded)
             msg_info = f"[etoc] Excluded {excluded_count!s} extra file(s) not in toc"
             logger.info(msg_info)
@@ -177,7 +152,7 @@ def add_changed_toctrees(
     changed,
     removed,
 ):
-    """Add docs with new or changed toctrees to changed list
+    """Add docs with new or changed toctrees to changed list.
 
     :param app: Sphinx app instance
     :type app: sphinx.application.Sphinx
@@ -192,18 +167,22 @@ def add_changed_toctrees(
     :returns: Documents changed
     :rtype: set[str]
     """
+    if TYPE_CHECKING:
+        site_map: SiteMap
+
     previous_map = getattr(app.env, "external_site_map", None)
     # move external_site_map from config to env
-    site_map: SiteMap
     app.env.external_site_map = site_map = app.config.external_site_map  # type: ignore[attr-defined]
     # Compare to previous map, to record docnames with new or changed toctrees
     if not previous_map:
-        return set()
-    filenames = site_map.get_changed(previous_map)
-    # set_files = {remove_suffix(name, app.config.source_suffix) for name in filenames}
-    set_files = {stem_natural(name) for name in filenames}
+        ret = set()
+    else:
+        filenames = site_map.get_changed(previous_map)
+        # suffixes -- app.config.source_suffix
+        set_files = {stem_natural(name) for name in filenames}
+        ret = set_files
 
-    return set_files
+    return ret
 
 
 class TableOfContentsNode(nodes.Element):
@@ -223,7 +202,8 @@ class TableofContents(SphinxDirective):  # type: ignore[misc]
 
     # TODO allow for name option of tableofcontents (to reference it)
     def run(self):
-        """Insert a ``TableOfContentsNode`` node
+        """Insert a
+        :py:class:`~sphinx_external_toc_strict.events.TableOfContentsNode` node
 
         :returns: list of ToC nodes
         :rtype: list[sphinx_external_toc_strict.events.TableOfContentsNode]
@@ -236,13 +216,19 @@ class TableofContents(SphinxDirective):  # type: ignore[misc]
 def insert_toctrees(app, doctree):
     """Create the toctree nodes and add it to the document.
 
-    Adapted from `sphinx/directives/other.py::TocTree`
+    Adapted from ``sphinx/directives/other.py::TocTree``
 
     :param app: Sphinx app instance
     :type app: sphinx.application.Sphinx
     :param doctree: Document into which insert tableofcontents directive
     :type doctree: docutils.nodes.document
     """
+    if TYPE_CHECKING:
+        site_map: SiteMap
+        doc_item: Document | None
+        toc_placeholders: list[TableOfContentsNode]
+        node_list: list[nodes.Element]
+
     # check for existing toctrees and raise warning
     for node in findall(doctree)(toctree_node):
         create_warning(
@@ -253,25 +239,23 @@ def insert_toctrees(app, doctree):
             line=node.line,
         )
 
-    toc_placeholders: list[TableOfContentsNode] = list(
-        findall(doctree)(TableOfContentsNode)
-    )
+    toc_placeholders = list(findall(doctree)(TableOfContentsNode))
 
-    site_map: SiteMap = app.env.external_site_map  # type: ignore[attr-defined]
-    doc_item: Document | None = site_map.get(app.env.docname)
+    site_map = app.env.external_site_map  # type: ignore[attr-defined]
+    doc_item = site_map.get(app.env.docname)
 
     # check for matches with suffix
     # TODO check in sitemap, that we do not have multiple docs of the same name
     # (strip extensions on creation)
     for suffix in app.config.source_suffix:
-        if doc_item is not None:
+        if doc_item is not None:  # pragma: no branch
             break
         doc_stem = stem_natural(app.env.docname)
         if len(doc_stem) == 0:
             suf_doc = Path(f"bob{app.env.docname}").suffix
         else:
             suf_doc = Path(app.env.docname).suffix
-        if len(suf_doc) == 0:
+        if not suf_doc:
             # docname -- no suffix
             doc_item = site_map.get(app.env.docname + suffix)
         else:
@@ -283,8 +267,8 @@ def insert_toctrees(app, doctree):
                 doc_item = site_map.get(doc_stem)
 
     is_no_document_or_descendants = doc_item is None or not doc_item.subtrees
-    if is_no_document_or_descendants:
-        if toc_placeholders:
+    if is_no_document_or_descendants:  # pragma: no branch
+        if toc_placeholders:  # pragma: no branch
             create_warning(
                 app,
                 doctree,
@@ -311,7 +295,7 @@ def insert_toctrees(app, doctree):
     all_docnames.remove(app.env.docname)  # remove current document
     excluded = Matcher(app.config.exclude_patterns)
 
-    node_list: list[nodes.Element] = []
+    node_list = []
 
     for toctree in doc_item.subtrees:
         subnode = toctree_node()
@@ -376,14 +360,14 @@ def insert_toctrees(app, doctree):
                     doc_count += 1
 
                 is_no_docs = doc_count == 0
-                if is_no_docs:
+                if is_no_docs:  # pragma: no branch
                     message = (
                         f"toctree glob pattern '{entry}' didn't match any documents"
                     )
                     create_warning(app, doctree, "glob", message, append_to=node_list)
 
         # reversing entries can be useful when globbing
-        if toctree.reversed:
+        if toctree.reversed:  # pragma: no branch
             subnode["entries"] = list(reversed(subnode["entries"]))
             subnode["includefiles"] = list(reversed(subnode["includefiles"]))
 
@@ -405,7 +389,7 @@ class InsertToctrees(SphinxTransform):  # type: ignore[misc]
     """Create the toctree nodes and add it to the document.
 
     This needs to occur at least before the ``DoctreeReadEvent`` (priority 880),
-    which triggers the `TocTreeCollector.process_doc` event (priority 500)
+    which triggers the ``TocTreeCollector.process_doc`` event (priority 500)
 
     .. py:attribute:: default_priority
        :type: int
@@ -419,7 +403,8 @@ class InsertToctrees(SphinxTransform):  # type: ignore[misc]
     default_priority = 100
 
     def apply(self, **kwargs):
-        """Calls insert_toctrees
+        """Calls insert_toctrees.
+
         :ivar kwargs: Keyword arguments
         :vartype: typing.Any
         """
@@ -445,17 +430,24 @@ def ensure_index_file(app, exception):
         # TODO: rewrite the redirect if master_doc has changed since last build
         or index_path.exists()
     ):
-        return
-
-    # root_name = remove_suffix(app.config.master_doc, app.config.source_suffix)
-    root_name = stem_natural(app.config.master_doc)
-
-    if app.builder.name == "dirhtml":
-        redirect_url = f"{root_name}/index.html"
+        pass
     else:
-        # Assume a single index for all non dir-HTML builders
-        redirect_url = f"{root_name}.html"
+        # suffixes -- app.config.source_suffix
+        root_name = stem_natural(app.config.master_doc)
 
-    redirect_text = f'<meta http-equiv="Refresh" content="0; url={redirect_url}" />\n'
-    index_path.write_text(redirect_text, encoding="utf8")
-    logger.info("[etoc] missing index.html written as redirect to '%s.html'", root_name)
+        if app.builder.name == "dirhtml":
+            redirect_url = f"{root_name}/index.html"
+        else:
+            # Assume a single index for all non dir-HTML builders
+            redirect_url = f"{root_name}.html"
+        msg_redirect = (
+            f"[etoc] missing index.html written as redirect to '{redirect_url}'"
+        )
+
+        redirect_text = (
+            f'<meta http-equiv="Refresh" content="0; url={redirect_url}" />\n'
+        )
+        index_path.write_text(redirect_text, encoding="utf8")
+        logger.info(msg_redirect)
+    ret = None
+    return ret

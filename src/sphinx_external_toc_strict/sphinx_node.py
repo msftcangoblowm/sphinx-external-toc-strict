@@ -3,19 +3,13 @@
 
 Query sphinx.ext.intersphinx inventories.
 
-.. py:data:: __all__
-   :type: tuple[str, str]
-   :value: ("fake_node", "query_intersphinx")
-
-   Module exports
-
 .. seealso::
 
    Code affected by RefItem
 
-   | strict_external_toc_strict.events.insert_toctrees
-   | strict_external_toc_strict.parsing_shared._parse_item_testable
-   | strict_external_toc_strict.parsing_strictyaml._parse_doc_item
+   | :py:func:`sphinx_external_toc_strict.events.insert_toctrees`
+   | :py:func:`sphinx_external_toc_strict.parsing_shared._parse_item_testable`
+   | :py:func:`sphinx_external_toc_strict.parsing_strictyaml._parse_doc_item`
 
    Sphinx extension testing
    `[top] <https://www.sphinx-doc.org/en/master/extdev/testing.html>`_

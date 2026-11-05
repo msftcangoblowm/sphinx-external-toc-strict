@@ -1,16 +1,15 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
--c pins.pip
+# pip installed very early. pins-myst-parser.in restricts pip version
 
-# pip installed very early. myst-parser.pins restricts pip version
-
-# affects pypy3.10 on MacOS
+# affects pypy3.11 on MacOS
 # myst-parser --> pytest-param-files --> ruamel-yaml --> ruamel-yaml-clib
 # https://github.com/pypa/pip/issues/12884
 # https://sourceforge.net/p/ruamel-yaml/tickets/521/
 # Temporary solution
 # https://github.com/qiskit-community/qiskit-optimization/pull/630/files
 
+-c pins-setuptools-scm.in
 # setuptools-scm[rich] @ git+https://github.com/pypa/setuptools-scm.git@d665621e25f091c0de5cd35b3d57cc00bd26e260
 setuptools-scm

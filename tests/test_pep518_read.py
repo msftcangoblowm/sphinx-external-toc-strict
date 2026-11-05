@@ -11,9 +11,9 @@ Unit test -- Module
 
 """
 
-import sys
 import tempfile
 import unittest
+from collections.abc import Sequence
 from pathlib import (
     Path,
     PurePath,
@@ -26,16 +26,11 @@ from sphinx_external_toc_strict.pep518_read import (
     find_pyproject_toml,
 )
 
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence  # noqa: F401 Used by sphinx
-else:  # pragma: no cover
-    from typing import Sequence  # noqa: F401 Used by sphinx
-
 
 class Pep518Sections(unittest.TestCase):
     """Pep518 sections tests."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Setup unittest. cwd and tests folder paths."""
         if "__pycache__" in __file__:
             # cached
@@ -45,7 +40,7 @@ class Pep518Sections(unittest.TestCase):
             self.path_tests = Path(__file__).parent
         self.cwd = self.path_tests.parent
 
-    def test_is_ok(self):
+    def test_is_ok(self) -> None:
         """Is not None and a non-empty string
 
         Vendered from package/module, logging-strict.util.check_type
@@ -65,7 +60,7 @@ class Pep518Sections(unittest.TestCase):
             out_actual = _is_ok(valid)
             self.assertTrue(out_actual)
 
-    def test_find_project_root(self):
+    def test_find_project_root(self) -> None:
         """Check possibilities: .git, .hg, pyproject.toml, or file system root"""
         # "pyproject.toml"
         with (

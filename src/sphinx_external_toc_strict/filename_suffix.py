@@ -9,35 +9,23 @@ If a Sequence (".md", ".rst"), this is OR logic, strip suffix from end of file n
 
 If a str, e.g. ".tar", a smarter algo is required.
 
-.. py:data: __all__
-   :type: tuple[str, str]
-   :value: ("strip_suffix", "stem_natural")
-
-   module exports
-
 """
 
-from __future__ import annotations
-
-import sys
+from collections.abc import Sequence
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     cast,
 )
 
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import Sequence
-else:  # pragma: no cover
-    from typing import Sequence
-
-
 __all__ = ("strip_suffix", "stem_natural")
 
 
 def stem_natural(name):
     """Similar to Path.stem, but removes all suffixes and doesn't fail
-    if there is no stem
+    if there is no stem.
+
+    Cannot distinguish between what are suffixes and a stem containing periods.
 
     :param name: file name, not file path
     :type name: str
@@ -77,7 +65,7 @@ def _strip_suffix_natural(name, suffixes):
     if TYPE_CHECKING:
         l_suffixes: list[str]
 
-    if not isinstance(suffixes, str):
+    if not isinstance(suffixes, str):  # pragma: no branch
         raise AssertionError("this algo is for one string only")
 
     stem = stem_natural(name)
@@ -97,7 +85,7 @@ def _strip_suffix_natural(name, suffixes):
 
     lst_suffixes = Path(name).suffixes
 
-    for idx_loop, suffix in enumerate(l_suffixes):
+    for suffix in l_suffixes:
         is_no_remaining = len(lst_suffixes) == 0
 
         if is_no_remaining:
@@ -133,13 +121,13 @@ def _strip_suffix_or(name, suffixes):
 
     :meta private:
     """
-    if not isinstance(suffixes, list):
+    if not isinstance(suffixes, list):  # pragma: no branch
         raise AssertionError("this algo is list[str] only")
 
     # Check suffixes preceded with a dot
     # tar.gz --> .tar.gz
     for idx, suffix in enumerate(suffixes):
-        if not suffix.startswith("."):
+        if not suffix.startswith("."):  # pragma: no branch
             suffixes[idx] = f".{suffix}"
 
     stem = stem_natural(name)
@@ -147,12 +135,12 @@ def _strip_suffix_or(name, suffixes):
     lst_suffixes = Path(name).suffixes
     str_suffixes = "".join(lst_suffixes)
 
-    if len(str_suffixes) == 0:
+    if not str_suffixes:
         ret = name
     else:
         ret = f"{stem}{str_suffixes}"
         for token in suffixes:
-            if str_suffixes.endswith(token):
+            if str_suffixes.endswith(token):  # pragma: no branch
                 str_suffixes = str_suffixes[: -len(token)]
                 ret = f"{stem}{str_suffixes}"
                 break
@@ -180,10 +168,10 @@ def strip_suffix(name, suffixes):
         f"Unsupported type expecting a str or a Sequence[str] got {type(suffixes)}"
     )
 
-    if isinstance(suffixes, str):
+    if isinstance(suffixes, str):  # pragma: no branch
         return _strip_suffix_natural(name, suffixes)
 
-    if not isinstance(suffixes, Sequence):
+    if not isinstance(suffixes, Sequence):  # pragma: no branch
         raise ValueError(msg_exc)
 
     if isinstance(suffixes, tuple):

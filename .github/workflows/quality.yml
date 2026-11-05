@@ -1,15 +1,15 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 # https://github.com/pyscaffold/pyscaffold/blob/master/src/pyscaffold/templates/github_ci_workflow.template
 # https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts#passing-data-between-jobs-in-a-workflow
 
-name: "Quality"
+name: Quality
 
 on:
   push:
     branches:
-      - main
-      - msftcangoblowm/*
+    - main
+    - msftcangoblowm/*
   pull_request:
   workflow_dispatch:
 
@@ -19,6 +19,7 @@ defaults:
 
 env:
   PIP_DISABLE_PIP_VERSION_CHECK: 1
+  LOCK_SUFFIX: .lock
 
 permissions:
   contents: read
@@ -31,80 +32,80 @@ concurrency:
 
 jobs:
   lint:
-    name: "isort black flake8 etc"
+    name: isort black flake8 etc
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v4.2.2
+    - name: Check out the repo
+      uses: actions/checkout@v7.0.1
 
-      - name: "Install Python"
-        uses: actions/setup-python@v5.6.0
-        with:
-          python-version: "3.10" # Minimum of PYVERSIONS
+    - name: Install Python
+      uses: actions/setup-python@v7.1.0
+      with:
+        python-version: '3.11'   # Minimum of PYVERSIONS
           # cache: pip
-          # cache-dependency-path: 'requirements/*.pip'
+          # cache-dependency-path: 'requirements/*${{ env.LOCK_SUFFIX }}'
 
-      - name: "Install dependencies"
-        run: |
-          python -m pip install -r requirements/tox.pip
+    - name: Install dependencies
+      run: |
+        python -m pip install -r requirements/tox$LOCK_SUFFIX
 
-      - name: "Tox lint"
-        run: |
-          python -m tox -e lint
+    - name: Tox lint
+      run: |
+        python -m tox -e lint
 
   mypy:
-    name: "Check types"
+    name: Check types
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v4.2.2
+    - name: Check out the repo
+      uses: actions/checkout@v7.0.1
 
-      - name: "Install Python"
-        uses: actions/setup-python@v5.6.0
-        with:
-          python-version: "3.10" # Minimum of PYVERSIONS, but at least 3.9
+    - name: Install Python
+      uses: actions/setup-python@v7.1.0
+      with:
+        python-version: '3.11'   # Minimum of PYVERSIONS
           # cache: pip
-          cache-dependency-path: 'requirements/*.pip'
+        cache-dependency-path: requirements/*$LOCK_SUFFIX
 
-      - name: "Install dependencies"
-        run: |
-          # Runs on 3.10, but hashes supported by pip-tools is
-          # not supported by setuptools. So don't expect hashes
-          python -m pip install -r requirements/tox.pip
+    - name: Install dependencies
+      run: |
+        # Runs on 3.11, but hashes supported by pip-tools is
+        # not supported by setuptools. So don't expect hashes
+        python -m pip install -r requirements/tox$LOCK_SUFFIX
 
-      - name: "Tox mypy"
-        run: |
-          python -m tox -e mypy
+    - name: Tox mypy
+      run: |
+        python -m tox -e mypy
 
   docs:
-    name: "Build docs"
+    name: Build docs
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v4.2.2
+    - name: Check out the repo
+      uses: actions/checkout@v7.0.1
 
-      - name: "Install Python"
-        uses: actions/setup-python@v5.6.0
-        with:
-          python-version: "3.13" # Doc version from PYVERSIONS
+    - name: Install Python
+      uses: actions/setup-python@v7.1.0
+      with:
+        python-version: '3.13'   # Doc version from PYVERSIONS
           # cache: pip
-          cache-dependency-path: 'requirements/*.pip'
+        cache-dependency-path: requirements/*$LOCK_SUFFIX
 
-      - name: "Show environment"
-        run: |
-          set -xe
-          python -VV
-          python -m site
-          env
+    - name: Show environment
+      run: |
+        set -xe
+        python -VV
+        python -m site
+        env
 
-      - name: "Install dependencies"
-        run: |
-          set -xe
-          python -m pip install -r requirements/tox.pip
+    - name: Install dependencies
+      run: |
+        set -xe
+        python -m pip install -r requirements/tox$LOCK_SUFFIX
 
-      - name: "Tox docs"
-        run: |
-          python -m tox -e docs
+    - name: Tox docs
+      run: |
+        python -m tox -e docs

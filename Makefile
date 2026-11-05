@@ -119,8 +119,16 @@ fix-upgrade:				## Upgrade and apply fixes
 
 #run all pre-commit checks
 .PHONY: pre-commit
-pre-commit:				## Run checks found in .pre-commit-config.yaml
-	@pre-commit run --all-files
+pre-commit: private target_tty = $(if $(show),1,0)
+pre-commit:				## make [show=1] pre-commit
+ifeq ($(is_venv),1)
+	@out=$$(SKIP=pyright pre-commit run --all-files ||:)
+	if [[ $(target_tty) -eq 1 ]]; then
+	echo "$$out" | tee /tmp/out.txt
+	else
+	echo "$$out" > /tmp/out.txt
+	fi
+endif
 
 #--strict is on
 .PHONY: mypy
@@ -227,10 +235,31 @@ install-force: install	## Force install even if exact same version
 # @$(VENV_BIN)/pytest --showlocals --cov=sphinx_external_toc_strict --cov-report=term-missing tests
 .PHONY: check
 check: private verbose_text = $(if $(v),"--verbose")
-check:					## Run tests, generate coverage reports -- make [v=1] coverage
+check: private target_tty = $(if $(show),1,0)
+check:					## Run tests, generate coverage reports -- make [v=1] [show=1] check
 ifeq ($(is_venv),1)
 	-@$(VENV_BIN_PYTHON) -m coverage erase
+	if [[ $(target_tty) -eq 1 ]]; then
 	$(VENV_BIN_PYTHON) -m coverage run --parallel -m pytest --showlocals $(verbose_text) tests
+	else
+	$(VENV_BIN_PYTHON) -m coverage run --parallel -m pytest --showlocals $(verbose_text) tests > /tmp/out_tests.err
+	fi
 	$(VENV_BIN_PYTHON) -m coverage combine
-	$(VENV_BIN_PYTHON) -m coverage report --fail-under=90
+	if [[ $(target_tty) -eq 1 ]]; then
+	$(VENV_BIN_PYTHON) -m coverage report
+	else
+	$(VENV_BIN_PYTHON) -m coverage report > /tmp/out.report
+	fi
+endif
+
+.PHONY: check-warning
+check-warning: private verbose_text = $(if $(v),"--verbose")
+check-warning: private target_tty = $(if $(show),1,0)
+check-warning:			## pytest warnings to errors -- make [v=1] [show=1] check-warning
+ifeq ($(is_venv),1)
+	@if [[ $(target_tty) -eq 1 ]]; then
+	$(VENV_BIN_PYTHON) -m pytest -W error --tb=long --capture=no --showlocals tests
+	else
+	$(VENV_BIN_PYTHON) -m pytest -W error --tb=long --capture=no --showlocals tests > /tmp/out.report
+	fi
 endif

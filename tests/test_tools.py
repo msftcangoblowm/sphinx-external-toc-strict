@@ -1,11 +1,9 @@
 """
 .. moduleauthor:: Dave Faulkmore <https://mastodon.social/@msftcangoblowme>
 
-..
-
 Unittest for parsing and tools
 
-Unit test -- Module
+With coverage
 
 .. code-block:: shell
 
@@ -16,9 +14,10 @@ Unit test -- Module
 """
 
 import copy
-import sys
+import platform
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -32,6 +31,12 @@ from sphinx_external_toc_strict.tools_strictyaml import (
     site_map_guess_titles,
 )
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from .fr import FileRegression
+    from .typing_only import DOES_NOT_OR_DOES
+
 TOC_FILES = list(Path(__file__).parent.joinpath("_toc_files").glob("*.yml"))
 JB_TOC_FILES = list(
     Path(__file__).parent.joinpath("_jb_migrate_toc_files").glob("*.yml")
@@ -41,7 +46,11 @@ JB_TOC_FILES = list(
 @pytest.mark.parametrize(
     "path", TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in TOC_FILES]
 )
-def test_file_to_sitemap(path: Path, tmp_path: Path, data_regression):
+def test_file_to_sitemap(
+    path: "Path",
+    tmp_path: "Path",
+    data_regression: "FileRegression",
+) -> None:
     """Test create_site_from_toc."""
     site_path = tmp_path.joinpath("site")
     create_site_from_toc(path, root_path=site_path)
@@ -49,45 +58,43 @@ def test_file_to_sitemap(path: Path, tmp_path: Path, data_regression):
     data_regression.check(sorted(file_list))
 
 
-testdata_file_to_sitemap_file_already_exists = (
-    (
-        Path(__file__).parent.joinpath("_toc_files", "glob.yml"),
-        ("doc1.rst",),
-        pytest.raises(OSError),
-    ),
-    (
-        Path(__file__).parent.joinpath("_toc_files", "glob_md_extras.yml"),
-        ("conf.py",),
-        pytest.raises(OSError),
-    ),
-)
-ids_file_to_sitemap_file_already_exists = (
-    "Complains file already exists",
-    "Complains non-document file already exists",
-)
-
-
 @pytest.mark.parametrize(
-    "path_toc, touch_these_files, expectation",
-    testdata_file_to_sitemap_file_already_exists,
-    ids=ids_file_to_sitemap_file_already_exists,
+    "relpath_toc, touch_these_files, expectation",
+    (
+        pytest.param(
+            Path("_toc_files").joinpath("glob.yml"),
+            ("doc1.rst",),
+            pytest.raises(OSError),
+            id="Complains-file-already-exists",
+        ),
+        pytest.param(
+            Path("_toc_files").joinpath("glob_md_extras.yml"),
+            ("conf.py",),
+            pytest.raises(OSError),
+            id="Complains-non-document-file-already-exists",
+        ),
+    ),
 )
 def test_file_to_sitemap_file_already_exists(
-    path_toc,
-    touch_these_files,
-    expectation,
-    tmp_path,
-    docs_dir,
-):
+    relpath_toc: "Path",
+    touch_these_files: tuple[str, ...],
+    expectation: "DOES_NOT_OR_DOES",
+    tmp_path: "Path",
+    docs_dir: "Path",
+    request: pytest.FixtureRequest,
+) -> None:
     """Monkey throws file into cogworks. So file already exists."""
     # pytest --showlocals --log-level INFO -k "test_file_to_sitemap_file_already_exists" tests
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc)
+
     # prepare
     for file_name in touch_these_files:
         docs_dir.joinpath(file_name).touch()
 
     # act and verify
     with expectation:
-        create_site_from_toc(path_toc, root_path=docs_dir)
+        create_site_from_toc(abspath_toc, root_path=docs_dir)
 
 
 testdata_site_map_files = [
@@ -105,28 +112,26 @@ testdata_site_map_files = [
     "subfolder14/subsubfolder/index.rst",
     "subfolder14/subsubfolder/other.rst",
 ]
-testdata_create_site_map_from_path = (
-    (
-        copy.deepcopy(testdata_site_map_files),
-        10,
-        3,
-    ),
-)
-ids_create_site_map_from_path = ("files with two unsupported hidden",)
 
 
 @pytest.mark.parametrize(
     "files, docs_valid_count, index_and_hidden_count",
-    testdata_create_site_map_from_path,
-    ids=ids_create_site_map_from_path,
+    (
+        pytest.param(
+            copy.deepcopy(testdata_site_map_files),
+            10,
+            3,
+            id="files-with-two-unsupported-hidden",
+        ),
+    ),
 )
 def test_create_site_map_from_path(
-    files,
-    docs_valid_count,
-    index_and_hidden_count,
-    tmp_path,
-    data_regression,
-):
+    files: "Sequence[str]",
+    docs_valid_count: int,
+    index_and_hidden_count: int,
+    tmp_path: "Path",
+    data_regression: "FileRegression",
+) -> None:
     """Test create_site_map_from_path."""
     # pytest --showlocals --log-level INFO -k "test_create_site_map_from_path" tests
     # prepare
@@ -182,39 +187,39 @@ def test_create_site_map_from_path(
     # data_regression.check(data)
 
 
-testdata_document_delitem = (
-    (
-        copy.deepcopy(testdata_site_map_files),
-        "__delitem__",
-        "subfolder14/index.rst",
-        pytest.raises(KeyError),
-    ),
-    (
-        copy.deepcopy(testdata_site_map_files),
-        "__delitem__",
-        "index",
-        pytest.raises(AssertionError),
-    ),
-    (
-        copy.deepcopy(testdata_site_map_files),
-        "__delitem__",
-        "subfolder14/index",
-        does_not_raise(),
-    ),
-)
-ids_document_delitem = (
-    "no such document cuz has suffix .rst",
-    "cannot delete root document",
-    "branch index document",
-)
-
-
 @pytest.mark.parametrize(
     "files, method_name, doc_name, expectation",
-    testdata_document_delitem,
-    ids=ids_document_delitem,
+    (
+        pytest.param(
+            copy.deepcopy(testdata_site_map_files),
+            "__delitem__",
+            "subfolder14/index.rst",
+            pytest.raises(KeyError),
+            id="no-such-document-cuz-has-suffix-.rst",
+        ),
+        pytest.param(
+            copy.deepcopy(testdata_site_map_files),
+            "__delitem__",
+            "index",
+            pytest.raises(AssertionError),
+            id="cannot-delete-root-document",
+        ),
+        pytest.param(
+            copy.deepcopy(testdata_site_map_files),
+            "__delitem__",
+            "subfolder14/index",
+            does_not_raise(),
+            id="branch-index-document",
+        ),
+    ),
 )
-def test_document_delitem(files, method_name, doc_name, expectation, tmp_path):
+def test_document_delitem(
+    files: "Sequence[str]",
+    method_name: str,
+    doc_name: str,
+    expectation: "DOES_NOT_OR_DOES",
+    tmp_path: "Path",
+) -> None:
     """api.Document methods"""
     # pytest --showlocals --log-level INFO -k "test_document_delitem" tests
     # prepare
@@ -259,7 +264,7 @@ def test_document_delitem(files, method_name, doc_name, expectation, tmp_path):
 @pytest.mark.parametrize(
     "path", JB_TOC_FILES, ids=[path.name.rsplit(".", 1)[0] for path in JB_TOC_FILES]
 )
-def test_migrate_jb(path, data_regression):
+def test_migrate_jb(path: "Path", data_regression: "FileRegression") -> None:
     """Test migrate jupyter book."""
     toc = migrate_jupyter_book(Path(path))
     data_regression.check(toc)
@@ -267,84 +272,93 @@ def test_migrate_jb(path, data_regression):
     parse_toc_data(toc)
 
 
-testdata_assess_folder_expecting_folder = (
-    (
-        Path("/etc/shells"),
-        (".sh",),
-        "index",
-        (".*",),
-        pytest.raises(NotADirectoryError),
-    ),
-)
-ids_assess_folder_expecting_folder = ("Expecting a folder, got a file",)
-
-
-@pytest.mark.skipif(sys.platform != "linux", reason="path is to a known linux file")
 @pytest.mark.parametrize(
     "path_dir, suffixes, default_index, ignore_matches, expectation",
-    testdata_assess_folder_expecting_folder,
-    ids=ids_assess_folder_expecting_folder,
+    (
+        pytest.param(
+            Path("/etc/shells"),
+            (".sh",),
+            "index",
+            (".*",),
+            pytest.raises(NotADirectoryError),
+            id="Expecting a folder, got a file",
+            marks=pytest.mark.skipif(
+                platform.system().lower() != "linux",
+                reason="path is to a known linux file",
+            ),
+        ),
+    ),
 )
 def test_assess_folder_expecting_folder(
-    path_dir,
-    suffixes,
-    default_index,
-    ignore_matches,
-    expectation,
-):
+    path_dir: "Path",
+    suffixes: "Sequence[str]",
+    default_index: str,
+    ignore_matches: "Sequence[str]",
+    expectation: "DOES_NOT_OR_DOES",
+) -> None:
     """Test _assess_folder."""
     # pytest --showlocals --log-level INFO -k "test_assess_folder_expecting_folder" tests
     with expectation:
         _assess_folder(path_dir, suffixes, default_index, ignore_matches)
 
 
-testdata_default_affinity = (
-    (("intro.rst", "doc1.md", "doc2.md", "doc3.md"), ".txt", ".md"),
-    (("intro.rst", "doc1.md", "doc2.rst", "doc3.rst"), ".txt", ".rst"),
-    (("intro.rst", "doc1.md", "doc3.rst"), ".txt", ".txt"),
-)
-ids_default_affinity = (
-    "majority markdown files",
-    "majority restructuredtext files",
-    "equal so inconclusive; go with default",
-)
-
-
 @pytest.mark.parametrize(
     "additional_files, default_ext, expected",
-    testdata_default_affinity,
-    ids=ids_default_affinity,
+    (
+        pytest.param(
+            ("intro.rst", "doc1.md", "doc2.md", "doc3.md"),
+            ".txt",
+            ".md",
+            id="majority-markdown-files",
+        ),
+        pytest.param(
+            ("intro.rst", "doc1.md", "doc2.rst", "doc3.rst"),
+            ".txt",
+            ".rst",
+            id="majority-restructuredtext-files",
+        ),
+        pytest.param(
+            ("intro.rst", "doc1.md", "doc3.rst"),
+            ".txt",
+            ".txt",
+            id="equal-so-inconclusive-go=with-default",
+        ),
+    ),
 )
-def test_default_affinity(additional_files, default_ext, expected):
+def test_default_affinity(
+    additional_files: "Sequence[str]",
+    default_ext: str,
+    expected: str,
+) -> None:
     """Test _default_affinity."""
     actual_affinity = _default_affinity(additional_files, default_ext)
     assert actual_affinity == expected
 
 
-testdata_sitemap_as_json = (
+@pytest.mark.parametrize(
+    "relpath_toc, use_case",
     (
-        Path(__file__).parent.joinpath(
-            "_jb_migrate_toc_files",
-            "jb_docs_toc.yml",
+        pytest.param(
+            Path("_jb_migrate_toc_files").joinpath("jb_docs_toc.yml"),
+            "jb-book",
+            id="use-case-jupyter_book",
         ),
-        "jb-book",
     ),
 )
-ids_sitemap_as_json = ("use case jupyter_book",)
-
-
-@pytest.mark.parametrize(
-    "path_toc, use_case",
-    testdata_sitemap_as_json,
-    ids=ids_sitemap_as_json,
-)
-def test_sitemap_as_json(path_toc, use_case, tmp_path):
+def test_sitemap_as_json(
+    relpath_toc: "Path",
+    use_case: str,
+    tmp_path: "Path",
+    request: pytest.FixtureRequest,
+) -> None:
     """Render SiteMap as json for non-default use cases."""
     # pytest --showlocals --log-level INFO -k "test_sitemap_as_json" tests
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc)
 
     # prepare
     #    toc --> site_map
-    d_toc = migrate_jupyter_book(path_toc)
+    d_toc = migrate_jupyter_book(abspath_toc)
     site_map = parse_toc_data(d_toc)
 
     # verify
@@ -354,39 +368,39 @@ def test_sitemap_as_json(path_toc, use_case, tmp_path):
     site_map.as_json()
 
 
-testdata_sitemap_globs = (
+@pytest.mark.parametrize(
+    "relpath_toc, expected_glob_count, docs_wo_suffix, expected_match_count",
     (
-        Path(__file__).parent.joinpath("_toc_files", "glob_md.yml"),
-        2,
-        (
-            "intro",
-            "README",
-            "conf.py",
-            "doc1",
-            "doc2",
-            "doc3",
+        pytest.param(
+            Path("_toc_files").joinpath("glob_md.yml"),
+            2,
+            (
+                "intro",
+                "README",
+                "conf.py",
+                "doc1",
+                "doc2",
+                "doc3",
+            ),
+            4,
+            id="two-globs",
         ),
-        4,
     ),
 )
-ids_sitemap_globs = ("two globs",)
-
-
-@pytest.mark.parametrize(
-    "path_toc, expected_glob_count, docs_wo_suffix, expected_match_count",
-    testdata_sitemap_globs,
-    ids=ids_sitemap_globs,
-)
 def test_sitemap_globs(
-    path_toc,
-    expected_glob_count,
-    docs_wo_suffix,
-    expected_match_count,
-    docs_dir,
-):
+    relpath_toc: "Path",
+    expected_glob_count: int,
+    docs_wo_suffix: "Sequence[str]",
+    expected_match_count: int,
+    docs_dir: "Path",
+    request: pytest.FixtureRequest,
+) -> None:
     """Inspect globs in a toc."""
     # pytest --showlocals --log-level INFO -k "test_sitemap_globs" tests
-    site_map = create_site_from_toc(path_toc, root_path=docs_dir)
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc)
+
+    site_map = create_site_from_toc(abspath_toc, root_path=docs_dir)
     set_globs = site_map.globs()
     actual_glob_count = len(set_globs)
     assert actual_glob_count == expected_glob_count
@@ -398,34 +412,34 @@ def test_sitemap_globs(
     assert actual_matches == expected_match_count
 
 
-testdata_new_excluded = (
+@pytest.mark.parametrize(
+    "relpath_toc, source_suffix, exclude_patterns, expected_excluded_count",
     (
-        Path(__file__).parent.joinpath("_toc_files", "glob_md_extras.yml"),
-        [".md", ".rst"],
-        ["doc2"],
-        1,
+        pytest.param(
+            Path("_toc_files").joinpath("glob_md_extras.yml"),
+            [".md", ".rst"],
+            ["doc2"],
+            1,
+            id="exclude_patterns-are-actually-ignored",
+        ),
     ),
 )
-ids_new_excluded = ("exclude_patterns are actually ignored",)
-
-
-@pytest.mark.parametrize(
-    "path_toc, source_suffix, exclude_patterns, expected_excluded_count",
-    testdata_new_excluded,
-    ids=ids_new_excluded,
-)
 def test_new_excluded(
-    path_toc,
-    source_suffix,
-    exclude_patterns,
-    expected_excluded_count,
-    docs_dir,
-):
+    relpath_toc: "Path",
+    source_suffix: "Sequence[str]",
+    exclude_patterns: "Sequence[str]",
+    expected_excluded_count: int,
+    docs_dir: "Path",
+    request: pytest.FixtureRequest,
+) -> None:
     """Files to exclude from site."""
     # pytest --showlocals --log-level INFO -k "test_new_excluded" tests
-    site_map = create_site_from_toc(path_toc, root_path=docs_dir)
+    abspath_tests_dir = request.path.parent
+    abspath_toc = abspath_tests_dir.joinpath(relpath_toc)
+
+    site_map = create_site_from_toc(abspath_toc, root_path=docs_dir)
     additional_files = site_map.meta.get("create_files", [])
-    assert len(additional_files) != 0
+    assert bool(additional_files)
     new_excluded = site_map.new_excluded(docs_dir, source_suffix, exclude_patterns)
     actual_excluded_count = len(new_excluded)
     assert actual_excluded_count == expected_excluded_count

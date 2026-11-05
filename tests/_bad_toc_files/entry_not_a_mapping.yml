@@ -1,5 +1,5 @@
 root: intro
 entries:
 - file
-- {"file": "b"}
+- {file: b}
 - file: doc2

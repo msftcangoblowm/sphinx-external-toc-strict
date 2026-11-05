@@ -28,11 +28,11 @@
     - file: interactive/hiding
   - file: file-types/index
     sections:
-      - file: file-types/markdown
-      - file: file-types/notebooks
-      - file: file-types/myst-notebooks
-      - file: file-types/jupytext
-      - file: file-types/restructuredtext
+    - file: file-types/markdown
+    - file: file-types/notebooks
+    - file: file-types/myst-notebooks
+    - file: file-types/jupytext
+    - file: file-types/restructuredtext
 
 - part: Build your book
   chapters:

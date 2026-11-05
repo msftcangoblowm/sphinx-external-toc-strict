@@ -14,11 +14,11 @@ This extension facilitates a **top-down** approach to defining the site-map stru
 
 .. PYVERSIONS
 
-* Python 3.10 through 3.12, and 3.13.0a3 and up.
+* Python 3.11 through 3.15, pypy-3.11
 
 **New in 2.0.x:**
 
-intersphinx support; ref > url; Sphinx py310+ drop py39;
+intersphinx support; ref > url; drop py310 py39;
 OS Independent; remove pip and setuptools pins;
 
 **New in 1.2.x:**
@@ -32,7 +32,7 @@ Forked
 sphinx-external-toc-strict is a fork of sphinx-external-toc
 
 .. csv-table:: Comparison
-   :header: "Matric", "TOC", "TOC-Strict"
+   :header: "Feature", "TOC", "TOC-Strict"
    :widths: auto
 
    "intersphinx support", "No", "Yes!"

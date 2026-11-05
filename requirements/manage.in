@@ -1,19 +1,11 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
 # packaging and kitting
 
--c pins.pip
 -r prod.unlock
--r tox.pip
--r pip.pip  # avoid setuptools conflict
+-r tox.in
+# avoid setuptools conflict
+-r pip.in
 
-twine           # pypi.org
 pre-commit
-
-# restview restricts readme_renderer. restview maybe abandonware
-# https://github.com/mgedmin/restview/blob/master/setup.py
-readme_renderer<37
-
-# viewer for vanilla ReStructuredText files (README.rst)
-restview

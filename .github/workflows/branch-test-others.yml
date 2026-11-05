@@ -1,14 +1,14 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
 # For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 # For contributors working in a branch, not main/master, test on Windows and MacOS
 # Quick, not exhaustive. Minimum interpreter versions
-name: "branch only test"
+name: branch only test
 
 on:
   push:
     branches:
-      - '**'
-      - '!main'
+    - '**'
+    - '!main'
   workflow_dispatch:
 
 defaults:
@@ -23,53 +23,74 @@ permissions:
 
 jobs:
   tests-other:
-    name: "${{ matrix.python-version }} on ${{ matrix.platform }}"
-    if:
-      ${{ !(contains('-notests', github.ref) || contains('refs/heads/main', github.ref)) }}
-    runs-on: "${{ matrix.platform }}"
+    name: ${{ matrix.python-version }} on ${{ matrix.platform }}
+    if: ${{ !(contains('-notests', github.ref) || contains('refs/heads/main', github.ref)) }}
+    runs-on: ${{ matrix.platform }}
     # If it doesn't finish in an hour, it's not going to. Don't spin for six
     # hours needlessly.
     timeout-minutes: 60
     strategy:
       matrix:
         platform:
-          - windows-latest
+        - windows-latest
         python-version:
-          - "3.12"
-          - "3.13"
+        - '3.12'
+        - '3.13'
       fail-fast: false
 
     steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v4.2.2
+    - name: Check out the repo
+      uses: actions/checkout@v7.0.1
 
-      - name: "Install ${{ matrix.python-version }} with setup-python"
-        uses: actions/setup-python@v5.6.0
-        with:
-          python-version: "${{ matrix.python-version }}"
-          allow-prereleases: true
+    - name: Install ${{ matrix.python-version }} with setup-python
+      uses: actions/setup-python@v7.1.0
+      with:
+        python-version: ${{ matrix.python-version }}
+        allow-prereleases: true
 
-      - name: "Show diagnostic info"
-        run: |
-          set -xe
-          python -VV
-          python -m site
-          env
+    - name: Show diagnostic info
+      run: |
+        set -xe
+        python -VV
+        python -m site
+        env
 
-      - name: "Install dependencies"
-        run: |
-          set -xe
-          python -m pip install -r requirements/tox.pip # 'pip<24.2'
+    # 'pip<24.2'
+    - name: Install dependencies
+      run: |
+        set -xe
+        python -m pip install -r requirements/tox.lock
 
-      - name: "Run tox for ${{ matrix.python-version }}"
-        run: |
-          python -m tox -- -rfsEX
+    - name: Set OS and Python short vars
+      run: |
+        platform="${{ matrix.platform }}"
+        python_version="${{ matrix.python-version }}"
+        OS_SHORT="${platform%%-*}"
+        OS_SHORT="${OS_SHORT/ubuntu/linux}"
+        echo "OS_SHORT=$OS_SHORT" >> $GITHUB_ENV
+        if [[ "$python_version" == pypy-* ]]; then
+          ver_short="${python_version//-/}"  # pypy3.11
+        else
+          ver_short="py${python_version//-/}"  # py3.14
+        fi
+        ver_short="${ver_short//./}"  # remove dots → pypy311 or py314
+        echo "VER_SHORT=$ver_short" >> $GITHUB_ENV
 
-      - name: "Retry tox for ${{ matrix.python-version }}"
-        if: failure()
-        run: |
-          # `exit 1` makes sure that the job remains red with flaky runs
-          python -m tox -- -rfsEX --lf -vvvvv && exit 1
+    - name: Run tox for ${{ matrix.python-version }}
+      run: |
+        echo "env.OS_SHORT ${{ env.OS_SHORT }}"
+        echo "env.VER_SHORT ${{ env.VER_SHORT }}"
+        python -m tox -vv -c tox-test.ini -e ${{ env.VER_SHORT }}-${{ env.OS_SHORT }}
+
+    - name: Retry tox for ${{ matrix.python-version }}
+      if: failure()
+      run: |
+        # `exit 1` makes sure that the job remains red with flaky runs
+        # python -m tox -- -rfsEX --lf -vvvvv && exit 1
+        echo "env.OS_SHORT ${{ env.OS_SHORT }}"
+        echo "env.VER_SHORT ${{ env.VER_SHORT }}"
+        # `exit 1` makes sure that the job remains red with flaky runs
+        python -m tox -vv -c tox-test.ini -e ${{ env.VER_SHORT }}-${{ env.OS_SHORT }} && exit 1
 
   # This job aggregates test results. It's the required check for branch protection.
   # https://github.com/marketplace/actions/alls-green#why
@@ -77,14 +98,13 @@ jobs:
   success:
     name: Jobs successful
     # The tests didn't run if the branch name includes "-notests"
-    if:
-      ${{ !(contains('-notests', github.ref) || contains('refs/heads/main', github.ref)) }}
+    if: ${{ !(contains('-notests', github.ref) || contains('refs/heads/main', github.ref)) }}
     needs:
-      - tests-other
+    - tests-other
     runs-on: ubuntu-latest
 
     steps:
-      - name: Decide whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@223e4bb7a751b91f43eda76992bcfbf23b8b0302
-        with:
-          jobs: ${{ toJSON(needs) }}
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@e68df088d4e9ee6bc36b8ea7deacf96161902d2a
+      with:
+        jobs: ${{ toJSON(needs) }}

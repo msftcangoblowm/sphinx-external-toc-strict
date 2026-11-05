@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=80.7.1", "wheel", "build", "setuptools_scm>=8.3.1"]
+requires = ["setuptools>=80.7.1", "wheel", "build", "setuptools_scm>=8.3.1,<10"]
 build-backend = "setuptools.build_meta"
 # "setuptools_scm>=8.3.1" removed due to failure to parse project.license field
 # in release.yml, :code:`python igor.py build_next "tag"` triggers setuptools_scm
@@ -11,7 +11,7 @@ dynamic = [
     "dependencies",
     "version",
 ]
-license = "Apache-2.0"
+license = "MPL-2.0"
 license-files = [
     "LICEN[CS]E*",
     "NOTICE*",
@@ -19,16 +19,17 @@ license-files = [
 description = "A sphinx extension that allows the site-map to be defined in a single YAML file."
 keywords = ["sphinx","extension", "toc", "strictyaml"]
 readme = "README.rst"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Programming Language :: Python :: Implementation :: CPython",
     "Framework :: Sphinx :: Extension",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -37,10 +38,10 @@ classifiers = [
 ]
 # author sphinx-external-toc {name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"},
 authors = [  # Contact by mastodon please
-    {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
+    {name = "Dave Faulkmore", email = "faulkmore@proton.me"},
 ]
 maintainers = [
-    {name = "Dave Faulkmore", email = "faulkmore@protonmail.com"},
+    {name = "Dave Faulkmore", email = "faulkmore@proton.me"},
 ]
 
 [project.urls]
@@ -56,12 +57,12 @@ where = ["src"]
 include = ["sphinx_external_toc_strict*"]
 
 [tool.setuptools.dynamic]
-optional-dependencies.pip = { file = ['requirements/pip.pip'] }
-optional-dependencies.pip_tools = { file = ['requirements/pip-tools.pip'] }
+optional-dependencies.pip = { file = ['requirements/pip.lock'] }
+optional-dependencies.pip_tools = { file = ['requirements/pip-tools.lock'] }
 dependencies = { file = ['requirements/prod.unlock'] }
-optional-dependencies.dev = { file = ['requirements/dev.pip'] }
-optional-dependencies.manage = { file = ['requirements/manage.pip'] }
-optional-dependencies.docs = { file = ['docs/requirements.pip'] }
+optional-dependencies.dev = { file = ['requirements/dev.lock'] }
+optional-dependencies.manage = { file = ['requirements/manage.lock'] }
+optional-dependencies.docs = { file = ['docs/requirements.lock'] }
 version = {attr = "sphinx_external_toc_strict._version.__version__"}
 
 [project.entry-points]
@@ -152,6 +153,7 @@ extensions = [
     "myst_parser",
 ]
 linkcheck_ignore = [
+    'https://docutils[.]sourceforge[.]io/docutils/nodes[.]py',
     "https://github.com/crdoconnor/strictyaml/blob/dfd93f9740ebd5e7150029bc3d89ea102bcddf00/strictyaml/representation.py#L48",
     "https://github.com/crdoconnor/strictyaml/blob/dfd93f9740ebd5e7150029bc3d89ea102bcddf00/strictyaml/representation.py#L114",
     "https://github.com/PyCQA/flake8/blob/fb9a02aaf77b56fcad4320971e7edca0cea93489/src/flake8/options/config.py#L56",
@@ -176,7 +178,7 @@ exclude_patterns = [
 doctest_show_successes = false
 doctest_test_doctest_blocks = "Yes please!"
 nitpicky = true
-autodoc_typehints = 'signature'
+autodoc_typehints = 'description'
 
 [tool.black]
 include = '\.pyi?$'
@@ -219,6 +221,7 @@ filterwarnings = [
 color = true
 exclude = [
     'src/sphinx_external_toc_strict/_version.py',
+    '.doc',
     'docs',
     'build',
     'retired',
@@ -238,3 +241,6 @@ patname = "patname"
 
 [tool.check-manifest]
 ignore = ['src/sphinx_external_toc_strict/version.py']
+
+[tool.refurb]
+ignore = ["FURB184"]

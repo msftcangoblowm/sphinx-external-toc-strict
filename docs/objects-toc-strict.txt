@@ -1,7 +1,23 @@
 # Sphinx inventory version 2
-# Project: sphinx-external-toc-strict 1.0.2
-# Version: 1.0.2
+# Project: sphinx-external-toc-strict 2.0.4
+# Version: 2.0.4
 # The remainder of this file is compressed using zlib.
-sphinx-external-toc-strict.parsing_strictyaml.dump_yaml py:func 1 code/parsing_strictyaml.html#$ -
-sphinx-external-toc-strict._compat.ValidatorType py:class 1 code/_compat.html#$ -
-sphinx-external-toc-strict._compat.ValidatorType py:data 1 code/_compat.html#$ -
+sphinx_external_toc_strict.api.Document py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.FileItem py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.GlobItem py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.RefItem py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.SiteMap py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.TocTree py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.api.UrlItem py:class 1 code/api.html#$ -
+sphinx_external_toc_strict.events.TableOfContentsNode py:class 1 code/events.html#$ -
+sphinx_external_toc_strict.events.insert_toctrees py:function 1 code/events.html#$ -
+sphinx_external_toc_strict.exceptions.MalformedError py:exception 1 code/exceptions.html#$ -
+sphinx_external_toc_strict.parsing_strictyaml.dump_yaml py:function 1 code/parsing_strictyaml.html#$ -
+sphinx_external_toc_strict.parsing_strictyaml._parse_doc_item py:function 1 code/parsing_strictyaml.html#$ -
+sphinx_external_toc_strict.parsing_strictyaml.parse_toc_yaml py:function 1 code/parsing_strictyaml.html#$ -
+sphinx_external_toc_strict.parsing_shared.FileFormat py:class 1 code/parsing_shared.html#$ -
+sphinx_external_toc_strict.parsing_shared.create_toc_dict py:function 1 code/parsing_shared.html#$ -
+sphinx_external_toc_strict.parsing_shared._parse_item_testable py:function 1 code/parsing_shared.html#$ -
+sphinx_external_toc_strict.pep518_read.find_project_root.params.srcs py:parameter 1 code/pep518_read.html#$ -
+sphinx_external_toc_strict.util_dc.ValidatorType py:class 1 code/util_dc.html#$ -
+sphinx_external_toc_strict.util_dc.UnionAB py:class 1 code/util_dc.html#$ -

@@ -1,0 +1,4 @@
+packaging==26.3
+    # via setuptools-scm
+setuptools-scm==8.3.1
+    # via -r pins-setuptools-scm.in

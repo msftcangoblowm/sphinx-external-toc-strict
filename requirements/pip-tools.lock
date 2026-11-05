@@ -1,4 +1,4 @@
-certifi==2025.4.26
+certifi==2026.10.23
     # via requests
 charset-normalizer==3.4.2
     # via requests
@@ -10,11 +10,9 @@ html5lib==1.1
     # via get-pypi-latest-version
 idna==3.10
     # via requests
-importlib-metadata==8.7.0; python_version < "3.10"
-    # via setuptools-scm
-packaging==25.0
+packaging==26.3
     # via
-    #   -r requirements/pip.pip
+    #   -r requirements/pip.lock
     #   build
     #   setuptools-scm
 pip-tools==7.4.1
@@ -27,16 +25,6 @@ requests==2.31.0
     # via get-pypi-latest-version
 six==1.17.0
     # via html5lib
-tomli==2.2.1; python_version < "3.11"
-    # via
-    #   -c requirements/pins.pip
-    #   -r requirements/pip.pip
-    #   build
-    #   pip-tools
-    #   pyproject-hooks
-    #   setuptools-scm
-typing-extensions==4.12.2; python_version<"3.10"
-    # via setuptools-scm
 urllib3==2.2.3
     # via requests
 webencodings==0.5.1

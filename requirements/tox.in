@@ -1,10 +1,8 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
-
--c pins.pip
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
 # Just install tox, which will then install more things.
-# "make upgrade" turns this into requirements/tox.pip
+# "make upgrade" turns this into requirements/tox.lock
 
 tox
 tox-gh

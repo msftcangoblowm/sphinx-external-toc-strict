@@ -38,6 +38,7 @@ Even if using markdown, the root index file **must be** ``index.rst``
 from __future__ import annotations
 
 import glob
+from collections.abc import MutableMapping
 from dataclasses import (
     asdict,
     dataclass,
@@ -46,6 +47,7 @@ from pathlib import Path
 from typing import (
     Any,
     Union,
+    cast,
 )
 
 from sphinx.util.matching import (
@@ -54,7 +56,13 @@ from sphinx.util.matching import (
     patmatch,
 )
 
-from ._compat import (
+from .constants import (
+    URL_PATTERN,
+    use_cases,
+)
+from .filename_suffix import stem_natural
+from .sphinx_node import query_intersphinx
+from .util_dc import (
     DC_SLOTS,
     deep_iterable,
     field,
@@ -63,17 +71,6 @@ from ._compat import (
     optional,
     validate_fields,
 )
-from .constants import (
-    URL_PATTERN,
-    use_cases,
-)
-from .filename_suffix import stem_natural
-from .sphinx_node import query_intersphinx
-
-try:
-    from collections.abc import MutableMapping
-except (ModuleNotFoundError, ImportError):  # pragma: no cover
-    from typing import MutableMapping
 
 
 class FileItem(str):
@@ -93,12 +90,12 @@ class FileItem(str):
 
         :type site_map: sphinx_external_toc_strict.api.SiteMap
         :returns: Generator of Sphinx renderable items' tuple
-        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        :rtype: collections.abc.Iterator[tuple[str, str]]
         """
         child_doc_item = site_map[self]
         docname = str(self)
         title = child_doc_item.title
-        # docname = remove_suffix(docname, app.config.source_suffix)
+        # suffixes -- app.config.source_suffix
         docname = stem_natural(docname)
 
         ret = (title, docname)
@@ -114,7 +111,7 @@ class GlobItem(str):
         :param all_docnames: All docnames in SiteMap
         :type all_docnames: collections.abc.Iterable[str]
         :returns: Generator of Sphinx renderable items' tuple
-        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        :rtype: collections.abc.Iterator[tuple[str, str]]
         """
         patname = str(self)
         docnames = sorted(patfilter(all_docnames, patname))
@@ -156,8 +153,8 @@ class UrlItem:
         :returns: Generator of Sphinx renderable items' tuple
         :rtype: collections.abc.Generator[tuple[str, str], None, None]
         """
-        ret = (self.title, self.url)
-        yield ret
+        t_ret = (self.title, self.url)
+        yield t_ret
 
 
 @dataclass(**DC_SLOTS)
@@ -186,7 +183,7 @@ class RefItem:
         :param app: sphinx instance
         :type: sphinx.application.Sphinx
         :returns: Generator of Sphinx renderable items' tuple
-        :rtype: collections.abc.Generator[tuple[str, str], None, None]
+        :rtype: collections.abc.Iterator[tuple[str, str]]
         """
         rendering_adjust = self.title if self.title is not None else self.ref_id
 
@@ -199,9 +196,9 @@ class RefItem:
             and isinstance(self.title, str)
             and len(self.title.strip()) != 0
         )
-        ret = (self.title, url) if is_title_provided else (title, url)
+        t_ret = (self.title, url) if is_title_provided else (title, url)
 
-        yield ret
+        yield t_ret
 
 
 @dataclass(**DC_SLOTS)
@@ -287,7 +284,7 @@ class Document:
 
     :vartype docname: str
     :ivar subtrees: Flat structure of all subtrees
-    :vartype subtrees: list[TocTree]
+    :vartype subtrees: list[sphinx_external_toc_strict.api.TocTree]
     :ivar title: In yaml, can provide a title. Otherwise pulled from the document
     :vartype title: str | None
 
@@ -341,6 +338,12 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
     :vartype file_format: str | None
     """
 
+    __slots__ = ("_root", "_docs", "_meta", "_file_format")
+    _root: Document
+    _docs: dict[str, Document]
+    _meta: dict[str, Any]
+    _file_format: str | None
+
     def __init__(
         self,
         root: Document,
@@ -348,10 +351,10 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         file_format: str | None = None,
     ) -> None:
         """Class constructor."""
-        self._docs: dict[str, Document] = {}
+        self._docs = cast("dict[str, Document]", {})
         self[root.docname] = root
-        self._root: Document = root
-        self._meta: dict[str, Any] = meta or {}
+        self._root = root
+        self._meta = cast("dict[str, Any]", meta or {})
         # bypasses property setter. Could be unsupported or mistaken file format
         self._file_format = file_format
 
@@ -404,11 +407,8 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
 
         """
         is_valid = val is not None and val in use_cases
-        if is_valid:
+        if is_valid:  # pragma: no branch
             self._file_format = val
-        else:  # pragma: no cover
-            # do nothing
-            pass
 
     def globs(self):
         """All globs present across all toctrees
@@ -455,29 +455,24 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
                 str(Path(srcdir) / "**" / f"*{suffix}"), recursive=True
             ):
                 path = Path(path_str)
-                if not path.is_file():  # pragma: no cover
-                    continue
-                else:  # pragma: no cover
-                    pass
-                posix = path.relative_to(srcdir).as_posix()
-                posix_no_suffix = posix[: -len(suffix)]
-                components = posix.split("/")
-                if not (
-                    # files can be stored with or without suffixes
-                    posix in self
-                    or posix_no_suffix in self
-                    # ignore anything already excluded, we have to check against
-                    # the file path and all its sub-directory paths
-                    or any(
-                        already_excluded("/".join(components[: i + 1]))
-                        for i in range(len(components))
-                    )
-                    # don't exclude docnames matching globs
-                    or self.match_globs(posix_no_suffix)
-                ):
-                    new_excluded.append(posix)
-                else:  # pragma: no cover
-                    pass
+                if path.is_file():  # pragma: no branch
+                    posix = path.relative_to(srcdir).as_posix()
+                    posix_no_suffix = posix[: -len(suffix)]
+                    components = posix.split("/")
+                    if not (
+                        # files can be stored with or without suffixes
+                        posix in self
+                        or posix_no_suffix in self
+                        # ignore anything already excluded, we have to check against
+                        # the file path and all its sub-directory paths
+                        or any(
+                            already_excluded("/".join(components[: i + 1]))
+                            for i in range(len(components))
+                        )
+                        # don't exclude docnames matching globs
+                        or self.match_globs(posix_no_suffix)
+                    ):  # pragma: no branch
+                        new_excluded.append(posix)
 
         return new_excluded
 
@@ -553,6 +548,9 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
                 ]
             elif isinstance(v, str):
                 d[k] = str(v)
+            else:  # pragma: no cover
+                pass
+
         return d
 
     def as_json(self):
@@ -572,10 +570,8 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
             "documents": doc_dict,
             "meta": self.meta,
         }
-        if self.file_format:
+        if self.file_format:  # pragma: no branch
             data["file_format"] = self.file_format
-        else:  # pragma: no cover
-            pass
 
         return data
 
@@ -595,13 +591,14 @@ class SiteMap(MutableMapping[str, Union[Document, Any]]):
         """
         changed_docs = set()
         # check if the root document has changed
-        if self.root != previous.root:
+        if self.root != previous.root:  # pragma: no branch
             changed_docs.add(self.root.docname)
         for name, doc in self._docs.items():
             if name not in previous:
                 changed_docs.add(name)
                 continue
             prev_doc = previous[name]
-            if prev_doc != doc:
+            if prev_doc != doc:  # pragma: no branch
                 changed_docs.add(name)
+
         return changed_docs

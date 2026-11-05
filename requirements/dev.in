@@ -1,18 +1,14 @@
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/master/NOTICE.txt
+# Licensed under the MPL-2.0 License: https://www.mozilla.org/en-US/MPL/2.0/
+# For details: https://github.com/msftcangoblowm/sphinx-external-toc-strict/blob/main/NOTICE.txt
 
--c pins.pip
 -r prod.unlock
+-r pins-typing.in
 
 black
 blackdoc
-isort
+coverage
 flake8
 flake8-pyproject
-mypy  # pyright would require node/npm/TypeScript
-coverage
-twine
-validate-pyproject
-pytest>=7.1
-pytest-regressions
+isort
 sphobjinv
+validate-pyproject

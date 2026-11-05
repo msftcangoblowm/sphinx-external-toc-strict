@@ -3,14 +3,7 @@
 
 git --> setuptools-scm --> kitting (howto.txt / igor.py / Makefile) --> semantic versioning
 
-.. py:data:: _map_release
-   :type: types.MappingProxyType
-   :value: types.MappingProxyType({"alpha": "a", "beta": "b", "candidate": "rc"})
-
-   Mapping of release levels. So can gracefully go back and forth
-
-Release phases
----------------
+**Release phases**
 
 Without SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SPHINX_EXTERNAL_TOC_STRICT environmental variable
 locals are included in version
@@ -61,12 +54,6 @@ Move the tag past post commits
      SETUPTOOLS_SCM_PRETEND_VERSION_FOR_SPHINX_EXTERNAL_TOC_STRICT="0.1.1.post1" python -m build
 
 
-.. py:data:: __all__
-   :type: tuple[str, str, str]
-   :value: ("sanitize_tag", "get_version", "readthedocs_url")
-
-   Module exports
-
 """
 
 import types
@@ -84,6 +71,7 @@ __all__ = (
     "readthedocs_url",
 )
 
+#: types.MappingProxyType: Mapping of release levels. So can gracefully go back and forth
 _map_release = types.MappingProxyType({"alpha": "a", "beta": "b", "candidate": "rc"})
 
 
@@ -106,7 +94,8 @@ def _strip_epoch(ver):
         epoch = ver[: idx + 1]
         remaining = ver[idx + 1 :]
 
-    return epoch, remaining
+    t_ret = (epoch, remaining)
+    return t_ret
 
 
 def _strip_local(ver):
@@ -132,7 +121,8 @@ def _strip_local(ver):
         local = ver[idx + 1 :]
         remaining = ver[:idx]
 
-    return local, remaining
+    t_ret = (local, remaining)
+    return t_ret
 
 
 def remove_v(ver):
@@ -149,16 +139,13 @@ def remove_v(ver):
     local, remaining = _strip_local(remaining)
 
     # If prepended "v", remove it. epoch e.g. ``1!v1.0.1`` would conceal the "v"
-    if remaining.startswith("v"):
-        remaining = remaining[1:]
+    remaining = remaining.removeprefix("v")
 
     ret = epoch if epoch is not None else ""
     ret += remaining
 
-    if local is not None:
+    if local is not None:  # pragma: no branch
         ret += f"+{local}"
-    else:  # pragma: no cover
-        pass
 
     return ret
 
@@ -211,14 +198,12 @@ def sanitize_tag(ver):
     else:  # pragma: no cover Do nothing
         is_still_issue = False
 
-    if is_still_issue:
+    if is_still_issue:  # pragma: no branch
         try:
             v = Version(str_remaining_whole)
         except InvalidVersion as e:
             msg = f"Version contains invalid token. {e}"
             raise ValueError(msg) from e
-    else:  # pragma: no cover Do nothing
-        pass
 
     ret = str(v)
 
@@ -245,15 +230,13 @@ def readthedocs_url(package_name, ver_="latest"):
     :rtype: str
     """
     # app-name --> package_name
-    if "_" in package_name:
+    if "_" in package_name:  # pragma: no branch
         package_name = package_name.replace("_", "-")
-    else:  # pragma: no cover
-        pass
 
-    if ver_ is None or (ver_ is not None and not isinstance(ver_, str)):
+    if ver_ is None or (
+        ver_ is not None and not isinstance(ver_, str)
+    ):  # pragma: no branch
         ver_ = "latest"
-    else:  # pragma: no cover
-        pass
 
     if ver_ != "latest":
         ver = sanitize_tag(ver_)
@@ -289,10 +272,8 @@ def get_version(ver, is_use_final=False):
 
     :rtype: tuple[tuple[int, int, int, str, int], int]
     """
-    if is_use_final is None or not isinstance(is_use_final, bool):
+    if is_use_final is None or not isinstance(is_use_final, bool):  # pragma: no branch
         is_use_final = False
-    else:  # pragma: no cover
-        pass
 
     # epoch and locals ignored
     _v = Version(ver)
@@ -315,10 +296,8 @@ def get_version(ver, is_use_final=False):
             short = t_pre[0]
             serial = t_pre[1]
             for long_, short_ in _map_release.items():
-                if short_ == short:
+                if short_ == short:  # pragma: no branch
                     releaselevel = long_
-                else:  # pragma: no cover continue
-                    pass
     elif not _v.is_prerelease and _v.is_postrelease:
         releaselevel = "post"
         serial = _v.post

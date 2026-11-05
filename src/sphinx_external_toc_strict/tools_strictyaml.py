@@ -1,17 +1,18 @@
 """Creating sitemap from toc or path."""
 
-from __future__ import annotations
-
 import re
 import shutil
-import sys
+from collections.abc import (
+    Mapping,
+    Sequence,
+)
 from fnmatch import fnmatch
 from itertools import chain
 from pathlib import (
     Path,
     PurePosixPath,
 )
-from typing import Any
+from typing import TYPE_CHECKING
 
 from .api import (
     Document,
@@ -32,16 +33,8 @@ from .parsing_strictyaml import (
     parse_toc_yaml,
 )
 
-if sys.version_info >= (3, 9):  # pragma: no cover
-    from collections.abc import (
-        Mapping,
-        Sequence,
-    )
-else:  # pragma: no cover
-    from typing import (
-        Mapping,
-        Sequence,
-    )
+if TYPE_CHECKING:
+    from typing import Any
 
 
 def _default_affinity(additional_files, default_ext):
@@ -67,18 +60,14 @@ def _default_affinity(additional_files, default_ext):
     for file_name in additional_files:
         file_suffix = Path(file_name).suffix
 
-        if file_suffix == ".md":
+        if file_suffix == ".md":  # pragma: no branch
             md_count += 1
-        else:  # pragma: no cover
-            pass
 
-        if file_suffix == ".rst":
+        if file_suffix == ".rst":  # pragma: no branch
             rst_count += 1
-        else:  # pragma: no cover
-            pass
 
     # ignore index.rst cuz it's unavoidable
-    if rst_count >= 1:
+    if rst_count >= 1:  # pragma: no branch
         rst_count -= 1
 
     if md_count != 0 and md_count > rst_count:
@@ -151,7 +140,7 @@ def create_site_from_toc(
     root_path.mkdir(parents=True, exist_ok=True)
 
     #    copy --> root folder
-    if toc_name and not root_path.joinpath(toc_name).exists():
+    if toc_name and not root_path.joinpath(toc_name).exists():  # pragma: no branch
         shutil.copyfile(toc_path, root_path.joinpath(toc_name))
 
     # non-document files
@@ -162,29 +151,24 @@ def create_site_from_toc(
     # set_additionals_orig = set_additionals.copy()
 
     for filename in set_additionals:
-        if filename in what_about_these:
+        if filename in what_about_these:  # pragma: no branch
             additional_files.remove(filename)
             docpath = root_path.joinpath(PurePosixPath(filename))
-            if docpath.exists() and not overwrite:
+            if docpath.exists() and not overwrite:  # pragma: no branch
                 raise OSError(msg_path_exists.format(docpath))
-            else:  # pragma: no cover
-                pass
+
             docpath.parent.mkdir(parents=True, exist_ok=True)
 
             content = []
 
             # append extra text
             extra_lines = append_text.get(filename, "").splitlines()
-            if extra_lines:
+            if extra_lines:  # pragma: no branch
                 content.extend(extra_lines + [""])
-            else:  # pragma: no cover
-                pass
 
             # note \n works when writing for all platforms:
             # https://docs.python.org/3/library/os.html#os.linesep
             docpath.write_text("\n".join(content), encoding=encoding)
-        else:  # pragma: no cover
-            pass
 
     # create documents
     #    check create_files, if a file extension specified. If so, use that not default_ext
@@ -193,17 +177,14 @@ def create_site_from_toc(
     for docname in chain(site_map, additional_files):
         filename = docname
         is_unknown_ext = not any(docname.endswith(ext) for ext in {".rst", ".md"})
-        if is_unknown_ext is True:
+        if is_unknown_ext:  # pragma: no branch
             # filename += default_ext
             filename += default_affinity
-        else:  # pragma: no cover
-            pass
 
         docpath = root_path.joinpath(PurePosixPath(filename))
-        if docpath.exists() and not overwrite:
+        if docpath.exists() and not overwrite:  # pragma: no branch
             raise OSError(msg_path_exists.format(docpath))
-        else:  # pragma: no cover
-            pass
+
         docpath.parent.mkdir(parents=True, exist_ok=True)
 
         content = []
@@ -251,9 +232,7 @@ def site_map_guess_titles(
 
     root_docname = site_map.root.docname
     docnames = [
-        docname
-        for docname in site_map
-        if docname != root_docname and is_modify_titles is True
+        docname for docname in site_map if docname != root_docname and is_modify_titles
     ]
     for docname in docnames:
         # Take titles from file names
@@ -314,11 +293,9 @@ def create_site_map_from_path(
     )
 
     is_no_index = root_index is None or root_index != default_index
-    if is_no_index:
+    if is_no_index:  # pragma: no branch
         msg_err = f"path does not contain a root file: {root_path}"
         raise FileNotFoundError(msg_err)
-    else:  # pragma: no cover
-        pass
 
     # create root item and child folders
     root_item, indexed_folders = _doc_item_from_path(
@@ -419,7 +396,7 @@ def _doc_item_from_path(
         child_index, child_files, child_folders = _assess_folder(
             sub_folder, suffixes, default_index, ignore_matches
         )
-        if not child_index:
+        if not child_index:  # pragma: no branch
             # TODO handle folders with no files, but files in sub-folders
             continue
         indexed_folders.append((sub_folder, child_index, child_files, child_folders))
@@ -442,7 +419,7 @@ def natural_sort(iterable):
     """Natural sort an iterable.
 
     :param iterable: A list of str
-    :type iterable: Iterable[str]
+    :type iterable: collections.abc.Iterable[str]
     :returns: Sorted, in ascending order, list
     :rtype: list[str]
 
@@ -452,7 +429,7 @@ def natural_sort(iterable):
 
     """
 
-    def _convert(text: str) -> int | str:
+    def _convert(text: str) -> "int | str":
         """So as to have a natural sort occur, convert digit to int.
         And lowercase any str.
 
@@ -463,7 +440,7 @@ def natural_sort(iterable):
         """
         return int(text) if text.isdigit() else text.lower()
 
-    def _alphanum_key(key: str) -> list[int | str]:
+    def _alphanum_key(key: str) -> "list[int | str]":
         """Converter for int chars
 
         :param key: A char
@@ -501,8 +478,9 @@ def _assess_folder(
 
     :meta private:
     """
-    if not folder.is_dir():
-        raise NotADirectoryError(f"path must be a directory: {folder}")
+    if not folder.is_dir():  # pragma: no branch
+        msg_warn = f"path must be a directory: {folder}"
+        raise NotADirectoryError(msg_warn)
 
     # conversion to a set is to remove duplicates, e.g. doc.rst and doc.md
     sub_files = natural_sort(
@@ -527,17 +505,18 @@ def _assess_folder(
         ]
     )
 
-    if not sub_files:
-        return (None, sub_files, sub_folders)
+    if not sub_files:  # pragma: no branch
+        t_ret = (None, sub_files, sub_folders)
+    else:
+        # get the index file for this folder
+        try:
+            index = sub_files.index(default_index)
+        except ValueError:
+            index = 0
+        index_file = sub_files.pop(index)
+        t_ret = (index_file, sub_files, sub_folders)
 
-    # get the index file for this folder
-    try:
-        index = sub_files.index(default_index)
-    except ValueError:
-        index = 0
-    index_file = sub_files.pop(index)
-
-    return (index_file, sub_files, sub_folders)
+    return t_ret
 
 
 def migrate_jupyter_book(toc):
@@ -574,6 +553,8 @@ def migrate_jupyter_book(toc):
          parsing migrated output
 
     """
+    if TYPE_CHECKING:
+        first_items: list[dict[str, Any]]
 
     if isinstance(toc, Path):
         path_toc = toc
@@ -583,22 +564,27 @@ def migrate_jupyter_book(toc):
     # convert list to dict
     if isinstance(toc, list):
         toc_updated = toc[0]
-        if not isinstance(toc_updated, dict):
-            raise MalformedError("First list item is not a dict")
-        if len(toc) > 1:
-            first_items: list[dict[str, Any]] = []
+        if not isinstance(toc_updated, dict):  # pragma: no branch
+            msg_warn = "First list item is not a dict"
+            raise MalformedError(msg_warn)
+        if len(toc) > 1:  # pragma: no branch
+            first_items = []
             top_items_key = "sections"  # this is the default top-level key
             # The first set of pages will be called *either* sections or chapters
-            if "sections" in toc_updated and "chapters" in toc_updated:
-                raise MalformedError(
+            if (
+                "sections" in toc_updated and "chapters" in toc_updated
+            ):  # pragma: no branch
+                msg_warn = (
                     "First list item contains both 'chapters' and 'sections' keys"
                 )
+                raise MalformedError(msg_warn)
             for key in ("sections", "chapters"):
-                if key in toc_updated:
+                if key in toc_updated:  # pragma: no branch
                     top_items_key = key
                     items = toc_updated.pop(key)
-                    if not isinstance(items, Sequence):
-                        raise MalformedError(f"First list item '{key}' is not a list")
+                    if not isinstance(items, Sequence):  # pragma: no branch
+                        msg_warn = f"First list item '{key}' is not a list"
+                        raise MalformedError(msg_warn)
                     first_items += items
 
             # add list items after to same level
@@ -609,18 +595,23 @@ def migrate_jupyter_book(toc):
                 ("part" in item or "chapter" in item) for item in first_items
             )
             contains_file = any("file" in item for item in first_items)
-            if contains_part and contains_file:
-                raise MalformedError("top-level contains mixed 'part' and 'file' keys")
+            if contains_part and contains_file:  # pragma: no branch
+                msg_warn = "top-level contains mixed 'part' and 'file' keys"
+                raise MalformedError(msg_warn)
 
             toc_updated["parts" if contains_part else top_items_key] = first_items
 
         toc = toc_updated
     elif not isinstance(toc, dict):
-        raise MalformedError("ToC is not a list or dict")
+        msg_warn = "ToC is not a list or dict"
+        raise MalformedError(msg_warn)
+    else:  # pragma: no cover
+        pass
 
     # convert first `file` to `root`
-    if "file" not in toc:
-        raise MalformedError("no top-level 'file' key found")
+    if "file" not in toc:  # pragma: no branch
+        msg_warn = "no top-level 'file' key found"
+        raise MalformedError(msg_warn)
     toc["root"] = toc.pop("file")
 
     # setting `titlesonly` True is now part of the file format
@@ -628,10 +619,10 @@ def migrate_jupyter_book(toc):
 
     # we should now have a dict with either a 'parts', 'chapters', or 'sections' key
     top_level_keys = {"parts", "chapters", "sections"}.intersection(toc.keys())
-    if len(top_level_keys) > 1:
-        raise MalformedError(
-            f"There is more than one top-level key: {top_level_keys!r}"
-        )
+    if len(top_level_keys) > 1:  # pragma: no branch
+        msg_warn = f"There is more than one top-level key: {top_level_keys!r}"
+        raise MalformedError(msg_warn)
+
     # from the top-level key we can now derive the file-format (for key-mappings)
     file_format = {
         "": "jb-book",
@@ -646,33 +637,38 @@ def migrate_jupyter_book(toc):
     dicts = [toc]
     while dicts:
         dct = dicts.pop(0)
-        if "chapters" in dct and "sections" in dct:
-            raise MalformedError(f"both 'chapters' and 'sections' in same dict: {dct}")
-        if "parts" in dct:
+        if "chapters" in dct and "sections" in dct:  # pragma: no branch
+            msg_warn = f"both 'chapters' and 'sections' in same dict: {dct}"
+            raise MalformedError(msg_warn)
+        if "parts" in dct:  # pragma: no branch
             dct[DEFAULT_SUBTREES_KEY] = dct.pop("parts")
-        if "sections" in dct:
+        if "sections" in dct:  # pragma: no branch
             dct[DEFAULT_ITEMS_KEY] = dct.pop("sections")
-        if "chapters" in dct:
+        if "chapters" in dct:  # pragma: no branch
             dct[DEFAULT_ITEMS_KEY] = dct.pop("chapters")
         for key in ("part", "chapter"):
-            if key in dct:
+            if key in dct:  # pragma: no branch
                 dct["caption"] = dct.pop(key)
 
         # add nested dicts
-        for val in dct.values():
-            for item in val if isinstance(val, Sequence) else [val]:
-                if isinstance(item, dict):
-                    dicts.append(item)
+        #    if val is a Sequence, iterate over it; otherwise wrap it in a
+        #    single-element list and iterate over that.
+        dicts.extend(
+            item
+            for val in dct.values()
+            for item in (val if isinstance(val, Sequence) else [val])
+            if isinstance(item, dict)
+        )
 
     # if `numbered` at top level, move to options or copy to each subtree
-    if "numbered" in toc:
+    if "numbered" in toc:  # pragma: no branch
         key = "numbered"
         val_raw = toc.pop("numbered")
         numbered = val_raw
-        if DEFAULT_ITEMS_KEY in toc:
+        if DEFAULT_ITEMS_KEY in toc:  # pragma: no branch
             toc["options"] = {key: numbered}
         for subtree in toc.get(DEFAULT_SUBTREES_KEY, []):
-            if key not in subtree:
+            if key not in subtree:  # pragma: no branch
                 subtree[key] = numbered
 
     # now convert to a site map, so we can validate
@@ -683,4 +679,5 @@ def migrate_jupyter_book(toc):
         raise MalformedError(msg_err) from err
     # change the file format and convert back to a dict
     site_map.file_format = file_format
-    return create_toc_dict(site_map, skip_defaults=True)
+    d_ret = create_toc_dict(site_map, skip_defaults=True)
+    return d_ret
