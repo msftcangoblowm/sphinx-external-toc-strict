@@ -11,6 +11,7 @@ Unit test -- Module
 
 """
 
+import os
 import platform
 import tempfile
 import unittest
@@ -224,7 +225,7 @@ class Pep518Sections(unittest.TestCase):
                 self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
 
             # PermissionError, **not** testing a filesystem base folder
-            if platform.system().lower() == "linux":
+            if os.geteuid() != 0 and platform.system().lower() == "linux":
                 srcs = ("/root",)
                 stdin_filename = None
                 with self.assertRaises(PermissionError):

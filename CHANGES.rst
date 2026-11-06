@@ -28,6 +28,8 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix(pep518_read): py314+ Path.resolve consistent legacy behavior
+   - ci: os.geteuid guard against CI container run with root permissions
    - chore(requirements): remove docs package sphobjinv from dev requirements
    - fix: in roots/test-root/_build/ remove stale pickled environment
    - refactor: _compat remnants --> util_dc
