@@ -28,19 +28,22 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
-   - fix: guard against non-posix lack of os.geteuid support
-   - fix(pep518_read): find_project_root no longer raises PermissionError
-   - fix(pep518_read): py314+ Path.resolve consistent legacy behavior
-   - ci: os.geteuid guard against CI container run with root permissions
-   - chore(requirements): remove docs package sphobjinv from dev requirements
-   - fix: in roots/test-root/_build/ remove stale pickled environment
-   - refactor: _compat remnants --> util_dc
-   - chore: license change apache-2.0 --> MPL-2.0
-   - chore: update dependencies
-   - ci: bump version
-   - tests: pytest.mark.parametrize with pytest.param and id
-
 .. scriv-start-here
+
+.. _changes_2-0-4:
+
+Version 2.0.4 — 2026-11-06
+--------------------------------
+
+- chore: license change apache-2.0 --> MPL-2.0
+- fix(pep518_read): find_project_root no longer raises PermissionError
+- fix: in roots/test-root/_build/ remove stale pickled environment
+- refactor: _compat remnants --> util_dc
+- tests: pytest.mark.parametrize with pytest.param and id
+- ci: os.geteuid guard against CI container run with root permissions
+- chore(requirements): remove docs package sphobjinv from dev requirements
+- chore: update dependencies
+- ci: bump version
 
 .. _changes_2-0-3.post1:
 
