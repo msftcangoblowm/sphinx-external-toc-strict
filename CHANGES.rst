@@ -30,6 +30,13 @@ Changelog
 
 .. scriv-start-here
 
+.. _changes_2-0-4.post0:
+
+Version 2.0.4.post0 — 2026-11-06
+---------------------------------
+
+- ci(dependabot): remove pins.pip remnant in docs/requirements.in
+
 .. _changes_2-0-4:
 
 Version 2.0.4 — 2026-11-06
