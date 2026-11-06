@@ -12,7 +12,6 @@ Unit test -- Module
 """
 
 import os
-import platform
 import stat
 import tempfile
 import unittest
@@ -227,7 +226,7 @@ class Pep518Sections(unittest.TestCase):
                 self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
 
             # PermissionError, **not** testing a filesystem base folder
-            if os.geteuid() != 0 and platform.system().lower() == "linux":
+            if hasattr(os, "geteuid") and os.geteuid() != 0:
                 # Remove f_d read permission, `srcs = ("/root",)`. CI does not
                 # guaranteed /root is inaccessible
                 srcs = (abspath_f_d.as_posix(),)

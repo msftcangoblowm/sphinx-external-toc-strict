@@ -28,6 +28,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - fix: guard against non-posix lack of os.geteuid support
    - fix(pep518_read): find_project_root no longer raises PermissionError
    - fix(pep518_read): py314+ Path.resolve consistent legacy behavior
    - ci: os.geteuid guard against CI container run with root permissions
