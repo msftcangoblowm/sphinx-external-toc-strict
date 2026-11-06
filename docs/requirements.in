@@ -4,9 +4,12 @@
 -c ../requirements/pins.pip
 -c ../requirements/prod.unlock  # currently same venv
 
-# sphinx-external-toc-strict
-scriv       # for writing GitHub releases
-sphobjinv   # cross-references inventories, objects.inv
+# cross-references inventories, objects.inv
+#    transitive dependency rpds-py requires Rust. PyO3-0.22.2 py313-
+sphobjinv
+
+# for writing GitHub releases
+scriv
 sphinx-pyproject
 sphinx-autobuild
 sphinx-paramlinks

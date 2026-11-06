@@ -28,6 +28,7 @@ Changelog
    Commit items for NEXT VERSION
    ..............................
 
+   - chore(requirements): remove docs package sphobjinv from dev requirements
    - fix: in roots/test-root/_build/ remove stale pickled environment
    - refactor: _compat remnants --> util_dc
    - chore: license change apache-2.0 --> MPL-2.0

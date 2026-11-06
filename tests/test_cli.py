@@ -277,7 +277,7 @@ def test_create_site_cli_normal(
         f"{root}.rst",
         f"doc1.{extension}",
         f"doc2.{extension}",
-        f"subfolder/other1.{extension}",
+        Path(f"subfolder/other1.{extension}").as_posix(),
     )
 
     cmd = [
@@ -302,11 +302,11 @@ def test_create_site_cli_normal(
     actual_paths = []
     for p_file in lst_path_files:
         p_relative_path = p_file.relative_to(tmp_path)
-        actual_paths.append(str(p_relative_path))
+        actual_paths.append(p_relative_path.as_posix())
 
     #    Confirm lists have same contents: expected_files == files
     for str_path_expected in expected_files:
-        assert str_path_expected in actual_paths
+        assert Path(str_path_expected).as_posix() in actual_paths
 
 
 @pytest.mark.parametrize(

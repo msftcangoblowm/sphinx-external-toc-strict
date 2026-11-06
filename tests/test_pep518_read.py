@@ -11,6 +11,7 @@ Unit test -- Module
 
 """
 
+import platform
 import tempfile
 import unittest
 from collections.abc import Sequence
@@ -223,11 +224,12 @@ class Pep518Sections(unittest.TestCase):
                 self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
 
             # PermissionError, **not** testing a filesystem base folder
-            srcs = ("/root",)
-            stdin_filename = None
-            with self.assertRaises(PermissionError):
-                find_project_root(srcs)
-            self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
+            if platform.system().lower() == "linux":
+                srcs = ("/root",)
+                stdin_filename = None
+                with self.assertRaises(PermissionError):
+                    find_project_root(srcs)
+                self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
 
 
 if __name__ == "__main__":  # pragma: no cover
