@@ -13,6 +13,7 @@ Unit test -- Module
 
 import os
 import platform
+import stat
 import tempfile
 import unittest
 from collections.abc import Sequence
@@ -209,6 +210,7 @@ class Pep518Sections(unittest.TestCase):
             tempfile.TemporaryDirectory() as f_d,
             patch("pathlib.Path.cwd", return_value=Path(f_d)),
         ):
+            abspath_f_d = Path(f_d)
             tests = ((f_d, "file system root"),)
             for t_valid_dirs in tests:
                 self.assertIsInstance(t_valid_dirs, tuple)
@@ -226,10 +228,26 @@ class Pep518Sections(unittest.TestCase):
 
             # PermissionError, **not** testing a filesystem base folder
             if os.geteuid() != 0 and platform.system().lower() == "linux":
-                srcs = ("/root",)
+                # Remove f_d read permission, `srcs = ("/root",)`. CI does not
+                # guaranteed /root is inaccessible
+                srcs = (abspath_f_d.as_posix(),)
                 stdin_filename = None
-                with self.assertRaises(PermissionError):
+                mode_orig = stat.S_IMODE(abspath_f_d.stat().st_mode)
+                try:
+                    # -r
+                    mode = abspath_f_d.stat().st_mode
+                    abspath_f_d.chmod(
+                        mode & ~(stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+                    )
+
+                    # confirm Path.stat() indicates would trigger PermissionError
+                    with self.assertRaises(PermissionError):
+                        os.scandir(abspath_f_d)
+
+                    # with self.assertRaises(PermissionError):
                     find_project_root(srcs)
+                finally:
+                    abspath_f_d.chmod(mode_orig)
                 self.assertIsNone(find_pyproject_toml(srcs, stdin_filename))
 
 

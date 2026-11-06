@@ -30,6 +30,8 @@ These functions are lifted from the black project. With minor changes:
 
 """
 
+import os
+import stat
 from collections.abc import Sequence
 from functools import lru_cache
 from pathlib import Path
@@ -177,14 +179,34 @@ def find_project_root(srcs, stdin_filename=None):
         else:  # pragma: no cover
             pass
 
-    # py314+ Path.resolve() returns False rather than PermissionError,
-    #    for consistent behavior, Path.resolve(strict=True)
     if is_none(srcs) or is_sequence_empty(
         srcs
     ):  # pragma: no cover  # pragma: no branch
-        srcs = [str(Path.cwd().resolve(strict=True))]
+        srcs = [str(Path.cwd().resolve())]
 
-    path_srcs = [Path(Path.cwd(), src).resolve(strict=True) for src in srcs]
+    path_srcs = []
+    for src in srcs:
+        # intraversible folder --> PermissionError
+        """
+        if Path(src).is_relative_to(Path.cwd()) and Path(src).is_absolute():
+            abspath_testthis = Path(src)
+        else:
+            abspath_testthis = Path.cwd().joinpath(src)
+        """
+        abspath_testthis = Path.cwd().joinpath(src)
+
+        # avoid is_dir check triggering an Exception.
+        try:
+            is_dir = stat.S_ISDIR(abspath_testthis.stat().st_mode)
+        except FileNotFoundError:
+            is_dir = False
+
+        if not is_dir:  # pragma: no branch
+            os.scandir(abspath_testthis.parent)
+        else:
+            os.scandir(abspath_testthis)
+
+        path_srcs.append(abspath_testthis.resolve())
 
     # A list of lists of parents for each 'src'. 'src' is included as a
     # "parent" of itself if it is a directory
